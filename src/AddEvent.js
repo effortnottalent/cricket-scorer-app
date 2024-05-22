@@ -4,6 +4,7 @@ import {
     extrasScoredData,
     wicketScoredData
 } from './eventData';
+import { fieldPositionsList } from './FieldPositions';
 
 const defaultEvent = {
     runs: -1,
@@ -12,9 +13,6 @@ const defaultEvent = {
 
 export default function AddEvent({ onAddEvent }) {
     const [ event, setEvent ] = useState({ ...defaultEvent });
-    function handleBuildEvent(event) {
-
-    }
     return (
         <div className='addevent'>
             <h1>Add event</h1>
@@ -36,19 +34,18 @@ export default function AddEvent({ onAddEvent }) {
                             {data.label}
                         </button>
                     })}
-                    {event.runs !== -1 &&
-                        <fieldset className='fieldPosition'>
-                            <label htmlFor='fieldPositionId'>Field position</label>
-                            <input type='text' name='fieldPositionId' id='fieldPositionId'></input>
-                        </fieldset>
-                    }
                 </fieldset>
                 <fieldset className='extras'>
                     <legend>Extras scored</legend>
                     {extrasScoredData.map((data, index) => {
+                        const selected = data.extra === event.extra;
                         return <button 
+                            className={selected ? 'selected' : ''}
                             key={index}
-                            data-extra={data.extra} 
+                            onClick={(e) => setEvent({
+                                ...event,
+                                extra: data.extra
+                            })}
                         >
                             {data.label}
                         </button>
@@ -57,14 +54,44 @@ export default function AddEvent({ onAddEvent }) {
                 <fieldset className='wicket'>
                     <legend>Wicket!</legend>
                     {wicketScoredData.map((data, index) => {
+                        const selected = data.type === event.wicket?.type;
                         return <button 
+                            className={selected ? 'selected' : ''}
                             key={index}
-                            data-type={data.type} 
+                            onClick={(e) => setEvent({
+                                ...event,
+                                wicket: {
+                                    type: data.type
+                                }
+                            })}
                         >
                             {data.label}
                         </button>
                     })}
                 </fieldset>
+
+                {(event.runs !== -1 || 
+                    event.wicket?.type === 'run out' ||
+                    event.wicket?.type === 'caught') &&
+                    <fieldset className='fieldPosition'>
+                        <label htmlFor='fieldPositionId'>Field position</label>
+                        <select 
+                            name='fieldPositionId' 
+                            id='fieldPositionId'
+                            onClick={(e) => setEvent({
+                                ...event,
+                                fieldPositionId: e.target.value
+                            })}
+                        >
+                            {fieldPositionsList.map((fp, index) => 
+                                (<option 
+                                    key={index} 
+                                    value={index}
+                                >{fp.label}</option>)
+                            )}
+                        </select>
+                    </fieldset>
+                    }
             </div>
             <fieldset className='notes'>
                 <label htmlFor='notes'>notes</label>
@@ -79,7 +106,7 @@ export default function AddEvent({ onAddEvent }) {
                     })}
                 ></input>
             </fieldset>
-            <button>Confirm</button>
+            <button onClick={() => onAddEvent(event) }>Confirm</button>
             <button onClick={() => setEvent({ ...defaultEvent })}>Clear</button>
         </div>
     );

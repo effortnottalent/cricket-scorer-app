@@ -161,7 +161,7 @@ export function calculateInnings(events) {
             byes: 0,
             legByes: 0
         },
-        ballByBall: []
+        ballByBall: [],
     });
 }
 
@@ -193,6 +193,6 @@ export function calculateScore(innings) {
             batterId: lastWicket.batterId,
             batterRuns: innings.batters[lastWicket.batterId].runs,
             partnership: lastWicket.partnership
-        } : null
+        } : null,
     }
 }
