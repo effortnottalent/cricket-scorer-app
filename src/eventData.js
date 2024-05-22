@@ -28,3 +28,34 @@ export const runsScoredData = [{
     label: 'Six (not a boundary)',
     runs: 6
 }];
+
+export const extrasScoredData = [{
+    label: 'Wide',
+    extra: 'wide'
+}, {
+    label: 'No-ball',
+    extra: 'no ball'
+}, {
+    label: 'Bye',
+    extra: 'bye'
+}, {
+    label: 'Leg bye',
+    extra: 'leg bye'
+}];
+
+export const wicketScoredData = [{
+    label: 'Bowled',
+    type: 'bowled'
+}, {
+    label: 'Caught',
+    type: 'caught'
+}, {
+    label: 'Run out',
+    type: 'run out'
+}, {
+    label: 'LBW',
+    type: 'lbw'
+}, {
+    label: 'Retired',
+    type: 'retired'
+}];
