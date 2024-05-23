@@ -13,6 +13,7 @@ const defaultEvent = {
 
 export default function AddEvent({ onAddEvent }) {
     const [ event, setEvent ] = useState({ ...defaultEvent });
+
     return (
         <div className='addevent'>
             <h1>Add event</h1>
@@ -78,7 +79,7 @@ export default function AddEvent({ onAddEvent }) {
                         <select 
                             name='fieldPositionId' 
                             id='fieldPositionId'
-                            onClick={(e) => setEvent({
+                            onChange={(e) => setEvent({
                                 ...event,
                                 fieldPositionId: e.target.value
                             })}
@@ -106,7 +107,10 @@ export default function AddEvent({ onAddEvent }) {
                     })}
                 ></input>
             </fieldset>
-            <button onClick={() => onAddEvent(event) }>Confirm</button>
+            <button onClick={() => {
+                onAddEvent(event); 
+                setEvent({ ...defaultEvent });
+            } }>Confirm</button>
             <button onClick={() => setEvent({ ...defaultEvent })}>Clear</button>
         </div>
     );

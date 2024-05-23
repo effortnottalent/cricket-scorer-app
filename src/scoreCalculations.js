@@ -2,7 +2,7 @@ import { fieldPositionsList } from './FieldPositions.js';
 
 function formatSummary(event) {
     return event.extra ? 
-        event.extra + (event.runs ? ', ran ' + event.runs : '') : 
+        event.extra + (event.runs > 0 ? ', ran ' + event.runs : '') : 
             (event.wicket ? 
                 event.wicket.type + (event.wicket.fielderId ? ' by ' + 
                     event.wicket.fielderId + ' at ' + fieldPositionsList[event.fieldPositionId].label : '') : 
@@ -115,6 +115,8 @@ export function calculateInnings(events) {
             }
 
             accScore.ballByBall.push(ballByBallItem);
+            accScore.onStrikeBatterId = onStrikeBatterId;
+            accScore.onBowlBowlerId = onBowlBowlerId;
 
             return accScore;
 
@@ -162,21 +164,24 @@ export function calculateInnings(events) {
             legByes: 0
         },
         ballByBall: [],
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0
     });
 }
 
 export function calculateScore(innings) {
     const lastWicket = (innings.wickets.length === 0 ? null : 
         innings.wickets[innings.wickets.length - 1]);
+    const balls = innings.bowlers.reduce(
+        (balls, bowler) => balls + bowler.balls, 0);
     const battersAtCreaseIds = innings.batters
         .map((_, i) => i).filter(i => !innings.batters[i].out);
     return {
-        runs: innings.batters.reduce(
-            (runs, batter) => runs + batter.runs, 0) 
+        runs: innings.bowlers.reduce(
+            (runs, bowler) => runs + bowler.runs + bowler.wides + bowler.noBalls, 0) 
             + innings.extras.byes + innings.extras.legByes,
         wickets: innings.batters.filter(batter => batter.out && batter.out.type !== 'retired').count,
-        overs: innings.bowlers.reduce(
-            (balls, bowler) => balls + bowler.balls, 0) / 6,
+        overs: Math.floor(balls / 6) + '.' + balls % 6,
         extras: innings.bowlers.reduce(
             (balls, bowler) => balls + bowler.wides + bowler.noBalls, 0)
             + innings.extras.byes + innings.extras.legByes,

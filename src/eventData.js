@@ -56,6 +56,9 @@ export const wicketScoredData = [{
     label: 'LBW',
     type: 'lbw'
 }, {
+    label: 'Hit wicket',
+    type: 'hit wicket'
+}, {
     label: 'Retired',
     type: 'retired'
 }];
