@@ -37,6 +37,8 @@ const initialEvents = [{
   runs: 2,
   extra: 'leg bye'
 }, {
+  overCalled: true
+}, {
   runs: 1,
   fieldPositionId: 21,
   howzat: true

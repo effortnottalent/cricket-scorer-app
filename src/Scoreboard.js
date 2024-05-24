@@ -1,11 +1,7 @@
-import { 
-    calculateInnings, 
-    calculateScore 
-} from './scoreCalculations.js';
+import { calculateScore } from './scoreCalculations.js';
 
 export default function Scoreboard({ events, players }) {
-    const innings = calculateInnings(events);
-    const score = calculateScore(innings);
+    const score = calculateScore(events);
     return (
         <div className='scoreboard'>
             <h1>Scoreboard</h1>
