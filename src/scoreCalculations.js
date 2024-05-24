@@ -1,13 +1,39 @@
-import { fieldPositionsList } from './FieldPositions.js';
+export function enrichEventsWithBattersAndBowlers(events) {
+    let onStrikeBatterId = 0;
+    let onBowlBowlerId = 0;
+    let offStrikeBatterId = 1;
+    let offBowlBowlerId = 1;
+    return events.reduce((enrichedEvents, event) => {
 
-function formatSummary(event) {
-    return event.extra ? 
-        event.extra + (event.runs > 0 ? ', ran ' + event.runs : '') : 
-            (event.wicket ? 
-                event.wicket.type + (event.wicket.fielderId ? ' by ' + 
-                    event.wicket.fielderId + ' at ' + fieldPositionsList[event.fieldPositionId].label : '') : 
-                    (event.runs === 0 ? 'no run' : 
-                        'hit to ' + fieldPositionsList[event.fieldPositionId].label + ' for ' + event.runs));
+        const enrichedEvent = {
+            ...event,
+            onStrikeBatterId,
+            onBowlBowlerId,
+            validBall: 
+                !event.extra ||
+                event.extra === 'bye' ||
+                event.extra === 'leg bye'
+        };
+
+        if(event.newBowler) {
+            onBowlBowlerId = event.newBowler;
+        }
+        if(event.runs % 2 !== 0) {
+            [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
+        } 
+        if(event.wicket) {
+            const nextBatterId = Math.max(enrichedEvent.map(event => event.onStrikeBatterId));
+            [onStrikeBatterId, offStrikeBatterId] = event.wicket.battersCrossed ? 
+                [ offStrikeBatterId, nextBatterId ] : [ nextBatterId, offStrikeBatterId ];
+        }
+        if(enrichedEvents
+            .filter(event => event.validBall)
+            .reduce((balls, bowler) => balls + bowler.balls, 0) % 6 === 0) {
+            [onBowlBowlerId, offBowlBowlerId] = [offBowlBowlerId, onBowlBowlerId];
+            [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
+        }
+        return enrichedEvent;
+    });
 }
 
 export function calculateInnings(events) {
@@ -21,14 +47,13 @@ export function calculateInnings(events) {
             const ballByBallItem = {
                 onStrikeBatterId,
                 onBowlBowlerId,
-                summary: formatSummary(event),
-                notes: event.notes
+                event: event,
             };
 
             if(event.extra) {
 
                 switch(event.extra) {
-                    case 'wide': 
+                    case 'wide':
                         accScore.bowlers[onBowlBowlerId].wides += event.runs + 1;
                         break;
                     case 'no ball':
@@ -123,13 +148,13 @@ export function calculateInnings(events) {
         }, {
         batters: [
             {
-                balls: 0,
+                balls: [],
                 runs: 0,
                 fours: 0,
                 sixes: 0,
             },
             {
-                balls: 0,
+                balls: [],
                 runs: 0,
                 fours: 0,
                 sixes: 0,
@@ -138,7 +163,7 @@ export function calculateInnings(events) {
         ],
         bowlers: [
             {
-                balls: 0,
+                balls: [],
                 runs: 0,
                 fours: 0,
                 sixes: 0,
@@ -148,7 +173,7 @@ export function calculateInnings(events) {
                 inSpell: true
             },
             {
-                balls: 0,
+                balls: [],
                 runs: 0,
                 fours: 0,
                 sixes: 0,
