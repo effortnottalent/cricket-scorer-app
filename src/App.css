@@ -40,3 +40,12 @@
 .selected {
   background-color: darkgray;
 }
+
+.sprite {
+  background-image: url('../public/symbols.png');
+  background-repeat: no-repeat;
+  background-size: 150%;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+}

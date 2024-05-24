@@ -3,7 +3,7 @@ import {
     calculateScore 
 } from './scoreCalculations.js';
 
-export default function Scoreboard({ events }) {
+export default function Scoreboard({ events, players }) {
     const innings = calculateInnings(events);
     const score = calculateScore(innings);
     return (
@@ -14,11 +14,17 @@ export default function Scoreboard({ events }) {
                 <li>Extras: {score.extras}</li>
                 {score.lastWicket && (<li>Last wicket fell at&nbsp;
                     {score.lastWicket.runs}, with batter&nbsp;
-                    {score.lastWicket.batterId} making&nbsp;
+                    {score.lastWicket.batterId}  - {players.find(player => 
+                    player.id === score.lastWicket.batterId && 
+                    player.type === 'batter')?.name ?? 'not yet named'} - making&nbsp;
                     {score.lastWicket.batterRuns} in a partnership of&nbsp;
                     {score.lastWicket.partnership}</li>)}
-                <li>Batter {score.batter1.id} is on {score.batter1.runs}</li>
-                <li>Batter {score.batter2.id} is on {score.batter2.runs}</li>
+                <li>Batter {score.batter1.id} - {players.find(player => 
+                    player.id === score.batter1.id && 
+                    player.type === 'batter')?.name ?? 'not yet named'} - is on {score.batter1.runs}</li>
+                <li>Batter {score.batter2.id} - {players.find(player => 
+                    player.id === score.batter2.id && 
+                    player.type === 'batter')?.name ?? 'not yet named'} -  is on {score.batter2.runs}</li>
                 <li>Current partnership is {score.runs - (score.lastWicket ? 
                     score.lastWicket.runs : 0)}</li>
                 <li>Batter {innings.onStrikeBatterId} facing bowler {innings.onBowlBowlerId}</li>

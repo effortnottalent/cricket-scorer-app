@@ -43,7 +43,7 @@ const initialEvents = [{
 }];
 
 const initialPlayers = [{
-  id: 3,
+  id: 0,
   name: 'Steve Stevens',
   type: 'batter'
 }];
@@ -75,7 +75,10 @@ function App() {
       <Scorebook 
         players={players} 
         onChangePlayer={handleChangePlayer} />
-      <Scoreboard events={events} />
+      <Scoreboard 
+        events={events}
+        players={players} 
+      />
       <BallByBall 
         events={events}
         players={players} 
