@@ -7,7 +7,6 @@ import {
 import { fieldPositionsList } from './FieldPositions';
 
 const defaultEvent = {
-    runs: -1,
     notes: ''
 };
 
@@ -71,7 +70,7 @@ export default function AddEvent({ onAddEvent }) {
                     })}
                 </fieldset>
 
-                {(event.runs !== -1 || 
+                {(event.runs !== undefined || 
                     event.wicket?.type === 'run out' ||
                     event.wicket?.type === 'caught') &&
                     <fieldset className='fieldPosition'>

@@ -30,7 +30,7 @@ export function enrichEvents(events) {
             id: id++,
         };
 
-        if(event.runs % 2 !== 0) {
+        if((event.runs ?? 0) % 2 !== 0) {
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
         } 
         if(event.wicket) {
@@ -67,18 +67,32 @@ export function enrichEvents(events) {
 
 function calculateRunsIncludingExtras(events) {
     return events.reduce((acc, event) => {
-        acc += event.runs;
+        acc += event.runs ?? 0;
         if(event.extra === 'wide' || 
                 event.extra === 'no-ball' || 
                 event.extra === 'no-ball hit')
             acc++;
         return acc;
-    },0);
+    }, 0);
+}
+
+function calculateExtrasOnly(events) {
+    return events.filter(event => event.extra)
+        .reduce((acc, event) => {
+            if(event.extra !== 'no-ball hit') {
+                acc += event.runs ?? 0;
+            }
+            if(event.extra === 'wide' || 
+                    event.extra === 'no-ball' || 
+                    event.extra === 'no-ball hit')
+                acc++;
+            return acc;
+    }, 0);
 }
 
 function calculateRunsNotIncludingExtras(events) {
     return events.reduce((acc, event) => {
-        if(event.extra === 'no-ball hit' || !event.extra) acc += event.runs;
+        if(event.extra === 'no-ball hit' || !event.extra) acc += event.runs ?? 0;
         return acc;
     }, 0);
 }
@@ -92,7 +106,7 @@ export function calculateScore(events) {
     const lastEvent = enrichedEvents[enrichedEvents.length - 1];
     const overs = (lastEvent.over + (lastEvent.ball === 5 ? 1 : 0)) + '.' + 
         ((lastEvent.ball + 1) % 6); 
-    const extras = calculateRunsIncludingExtras(enrichedEvents.filter(event => event.extra));
+    const extras = calculateExtrasOnly(enrichedEvents);
     const batter1 = {
         id: lastEvent.onStrikeBatterId,
         runs: calculateRunsNotIncludingExtras(enrichedEvents.filter(event => 
