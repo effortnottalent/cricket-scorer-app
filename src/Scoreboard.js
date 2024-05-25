@@ -23,7 +23,6 @@ export default function Scoreboard({ events, players }) {
                     player.type === 'batter')?.name ?? 'not yet named'} -  is on {score.batter2.runs}</li>
                 <li>Current partnership is {score.runs - (score.lastWicket ? 
                     score.lastWicket.runs : 0)}</li>
-                <li>Batter {innings.onStrikeBatterId} facing bowler {innings.onBowlBowlerId}</li>
             </ul>
         </div>
     );
