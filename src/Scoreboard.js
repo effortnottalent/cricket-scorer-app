@@ -1,4 +1,8 @@
-import { calculateScore } from './scoreCalculations.js';
+import { 
+    calculateScore,
+    getOnBowlBowlerId,
+    getOnStrikeBatterId
+} from './scoreCalculations.js';
 
 export default function Scoreboard({ events, players }) {
     const score = calculateScore(events);
@@ -23,6 +27,12 @@ export default function Scoreboard({ events, players }) {
                     player.type === 'batter')?.name ?? 'not yet named'} -  is on {score.batter2.runs}</li>
                 <li>Current partnership is {score.runs - (score.lastWicket ? 
                     score.lastWicket.runs : 0)}</li>
+                <li>Batter {getOnStrikeBatterId()} - {players.find(player => 
+                    player.id === getOnStrikeBatterId() && 
+                    player.type === 'batter')?.name ?? 'not yet named'} on strike, facing bowler&nbsp;
+                    {getOnBowlBowlerId()} - {players.find(player => 
+                    player.id === getOnBowlBowlerId() && 
+                    player.type === 'bowler')?.name ?? 'not yet named'}</li>
             </ul>
         </div>
     );

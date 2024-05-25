@@ -5,6 +5,7 @@ export default function FieldPositions() {
 }
 
 export const fieldPositionsList = [
+    { label: 'field position not recorded' },
     { label: 'wicket keeper', x: 0, y: 0 }, 
     { label: 'first slip', x: 0, y: 0 }, 
     { label: 'second slip', x: 0, y: 0 }, 

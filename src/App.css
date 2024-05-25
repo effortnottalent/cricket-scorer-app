@@ -49,3 +49,34 @@
   width: 32px;
   height: 32px;
 }
+.batter-entry {
+  display: flex;
+  flex-direction: row;
+  width: 90vw;
+  align-items: center;
+}
+.batter-name {
+  display: flex;
+  width: 20vw;
+}
+.batter-log {
+  display: flex;
+  width: 50vw;
+}
+.bowler-entry {
+  display: flex;
+  flex-direction: row;
+  width: 90vw;
+  align-items: center;
+}
+.bowler-name {
+  display: flex;
+  width: 20vw;
+}
+.bowler-log {
+  display: flex;
+  width: 50vw;
+}
+.bowler-1 {
+  color:blue;
+}

@@ -34,7 +34,10 @@ export const extrasScoredData = [{
     extra: 'wide'
 }, {
     label: 'No-ball',
-    extra: 'no ball'
+    extra: 'no-ball'
+}, {
+    label: 'No-ball Hit',
+    extra: 'no-ball hit'
 }, {
     label: 'Bye',
     extra: 'bye'

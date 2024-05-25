@@ -107,6 +107,18 @@ export default function AddEvent({ onAddEvent }) {
                     })}
                 ></input>
             </fieldset>
+            <fieldset className='utility'>
+                <legend>Utility</legend>
+                <button 
+                    className={event.overCalled ? 'selected' : ''}
+                    onClick={(e) => setEvent({
+                        ...event,
+                        overCalled: true
+                    })}
+                >
+                    Over called
+                </button>
+            </fieldset>
             <button onClick={() => {
                 onAddEvent(event); 
                 setEvent({ ...defaultEvent });

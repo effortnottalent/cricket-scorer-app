@@ -22,6 +22,7 @@ export default function BallByBall({ events, players }) {
 }
 
 function formatSummary(event) {
+    if(!event.fieldPositionId) event.fieldPositionId = 0;
     return event.extra ? 
         event.extra + (event.runs > 0 ? ', ran ' + event.runs : '') : 
             (event.wicket ? 

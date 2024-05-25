@@ -44,11 +44,10 @@ const initialEvents = [{
   howzat: true
 }];
 
-const initialPlayers = [{
-  id: 0,
-  name: 'Steve Stevens',
-  type: 'batter'
-}];
+const initialPlayers = [
+  ...[...Array(11)].map((_, i) => ({ id: i, type: 'batter'})),
+  ...[...Array(2)].map((_, i) => ({ id: i, type: 'bowler'}))
+];
 
 function App() {
   const [ events, eventDispatch ] = useReducer(eventsReducer, initialEvents);
@@ -76,6 +75,7 @@ function App() {
       <AddEvent onAddEvent={handleAddEvent} />
       <Scorebook 
         players={players} 
+        events={events}
         onChangePlayer={handleChangePlayer} />
       <Scoreboard 
         events={events}

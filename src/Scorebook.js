@@ -1,32 +1,51 @@
 import { useState } from 'react';
+import { 
+    getOnBowlBowlerId,
+    getOnStrikeBatterId
+} from './scoreCalculations.js';
+import { enrichEvents } from './scoreCalculations.js';
 
-export default function Scorebook({ players, onChangePlayer }) {
+import Symbol from './Symbol.js';
+
+export default function Scorebook({ players, onChangePlayer, events }) {
+    const enrichedEvents = enrichEvents(events);
     return (
         <div className='lineup'>
             <h1>Scorebook</h1>
             <div className='batters'>
                 <h2>Batters</h2>
-                {[...Array(11)].map((_, i) =>
-                    <PlayerNameEntry
-                        player={players.find(player => player.type === 'batter' && player.id === i)}
-                        type='batter'
-                        index={i}
-                        onChange={onChangePlayer}
-                    />
+                {players.filter(player => player.type === 'batter').map(player => 
+                    <div class='batter-entry'>
+                        <PlayerNameEntry
+                            player={player}
+                            type='batter'
+                            index={player.id}
+                            onChange={onChangePlayer}
+                            isOnStrike={player.id === getOnStrikeBatterId()}
+                        />
+                        <BatterLog 
+                            events={enrichedEvents.filter(event => 
+                                event.onStrikeBatterId === player.id)} 
+                        />
+                    </div>
                 )}
             </div>
             <div className='bowlers'>
                 <h2>Bowlers</h2>
-                {players.filter(player => player.type === 'bowler').length === 0 && 
-                    <p>No bowlers yet defined.</p>
-                }
                 {players.filter(player => player.type === 'bowler').map(player => 
-                    <PlayerNameEntry
-                        player={player}
-                        type='bowler'
-                        index={player.id}
-                        onChange={onChangePlayer}
-                    />
+                    <div class='bowler-entry'>
+                        <PlayerNameEntry
+                            player={player}
+                            type='bowler'
+                            index={player.id}
+                            onChange={onChangePlayer}
+                            isOnStrike={player.id === getOnBowlBowlerId()}
+                        />
+                        <BowlerLog 
+                            events={enrichedEvents.filter(event => 
+                                event.onBowlBowlerId === player.id)} 
+                        />
+                    </div>
                 )}
                 <button onClick={() => onChangePlayer({
                         type: 'bowler',
@@ -38,7 +57,23 @@ export default function Scorebook({ players, onChangePlayer }) {
     );
 }
 
-function PlayerNameEntry({ player, type, index, onChange }) {
+function BatterLog({ events }) {
+    return (
+        <div className='batter-log'>
+            {events.map(event => Symbol({event, isBatter: true}))}
+        </div>
+    );
+}
+
+function BowlerLog({ events }) {
+    return (
+        <div className='bowler-log'>
+            {events.map(event => Symbol({event, isBatter: false}))}
+        </div>
+    );
+}
+
+function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
     const [isEditing, setIsEditing] = useState(false);
     let playerContent;
     if(isEditing) {
@@ -64,12 +99,14 @@ function PlayerNameEntry({ player, type, index, onChange }) {
             <>
                 {player?.name ?? 'Player ' + (index + 1)}
                 &nbsp;
+                {isOnStrike && ' *'}
+                &nbsp;
                 <button onClick={() => setIsEditing(true)}>Edit</button>
             </>
         );
     }
     return (
-        <div className={type}>
+        <div className={type + '-name'}>
             {index + 1} &nbsp;
             {playerContent}
         </div>
