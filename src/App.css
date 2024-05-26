@@ -51,7 +51,7 @@
   display: flex;
   width: 20vw;
 }
-.batter-log {
+.batter-row {
   display: flex;
   width: 50vw;
 }
@@ -68,14 +68,6 @@
   display: flex;
   width: 20vw;
 }
-.bowler-log {
-  display: flex;
-  width: 50vw;
-}
-.bowler-1 {
-  color:blue;
-}
-
 /*
 @font-face {
   font-family: "Open Sans Light";
@@ -121,7 +113,7 @@
   width: 32px;
   margin: auto;
 }
-.no-ball-hit {
+.hit-no-ball {
   position: absolute;
   top: 50%;
   left: 50%;

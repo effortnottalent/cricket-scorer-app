@@ -42,6 +42,14 @@ const initialEvents = [{
   runs: 1,
   fieldPositionId: 21,
   howzat: true
+}, {
+  runs: 4,
+  fieldPositionId: 14,
+  extra: 'no-ball'
+}, {
+  runs: 3,
+  fieldPositionId: 11,
+  extra: 'hit no-ball'
 }];
 
 const initialPlayers = [

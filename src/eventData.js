@@ -36,8 +36,8 @@ export const extrasScoredData = [{
     label: 'No-ball',
     extra: 'no-ball'
 }, {
-    label: 'No-ball Hit',
-    extra: 'no-ball hit'
+    label: 'Hit no-ball',
+    extra: 'hit no-ball'
 }, {
     label: 'Bye',
     extra: 'bye'
