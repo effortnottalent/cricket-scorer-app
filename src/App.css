@@ -41,14 +41,6 @@
   background-color: darkgray;
 }
 
-.sprite {
-  background-image: url('../public/symbols.png');
-  background-repeat: no-repeat;
-  background-size: 150%;
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-}
 .batter-entry {
   display: flex;
   flex-direction: row;
@@ -63,6 +55,9 @@
   display: flex;
   width: 50vw;
 }
+
+/* bowler stuff */
+
 .bowler-entry {
   display: flex;
   flex-direction: row;
@@ -79,4 +74,96 @@
 }
 .bowler-1 {
   color:blue;
+}
+
+/*
+@font-face {
+  font-family: "Open Sans Light";
+  src: url("https://www.1001fonts.com/download/font/open-sans.light.ttf");
+}
+*/
+.bowler-row {
+  display: flex;
+  width: 1280px;
+  border: 2px solid darkgray;
+  align-items: center;
+  padding: 16px;
+  flex-direction: row;
+  font-family: "Open Sans Light", "Open Sans", "Ubuntu", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: 30px;
+}
+.bowler-over {
+  display: flex;
+  position: relative;
+  width: 96px;
+  height: 144px;
+  border: 1px solid darkgray;
+  background-color: white;
+  flex-wrap: wrap;
+}
+.bowler-ball {
+  display: flex;
+  position: relative;
+  height: 48px;
+  width: 48px;
+}
+.bowler-nine-ball-over {
+  width: 32px;
+}
+.bowler-twelve-ball-over {
+  width: 32px;
+  height: 32px;
+}
+.bowler-glyph {
+  height: 32px;
+  width: 32px;
+  margin: auto;
+}
+.no-ball-hit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 16px;
+  transform: translate(-50%, -50%);
+}
+.bye-hit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 12px;
+  transform: translate(-50%, -20%);
+}
+.leg-bye-hit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 12px;
+  transform: translate(-50%, -100%);
+}
+.run {
+  margin: auto;
+}
+.bowler-wide-wicket-1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 12px;
+  transform: translate(-130%, -120%);
+}
+.bowler-wide-runout-3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 12px;
+  transform: translate(-180%, 10%);
+}
+.bowler-maiden {
+  position: absolute;
+  height: 144px;
+  width: 96px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

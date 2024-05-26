@@ -1,13 +1,5 @@
-export default function Symbol({ event, isBatter }) {
-    const symbolHeight = 36;
-    const imgIndex = translateEventToSymbol(event, isBatter);
-    if(imgIndex === null) return;
-    return (<div
-        className='sprite'
-        style={{backgroundPosition: '-8px ' + (symbolHeight * -imgIndex - 8) + 'px'}}
-    />);
-}
-function translateEventToSymbol(event, isBatter) {
+
+export function renderEvent(event, overClass, isBatter) {
     if(event.wicket) {
         if(isBatter) {
             return 9;
@@ -54,6 +46,13 @@ function translateEventToSymbol(event, isBatter) {
             return 40 + event.runs;
         }
     } else {
-        return event.runs === 0 ? 6 : event.runs - 1;
+        return ( 
+            <div class={'bowler-ball ' + overClass}>
+                <span class='run'>
+                    {event.runs}
+                </span>
+            </div>);
     }
 }
+
+// https://jsfiddle.net/82et1gf6/809/ for the html and css

@@ -4,8 +4,7 @@ import {
     getOnStrikeBatterId
 } from './scoreCalculations.js';
 import { enrichEvents } from './scoreCalculations.js';
-
-import Symbol from './Symbol.js';
+import BowlerLog from './BowlerLog.js';
 
 export default function Scorebook({ players, onChangePlayer, events }) {
     const enrichedEvents = enrichEvents(events);
@@ -15,7 +14,7 @@ export default function Scorebook({ players, onChangePlayer, events }) {
             <div className='batters'>
                 <h2>Batters</h2>
                 {players.filter(player => player.type === 'batter').map(player => 
-                    <div class='batter-entry'>
+                    <div className='batter-entry'>
                         <PlayerNameEntry
                             player={player}
                             type='batter'
@@ -33,7 +32,7 @@ export default function Scorebook({ players, onChangePlayer, events }) {
             <div className='bowlers'>
                 <h2>Bowlers</h2>
                 {players.filter(player => player.type === 'bowler').map(player => 
-                    <div class='bowler-entry'>
+                    <div className='bowler-entry'>
                         <PlayerNameEntry
                             player={player}
                             type='bowler'
@@ -61,14 +60,6 @@ function BatterLog({ events }) {
     return (
         <div className='batter-log'>
             {events.map(event => Symbol({event, isBatter: true}))}
-        </div>
-    );
-}
-
-function BowlerLog({ events }) {
-    return (
-        <div className='bowler-log'>
-            {events.map(event => Symbol({event, isBatter: false}))}
         </div>
     );
 }
