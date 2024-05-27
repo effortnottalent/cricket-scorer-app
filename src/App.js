@@ -30,7 +30,7 @@ const initialEvents = [{
   runs: 0,
   wicket: {
     type: 'caught',
-    fielderId: 7
+    playerId: 7
   },
   fieldPositionId: 13,
 }, {

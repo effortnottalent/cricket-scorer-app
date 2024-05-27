@@ -26,8 +26,8 @@ function formatSummary(event) {
     return event.extra ? 
         event.extra + (event.runs > 0 ? ', ran ' + event.runs : '') : 
             (event.wicket ? 
-                event.wicket.type + (event.wicket.fielderId ? ' by ' + 
-                    event.wicket.fielderId + ' at ' + fieldPositionsList[event.fieldPositionId].label : '') : 
+                event.wicket.type + (event.wicket.playerId ? ' by ' + 
+                    event.wicket.playerId + ' at ' + fieldPositionsList[event.fieldPositionId].label : '') : 
                     (event.runs === 0 ? 'no run' : 
                         'hit to ' + fieldPositionsList[event.fieldPositionId].label + ' for ' + event.runs));
 }

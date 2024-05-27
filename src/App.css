@@ -1,3 +1,8 @@
+body {
+  font-family: "Open Sans Light", "Open Sans", "Ubuntu", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 .App {
   text-align: center;
 }
@@ -28,89 +33,131 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .selected {
   background-color: darkgray;
 }
-
-.batter-entry {
+.batter-row {
+  border-top: 1px solid darkgray;
+  border-bottom: 0px;
   display: flex;
-  flex-direction: row;
-  width: 90vw;
   align-items: center;
+  flex-direction: row;
+  font-size: 20px;
+  justify-content: flex-end;
+}
+.batter-row:last-child {
+  border-bottom: 1px solid darkgray;
 }
 .batter-name {
   display: flex;
-  width: 20vw;
+  width: 192px;
 }
-.batter-row {
+.batter-log {
+  border-left: 1px solid darkgray;
   display: flex;
-  width: 50vw;
+  height: 48px;
+  padding-left: 8px;
+  flex: 1;
 }
-
-/* bowler stuff */
-
-.bowler-entry {
+.batter-ball {
   display: flex;
-  flex-direction: row;
-  width: 90vw;
+}
+.batter-summary {
+  font-size: 12px;
+  display: flex;
+}
+.batter-summary div {
+  display: flex;
+  height: 50px;
   align-items: center;
+}
+.batter-summary > div {
+  flex-direction: column;
+  border-left: 1px solid darkgray;
+}
+.batter-wicket {
+  width: 100px;
+}
+.batter-wicket-label {
+  border-bottom: 1px solid darkgray;
+  justify-content: center;
+  width: 100px;
+}
+.batter-fielder {
+  width: 100px;
+}
+.batter-fielder-label {
+  border-bottom: 1px solid darkgray;
+  justify-content: center;
+  width: 100px;
+}
+.batter-balls {
+  width: 50px;
+}
+.batter-balls-label {
+  border-bottom: 1px solid darkgray;
+  justify-content: center;
+  width: 50px;
+}
+.batter-runs {
+  width: 50px;
+}
+.batter-runs-label {
+  border-bottom: 1px solid darkgray;
+  justify-content: center;
+  width: 50px;
+}
+.bowler-row {
+  border-top: 1px solid darkgray;
+  border-bottom: 0px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  font-size: 20px;
+}
+.bowler-row:last-child {
+  border-bottom: 1px solid darkgray;
 }
 .bowler-name {
   display: flex;
-  width: 20vw;
-}
-/*
-@font-face {
-  font-family: "Open Sans Light";
-  src: url("https://www.1001fonts.com/download/font/open-sans.light.ttf");
-}
-*/
-.bowler-row {
-  display: flex;
-  width: 1280px;
-  border: 2px solid darkgray;
   align-items: center;
-  padding: 16px;
-  flex-direction: row;
-  font-family: "Open Sans Light", "Open Sans", "Ubuntu", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-size: 30px;
+  width: 192px;
+  height: 116px;
+  border-right: 1px solid darkgray;
 }
 .bowler-over {
   display: flex;
   position: relative;
-  width: 96px;
-  height: 144px;
-  border: 1px solid darkgray;
+  width: 72px;
+  height: 96px;
+  border-right: 1px solid darkgray;
   background-color: white;
   flex-wrap: wrap;
+  font-size: 20px;
+}
+.bowler-over-summary {
+  width: 72px;
+  height: 18px;
+  border-top: 1px solid darkgray;
+  border-right: 1px solid darkgray;
+  font-size: 16px;
 }
 .bowler-ball {
   display: flex;
   position: relative;
-  height: 48px;
-  width: 48px;
+  height: 32px;
+  width: 36px;
 }
 .bowler-nine-ball-over {
-  width: 32px;
+  width: 24px;
 }
 .bowler-twelve-ball-over {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
 }
 .bowler-glyph {
-  height: 32px;
-  width: 32px;
+  height: 24px;
+  width: 24px;
   margin: auto;
 }
 .hit-no-ball {
@@ -158,4 +205,44 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.extras-rows {
+  display: flex;
+  border-top: 1px solid darkgray;
+  border-bottom: 1px solid darkgray;
+}
+.extras-rows div {
+  display: flex;
+  flex: 1;
+  height: 50px;
+  align-items: center;
+}
+.extras-rows > div {
+  flex-direction: column;
+}
+.ticker-section {
+  position: relative;
+  width: 100%;
+  border-top: 1px solid darkgray;
+  border-bottom: 1px solid darkgray;  
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(24px, 1fr));
+}
+.ticker-section > div {
+  font-size: 12px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%, auto;
+}
+.diag {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='16' y1='80' x2='80' y2='16' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+}
+.strike-start {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='24' y1='48' x2='96' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+}
+.strike {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='0' y1='48' x2='96' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+}
+.strike-end {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='0' y1='48' x2='72' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
 }

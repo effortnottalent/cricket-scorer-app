@@ -70,7 +70,7 @@ function calculateRunsIncludingExtras(events) {
         acc += event.runs ?? 0;
         if(event.extra === 'wide' || 
                 event.extra === 'no-ball' || 
-                event.extra === 'no-ball hit')
+                event.extra === 'hit no-ball')
             acc++;
         return acc;
     }, 0);
@@ -84,7 +84,7 @@ function calculateExtrasOnly(events) {
             }
             if(event.extra === 'wide' || 
                     event.extra === 'no-ball' || 
-                    event.extra === 'no-ball hit')
+                    event.extra === 'hit no-ball')
                 acc++;
             return acc;
     }, 0);
