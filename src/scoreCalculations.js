@@ -30,9 +30,6 @@ export function enrichEvents(events) {
             id: id++,
         };
 
-        if((event.runs ?? 0) % 2 !== 0) {
-            [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
-        } 
         if(event.wicket) {
             const nextBatterId = event.wicket.nextBatterId ?? 
                 Math.max(onStrikeBatterId, offStrikeBatterId) + 1;
@@ -41,6 +38,9 @@ export function enrichEvents(events) {
             [ onStrikeBatterId, offStrikeBatterId ] = event.wicket.battersCrossed ? 
                 [ remainingBatter, nextBatterId ] : [ nextBatterId, remainingBatter ];
         }
+        if((event.runs ?? 0) % 2 !== 0) {
+            [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
+        } 
         if(event.newBowler) {
             if(ball === 0) {
                 onBowlBowlerId = event.newBowler;
@@ -65,7 +65,7 @@ export function enrichEvents(events) {
     }).filter(event => event != null);
 }
 
-function calculateRunsIncludingExtras(events) {
+export function calculateRunsIncludingExtras(events) {
     return events.reduce((acc, event) => {
         acc += event.runs ?? 0;
         if(event.extra === 'wide' || 
@@ -76,25 +76,55 @@ function calculateRunsIncludingExtras(events) {
     }, 0);
 }
 
-function calculateExtrasOnly(events) {
-    return events.filter(event => event.extra)
-        .reduce((acc, event) => {
-            if(event.extra !== 'no-ball hit') {
-                acc += event.runs ?? 0;
-            }
-            if(event.extra === 'wide' || 
-                    event.extra === 'no-ball' || 
-                    event.extra === 'hit no-ball')
-                acc++;
-            return acc;
+export function calculateExtrasBreakdown(events) {
+    return ({
+        wides: events.filter(event => event.extra === 'wide')
+            .reduce((acc, event) => acc += 1 + (event.runs ?? 0), 0),
+        byes: events.filter(event => event.extra === 'bye')
+            .reduce((acc, event) => acc += event.runs, 0),
+        legByes: events.filter(event => event.extra === 'leg bye')
+            .reduce((acc, event) => acc += event.runs, 0),
+        noBalls: events.filter(event => ['hit no-ball', 'no-ball']
+            .includes(event.extra)).reduce((acc, event) =>
+                acc += (event.extra === 'no-ball' ? 1 + (event.runs ?? 0) : 1), 0)
+    })
+}
+
+export function calculateExtrasTotal(events) {
+    return Object.entries(calculateExtrasBreakdown(events))
+        .reduce((acc, item) => acc += item[1], 0);
+}
+
+export function calculateRunsNotIncludingExtras(events) {
+    return events.reduce((acc, event) => {
+        if(event.extra === 'hit no-ball' || !event.extra) acc += (event.runs ?? 0);
+        return acc;
     }, 0);
 }
 
-function calculateRunsNotIncludingExtras(events) {
-    return events.reduce((acc, event) => {
-        if(event.extra === 'no-ball hit' || !event.extra) acc += event.runs ?? 0;
-        return acc;
-    }, 0);
+export const calculateBallsFaced = (events) => 
+    events.filter(event => 
+        !(['wide', 'no-ball'].includes(event.extra))).length;
+
+export const calculateWickets = (events) => 
+    events.reduce((acc, event) => acc += 
+        (event.wicket && event.wicket.type !== 'retired') ? 
+            1 : 0, 0);
+
+export function calculatePartnershipAtWicket(events, wicket) {
+    const wicketEvents = events.filter(event => event.wicket);
+    return calculateRunsIncludingExtras(events.filter(event =>
+        event.id > (wicketEvents[wicket - 1]?.id ?? 0) && 
+        event.id <= (wicketEvents[wicket]?.id ?? 
+            Number.MAX_SAFE_INTEGER)));
+}
+
+export function getOverNumberValue(events) {
+    const enrichedEvents = enrichEvents(events);
+    const lastEvent = enrichedEvents[enrichedEvents.length - 1];
+    return events[events.length -1].overCalled ? 
+        (lastEvent.over + 1) + '.0' :
+        lastEvent.over + '.' + (lastEvent.ball + 1);
 }
 
 export function calculateScore(events) {
@@ -104,9 +134,8 @@ export function calculateScore(events) {
     const wickets = enrichedEvents.filter(event => 
         event.wicket && event.wicket.type !== 'retired').length;
     const lastEvent = enrichedEvents[enrichedEvents.length - 1];
-    const overs = (lastEvent.over + (lastEvent.ball === 5 ? 1 : 0)) + '.' + 
-        ((lastEvent.ball + 1) % 6); 
-    const extras = calculateExtrasOnly(enrichedEvents);
+    const overs = getOverNumberValue(events);
+    const extras = calculateExtrasTotal(events);
     const batter1 = {
         id: lastEvent.onStrikeBatterId,
         runs: calculateRunsNotIncludingExtras(enrichedEvents.filter(event => 
@@ -126,10 +155,7 @@ export function calculateScore(events) {
         .filter(event => event.id <= lastWicketEvent.id));
     const lastWicketBatterRuns = calculateRunsNotIncludingExtras(enrichedEvents
         .filter(event => event.onStrikeBatterId === lastWicketBatterId));
-    const secondLastWicketEvent = wicketEvents[wicketEvents.length - 2];
-    const partnership = calculateRunsIncludingExtras(enrichedEvents.filter(event =>
-        event.id > (secondLastWicketEvent?.id ?? 0) && 
-        event.id <= lastWicketEvent.id));
+    const partnership = calculatePartnershipAtWicket(events, calculateWickets(events));
     const lastWicket = {
         runs: lastWicketRuns,
         batterId: lastWicketBatterId,

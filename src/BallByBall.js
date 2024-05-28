@@ -9,12 +9,8 @@ export default function BallByBall({ events, players }) {
             <ul>
                 {enrichedEvents.map((event, index) => (
                     <li key={index}>
-                        {players.find(player => player.id === event.onBowlBowlerId &&
-                            player.type === 'bowler')?.name ?? 'bowler ' + event.onBowlBowlerId}
-                        &nbsp;to&nbsp;
-                    {players.find(player => player.id === event.onStrikeBatterId && 
-                        player.type === 'batter')?.name ?? 'batter ' + event.onStrikeBatterId}:&nbsp;
-                    {formatSummary(event)}{event.notes && ', ' + event.notes}</li>
+                        {formatSummary(event)}
+                    </li>
                 ))}
             </ul>
         </div>
@@ -22,12 +18,5 @@ export default function BallByBall({ events, players }) {
 }
 
 function formatSummary(event) {
-    if(!event.fieldPositionId) event.fieldPositionId = 0;
-    return event.extra ? 
-        event.extra + (event.runs > 0 ? ', ran ' + event.runs : '') : 
-            (event.wicket ? 
-                event.wicket.type + (event.wicket.playerId ? ' by ' + 
-                    event.wicket.playerId + ' at ' + fieldPositionsList[event.fieldPositionId].label : '') : 
-                    (event.runs === 0 ? 'no run' : 
-                        'hit to ' + fieldPositionsList[event.fieldPositionId].label + ' for ' + event.runs));
+    return JSON.stringify(event);
 }

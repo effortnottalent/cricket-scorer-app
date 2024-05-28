@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { 
     getOnBowlBowlerId,
-    getOnStrikeBatterId
+    getOnStrikeBatterId,
+    calculateRunsIncludingExtras,
+    calculateWickets,
+    calculatePartnershipAtWicket,
+    calculateExtrasBreakdown,
+    calculateRunsNotIncludingExtras,
+    calculateBallsFaced
 } from './scoreCalculations.js';
 import { enrichEvents } from './scoreCalculations.js';
 
@@ -70,15 +76,97 @@ export default function Scorebook({ players, onChangePlayer, events }) {
             </div>
             <div className='extras'>
                 <h2>Extras</h2>
-                <div class='extras-rows'>
-                    <ExtrasSummary events={events} />
-                </div>
+                <ExtrasSummary events={events} />
             </div>
-            <div className='ticker'>
-                <h2>Ticker</h2>
-                <ScoreTicker events={events} />
-                <OversTicker events={events} />
+            <div className='score-ticker'>
+                <h2>Score Ticker</h2>
+                <ScoreTicker events={enrichedEvents} />
             </div>
+            <div className='overs-summary'>
+                <h2>Over-by-over Summary</h2>
+                <OverByOverSummary events={enrichedEvents} />
+            </div>
+            <div className='wickets-summary'>
+                <h2>Wicket-by-wicket Summary</h2>
+                <WicketByWicketSummary events={enrichedEvents} />
+            </div>
+        </div>
+    );
+}
+
+const groupEventsByOver = (events) => events.reduce((acc, event) => {
+    event.ball === 0 ? acc.push([ event ]) : acc[acc.length - 1].push(event);
+    return acc;
+}, []);
+
+function OverByOverSummary({ events }) {
+    const eventsByOver = groupEventsByOver(events);
+    return (
+        <div className='overs-summary-row'>
+            <div className='overs-summary-entry'>
+                <div className='over-summary-over-label'>Over</div>
+                <div className='over-summary-runs-label'>Runs</div>
+                <div className='over-summary-wickets-label'>Wickets</div>
+                <div className='over-summary-bowler-label'>Bowler</div>
+            </div>
+            {eventsByOver.map((over, i) => {
+                const ballsUpToOver = eventsByOver.slice(0, i + 1).flat();
+                return (
+                    <div className='overs-summary-entry'>
+                        <div className='over-summary-over-value'>
+                            {over[0].over + 1}
+                        </div>
+                        <div className='over-summary-runs-value'>
+                            {calculateRunsIncludingExtras(ballsUpToOver)}
+                        </div>
+                        <div className='over-summary-wickets-value'>
+                            {calculateWickets(ballsUpToOver)}
+                        </div>
+                        <div className='over-summary-bowler-value'>
+                            {over[0].onBowlBowlerId}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
+function WicketByWicketSummary({ events }) {
+    const wicketEvents = events.filter(event => event.wicket);
+    return (
+        <div className='wickets-summary-row'>
+            <div className='wickets-summary-entry'>
+                <div className='wickets-summary-wicket-label'>Wicket</div>
+                <div className='wickets-summary-batterout-label'>Batter out</div>
+                <div className='wickets-summary-runs-label'>Runs</div>
+                <div className='wickets-summary-partnership-label'>Partnership</div>
+                <div className='wickets-summary-bowler-label'>Bowler</div>
+            </div>
+            {[...Array(calculateWickets(events))].map((_, i) => {
+                return (
+                    <div className='wickets-summary-entry'>
+                        <div className='wicket-summary-wicket-value'>
+                            {i + 1}
+                        </div>
+                        <div className='wickets-summary-batterout-value'>
+                            {(wicketEvents[i].batterOut ?? 
+                                wicketEvents[i].onStrikeBatterId) + 1}
+                        </div>
+                        <div className='wicket-summary-runs-value'>
+                            {calculateRunsIncludingExtras(events
+                                .filter(event => event.id <= wicketEvents[i]?.id ?? 
+                                    Number.MAX_SAFE_INTEGER))}
+                        </div>
+                        <div className='wicket-summary-partnership-value'>
+                            {calculatePartnershipAtWicket(events, i)}
+                        </div>
+                        <div className='wicket-summary-bowler-value'>
+                            {wicketEvents[i].onBowlBowlerId + 1}
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }
@@ -87,7 +175,7 @@ function ScoreTicker({ events }) {
     const tickerLength = 420;
     let score = 0;
     return (
-        <div class='ticker-section'>
+        <div class='ticker-score-section'>
             {events.map(event => {
                 const oldScore = score;
                 score += event.runs ?? 0;
@@ -113,38 +201,26 @@ function ScoreTicker({ events }) {
 }
 
 function ExtrasSummary({ events }) {
+    const extrasBreakdown = calculateExtrasBreakdown(events);
     return (
-        <>
+        <div class='extras-rows'>
             <div className='wides'>
                 <div className='wides-label'>Wides</div>
-                <div className='wides-value'>
-                    {events.filter(event => event.extra === 'wide').reduce((acc, event) =>
-                        acc += 1 + event.runs, 0)}
-                </div>
+                <div className='wides-value'>{extrasBreakdown.wides}</div>
             </div>
             <div className='byes'>
                 <div className='byes-label'>Byes</div>
-                <div className='byes-value'>
-                    {events.filter(event => event.extra === 'bye').reduce((acc, event) =>
-                        acc += event.runs, 0)}
-                </div>
+                <div className='byes-value'>{extrasBreakdown.byes}</div>
             </div>
             <div className='leg-byes'>
                 <div className='leg-byes-label'>Leg Byes</div>
-                <div className='leg byes-value'>
-                    {events.filter(event => event.extra === 'leg bye').reduce((acc, event) =>
-                        acc += event.runs, 0)}
-                </div>
+                <div className='leg byes-value'>{extrasBreakdown.legByes}</div>
             </div>
             <div className='no-balls'>
                 <div className='no-balls-label'>No-Balls</div>
-                <div className='no-balls-value'>
-                    {events.filter(event => ['hit no-ball', 'no-ball']
-                        .includes(event.extra)).reduce((acc, event) =>
-                            acc += (event.extra === 'no-ball' ? 1 + event.runs : 1), 0)}
-                </div>
+                <div className='no-balls-value'>{extrasBreakdown.noBalls}</div>
             </div>
-        </>
+        </div>
     )
 }
 
@@ -154,7 +230,7 @@ function BatterSummary({ events }) {
             <div className='batter-wicket'>
                 <div className='batter-wicket-label'>How out</div>
                 <div className='batter-wicket-value'>
-                    {events[events.length - 1]?.wicket?.type ?? 'Not out'}
+                    {events[events.length - 1]?.wicket?.type ?? ''}
                 </div>
             </div>
             <div className='batter-fielder'>
@@ -166,16 +242,13 @@ function BatterSummary({ events }) {
             <div className='batter-balls'>
                 <div className='batter-balls-label'>Balls</div>
                 <div className='batter-balls-value'>
-                    {events.filter(event => 
-                        !(['wide', 'no-ball', 'hit no-ball'].includes(event.extra))).length}
+                    {calculateBallsFaced(events)}
                 </div>
             </div>
             <div className='batter-runs'>
                 <div className='batter-runs-label'>Runs</div>
                 <div className='batter-runs-value'>
-                    {events.filter(event => 
-                        !(['wide', 'no-ball', 'bye', 'leg-bye'].includes(event.extra)))
-                            .reduce((acc, event) => acc += event.runs, 0)}
+                    {calculateRunsNotIncludingExtras(events)}
                 </div>
             </div>
         </div>
@@ -243,15 +316,8 @@ function calculateRunsAgainstBowler(events) {
     }, 0);
 }
 
-function OversTicker({ events }) {
-    
-}
-
 function BowlerLog({ events }) {
-    const eventsByOver = events.reduce((acc, event) => {
-        event.ball === 0 ? acc.push([ event ]) : acc[acc.length - 1].push(event);
-        return acc;
-    }, []);
+    const eventsByOver = groupEventsByOver(events);
     const overSummaries = eventsByOver.map(overEvents => ({
         runs: calculateRunsAgainstBowler(overEvents),
         wickets: overEvents.reduce((acc, event) => acc += event.wicket ? 1 : 0, 0)
@@ -292,7 +358,7 @@ const OverLogSummary = ({overSummary, index}) => (
         {overSummary.runs} - {overSummary.wickets}
     </div>);
 
-const overClass = (overLength) => (overLength > 10 ? ' bowler-twelve-ball-over' : 
+const overClass = (overLength) => (overLength > 9 ? ' bowler-twelve-ball-over' : 
     (overLength > 6 ? ' bowler-nine-ball-over' : ''));
 
 const GlyphContainer = ({children}) => (<span className='bowler-glyph'>{children}</span>);
@@ -341,7 +407,7 @@ const runDotWidePoints = [
     { x: 76, y: 76 },
 ];
 
-const WideGlyph = ({runs}) => (
+const WideGlyph = ({runs, wicketType}) => (
     <GlyphContainer>
         <svg className={'wide-' + runs} viewBox="0 0 96 96">
             <path d="M10,48h80" transform="translate(-2 0)" fill="none" stroke="#000" strokeWidth="6"/>
@@ -353,6 +419,16 @@ const WideGlyph = ({runs}) => (
                 />
             )}
         </svg>
+        {wicketType === 'run out' &&
+            <span className={'run bowler-wide-runout-' + runs ?? 0}>
+                R
+            </span>
+        }
+        {wicketType === 'stumped' &&
+            <span className={'run bowler-wide-stumped'}>
+                W
+            </span>
+        }
     </GlyphContainer>
 );
 
@@ -419,11 +495,10 @@ export function BallLogEntry({event, overLength, isBatter}) {
             glyph = <BatterOutGlyph />;
         } else if(event.extra) {
             if(event.extra === 'wide') {
-                if(event.wicket.type === 'run out') {
-                    return 20 + event.runs;
-                } else {
-                    return 20;
-                }
+                glyph = <WideGlyph 
+                    runs={event.runs ?? 0} 
+                    wicketType={event.wicket.type}
+                />
             } else if(event.extra === 'no-ball' && 
                     event.wicket.type === 'run out') {
                 return 36 + event.runs;
@@ -444,13 +519,6 @@ export function BallLogEntry({event, overLength, isBatter}) {
                     runs={event.runs ?? 0}
                     bowler={event.onBowlBowlerId}
                 />;
-            } else if(['bye', 'leg bye'].includes(event.extra)) {
-                glyph = <HitRunsSpan 
-                    runs={0}
-                    bowler={event.onBowlBowlerId}
-                />;
-            } else {
-                return null;
             }
         } else if(event.extra === 'wide') {
             glyph = <WideGlyph runs={event.runs ?? 0} />

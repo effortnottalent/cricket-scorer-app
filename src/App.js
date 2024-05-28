@@ -50,6 +50,31 @@ const initialEvents = [{
   runs: 3,
   fieldPositionId: 11,
   extra: 'hit no-ball'
+}, {
+  extra: 'wide',
+  runs: 3,
+  wicket: {
+    type: 'run out',
+    fieldPositionId: 1
+  }
+}, {
+  extra: 'wide',
+  wicket: {
+    type: 'stumped',
+    fieldPositionId: 1
+  }
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  runs: 1
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  overCalled: true
 }];
 
 const initialPlayers = [

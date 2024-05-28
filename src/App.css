@@ -184,19 +184,40 @@ body {
 .run {
   margin: auto;
 }
-.bowler-wide-wicket-1 {
+.bowler-wide-stumped {
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 12px;
+  font-size: 10px;
   transform: translate(-130%, -120%);
+}
+.bowler-wide-runout-0 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+  transform: translate(-160%, -110%);
+}
+.bowler-wide-runout-1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+  transform: translate(50%, -110%);
+}
+.bowler-wide-runout-2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+  transform: translate(-160%, 10%);
 }
 .bowler-wide-runout-3 {
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 12px;
-  transform: translate(-180%, 10%);
+  font-size: 10px;
+  transform: translate(50%, 10%);
 }
 .bowler-maiden {
   position: absolute;
@@ -220,7 +241,7 @@ body {
 .extras-rows > div {
   flex-direction: column;
 }
-.ticker-section {
+.ticker-score-section {
   position: relative;
   width: 100%;
   border-top: 1px solid darkgray;
@@ -228,7 +249,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill,minmax(24px, 1fr));
 }
-.ticker-section > div {
+.ticker-score-section > div {
   font-size: 12px;
   background-repeat: no-repeat;
   background-position: center center;
@@ -245,4 +266,34 @@ body {
 }
 .strike-end {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='0' y1='48' x2='72' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+}
+.overs-summary-row {
+  display: flex;
+  border-top: 1px solid darkgray;
+  border-bottom: 1px solid darkgray;
+}
+.overs-summary-entry {
+  display: flex;
+  border-right: 1px solid darkgray;
+  flex-direction: column;
+}
+.overs-summary-entry > div {
+  width: 64px;
+  display: flex;
+  justify-content: center;
+}
+.wickets-summary-row {
+  display: flex;
+  border-top: 1px solid darkgray;
+  border-bottom: 1px solid darkgray;
+}
+.wickets-summary-entry {
+  display: flex;
+  border-right: 1px solid darkgray;
+  flex-direction: column;
+}
+.wickets-summary-entry > div {
+  width: 96px;
+  display: flex;
+  justify-content: center;
 }
