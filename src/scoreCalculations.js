@@ -41,13 +41,6 @@ export function enrichEvents(events) {
         if((event.runs ?? 0) % 2 !== 0) {
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
         } 
-        if(event.newBowler) {
-            if(ball === 0) {
-                onBowlBowlerId = event.newBowler;
-            } else {
-                offBowlBowlerId = event.newBowler;
-            }
-        }
         if(event.overCalled) {
             over++;
             ball = 0;
@@ -60,6 +53,13 @@ export function enrichEvents(events) {
                 event.extra === 'bye' ||
                 event.extra === 'leg bye')) {
             ball++;
+        }
+        if(event.newBowlerId) {
+            if(ball === 0) {
+                onBowlBowlerId = event.newBowlerId;
+            } else {
+                offBowlBowlerId = event.newBowlerId;
+            }
         }
         return enrichedEvent;
     }).filter(event => event != null);
@@ -101,6 +101,13 @@ export function calculateRunsNotIncludingExtras(events) {
         return acc;
     }, 0);
 }
+export const calculateRunsAgainstBowler = (events) => events.reduce((acc, event) => {
+    if(!['bye', 'leg bye'].includes(event.extra))
+        acc += event.runs ?? 0;
+    if(['wide', 'no-ball', 'no-ball hit'].includes(event.extra))
+        acc++;
+    return acc;
+}, 0);
 
 export const calculateBallsFaced = (events) => 
     events.filter(event => 

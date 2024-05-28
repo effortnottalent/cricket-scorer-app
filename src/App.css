@@ -107,6 +107,9 @@ body {
   justify-content: center;
   width: 50px;
 }
+.bowler-log {
+  display: flex;
+}
 .bowler-row {
   border-top: 1px solid darkgray;
   border-bottom: 0px;
@@ -125,7 +128,7 @@ body {
   height: 116px;
   border-right: 1px solid darkgray;
 }
-.bowler-over {
+.bowler-over-detail {
   display: flex;
   position: relative;
   width: 72px;

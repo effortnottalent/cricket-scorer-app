@@ -7,7 +7,8 @@ import {
     calculatePartnershipAtWicket,
     calculateExtrasBreakdown,
     calculateRunsNotIncludingExtras,
-    calculateBallsFaced
+    calculateBallsFaced,
+    calculateRunsAgainstBowler
 } from './scoreCalculations.js';
 import { enrichEvents } from './scoreCalculations.js';
 
@@ -306,44 +307,38 @@ function BatterLog({ events }) {
     );
 }
 
-function calculateRunsAgainstBowler(events) {
-    return events.reduce((acc, event) => {
-        if(!['bye', 'leg bye'].includes(event.extra))
-            acc += event.runs ?? 0;
-        if(['wide', 'no-ball', 'no-ball hit'].includes(event.extra))
-            acc++;
-        return acc;
-    }, 0);
-}
-
 function BowlerLog({ events }) {
     const eventsByOver = groupEventsByOver(events);
     const overSummaries = eventsByOver.map(overEvents => ({
         runs: calculateRunsAgainstBowler(overEvents),
         wickets: overEvents.reduce((acc, event) => acc += event.wicket ? 1 : 0, 0)
     }));
+    const cumulativeOverSummaries = overSummaries.map((_, index) => {
+        overSummaries.slice(0, index + 1).reduce((acc, os) => ({
+            runs: acc.runs += os.runs,
+            wickets: acc.wickets += os.wickets 
+        }), [])
+    });
     return (
         <div className='bowler-log'>
             {eventsByOver.map((overEvents, index) => 
-                <OverLogEntry
-                    overEvents={overEvents}
-                    index={index}
-                />)}
-            {overSummaries.map((_, i) => 
-                <OverLogSummary
-                    overSummary={
-                        overSummaries.slice(0, i+1).reduce((acc, os) => ({
-                            runs: acc.runs += os.runs,
-                            wickets: acc.wickets += os.wickets 
-                        }))
-                    }
-                />)}
+                <div className='bowler-over'>
+                    <OverLogEntry
+                        overEvents={overEvents}
+                        index={index}
+                    />
+                    <OverLogSummary
+                        overSummary={cumulativeOverSummaries[index]}
+                        index={index}
+                    />
+                </div>
+            )}
         </div>
     );
 }
 
 const OverLogEntry = ({overEvents, index}) => (
-    <div key={'over-' + index} className='bowler-over'>
+    <div key={'over-' + index} className='bowler-over-detail'>
         {overEvents.map((ballEvents) => 
             <BallLogEntry
                 event={ballEvents}

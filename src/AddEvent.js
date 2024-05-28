@@ -10,7 +10,7 @@ const defaultEvent = {
     notes: ''
 };
 
-export default function AddEvent({ onAddEvent }) {
+export default function AddEvent({ onAddEvent, players }) {
     const [ event, setEvent ] = useState({ ...defaultEvent });
 
     return (
@@ -69,7 +69,6 @@ export default function AddEvent({ onAddEvent }) {
                         </button>
                     })}
                 </fieldset>
-
                 {(event.runs !== undefined || 
                     event.wicket?.type === 'run out' ||
                     event.wicket?.type === 'caught') &&
@@ -106,8 +105,8 @@ export default function AddEvent({ onAddEvent }) {
                     })}
                 ></input>
             </fieldset>
-            <fieldset className='utility'>
-                <legend>Utility</legend>
+            <fieldset className='over'>
+                <legend>Over called</legend>
                 <button 
                     className={event.overCalled ? 'selected' : ''}
                     onClick={(e) => setEvent({
@@ -117,6 +116,27 @@ export default function AddEvent({ onAddEvent }) {
                 >
                     Over called
                 </button>
+                {event.overCalled && (
+                    <>
+                        <label htmlFor='newBowlerId'>Change of bowler</label>
+                        <select
+                            name='newBowlerId'
+                            id='newBowlerId'
+                            onChange={(e) => setEvent({
+                                ...event,
+                                newBowlerId: e.target.value
+                            })}
+                        >
+                            {players.filter(player => player.type === 'bowler')
+                                .map((player, index) => (
+                                    <option 
+                                        key={index} 
+                                        value={index}
+                                    >{player.name ?? 'Player ' + (index + 1) }</option>
+                            ))}
+                        </select>
+                    </>
+                )}
             </fieldset>
             <button onClick={() => {
                 onAddEvent(event); 

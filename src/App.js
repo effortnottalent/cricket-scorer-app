@@ -75,11 +75,23 @@ const initialEvents = [{
   runs: 0
 }, {
   overCalled: true
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  runs: 2
+}, {
+  runs: 0
+}, {
+  runs: 0
 }];
 
 const initialPlayers = [
   ...[...Array(11)].map((_, i) => ({ id: i, type: 'batter'})),
-  ...[...Array(2)].map((_, i) => ({ id: i, type: 'bowler'}))
+  ...[...Array(3)].map((_, i) => ({ id: i, type: 'bowler'}))
 ];
 
 function App() {
@@ -105,11 +117,15 @@ function App() {
       <header className="App-header">
         Cricket App
       </header>
-      <AddEvent onAddEvent={handleAddEvent} />
+      <AddEvent 
+        onAddEvent={handleAddEvent}
+        players={players}
+      />
       <Scorebook 
         players={players} 
         events={events}
-        onChangePlayer={handleChangePlayer} />
+        onChangePlayer={handleChangePlayer} 
+      />
       <Scoreboard 
         events={events}
         players={players} 
