@@ -53,6 +53,14 @@ export default function BallByBall({ events, players }) {
     );
 }
 
+export function formatLongSummary(event, players) {
+    return 'Ball ' + event.over + '.' + event.ball + ': ' +
+        'Batter ' + players[event.onStrikeBatterId]?.name ??
+        'Player ' + (event.onStrikeBatterId + 1) + ' facing bowler ' + 
+        players[event.onBowlBowlerId]?.name ?? 'Player ' + 
+        (event.onBowlBowlerId + 1) + ', ' + formatSummary(event);
+}
+
 function formatSummary(event) {
     let wicketDetail = event.wicket?.type;
     if(!['bowled', 'stumped', 'lbw', 'retired'].includes(wicketDetail)) {

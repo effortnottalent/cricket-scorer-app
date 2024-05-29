@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { 
+    useState
+} from 'react';
 import { 
     getOnBowlBowlerId,
     getOnStrikeBatterId,
@@ -12,6 +14,7 @@ import {
     calculateCumulativeOverSummaries
 } from './scoreCalculations.js';
 import { enrichEvents } from './scoreCalculations.js';
+import { formatLongSummary } from './BallByBall.js';
 
 const bowlerColours = [
     '#22228a',
@@ -258,7 +261,7 @@ function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
     if(isEditing) {
         playerContent = (
             <input
-                class={type + '-name-edit'}
+                className={type + '-name-edit'}
                 value={player?.name}
                 onChange={(e) => {
                     onChange({
@@ -274,7 +277,7 @@ function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
     } else {
         playerContent = (
             <div 
-                class={type + '-name-label'}
+                className={type + '-name-label'}
                 onClick={() => setIsEditing(true)}>
                 {type === 'bowler' ? '█ ' : ''}{player?.name ?? 'Player ' + (index + 1)}
                 {isOnStrike && ' *'}
@@ -345,8 +348,9 @@ const overClass = (overLength) => (overLength > 9 ? ' bowler-twelve-ball-over' :
 
 const GlyphContainer = ({children}) => (<span className='bowler-glyph'>{children}</span>);
 
-const BallContainer = ({overLength, isBatter, children}) => (
-    <div className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
+const BallContainer = ({overLength, isBatter, children, event}) => (
+    <div 
+        className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
         {children}
     </div>);
 
@@ -542,8 +546,10 @@ export function BallLogEntry({event, overLength, isBatter}) {
         />;
     }
     return <BallContainer
+        event={event}
         overLength={overLength}
-        isBatter={isBatter}>
+        isBatter={isBatter}
+        >
             {glyph}
         </BallContainer>;
 }
