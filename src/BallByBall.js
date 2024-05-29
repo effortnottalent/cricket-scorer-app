@@ -1,4 +1,9 @@
-import { enrichEvents } from './scoreCalculations.js';
+import { 
+    calculateWickets,
+    enrichEvents,
+    groupEventsByOver,
+    calculateRunsIncludingExtras
+} from './scoreCalculations.js';
 import { fieldPositionsList } from './FieldPositions.js';
 
 export default function BallByBall({ events, players }) {
@@ -6,17 +11,48 @@ export default function BallByBall({ events, players }) {
     return (
         <div className='ball-by-ball'>
             <h1>Ball-by-ball</h1>
-            <ul>
-                {enrichedEvents.map((event, index) => (
-                    <li key={index}>
-                        {formatSummary(event)}
-                    </li>
-                ))}
-            </ul>
+            <div className="bbb-header">
+                <div className='bbb-over'>Over</div>
+                <div className='bbb-ball-number'>Ball</div>
+                <div className='bbb-bowler'>Bowler</div>
+                <div className='bbb-batter'>Batter</div>
+                <div className='bbb-summary'>Summary</div>
+                <div className='bbb-runs'>Runs</div>
+                <div className='bbb-wickets'>Wkts</div>
+            </div>
+            {groupEventsByOver(enrichedEvents).map(overEvents => 
+                <div className="bbb-row">
+                    <div className='bbb-over'>{overEvents[0].over + 1}</div>
+                        <div className='bbb-balls'>
+                        {overEvents.map(event => 
+                                <div className="bbb-ball">
+                                    <div className='bbb-ball-number'>{event.ball + 1}</div>
+                                    <div className='bbb-bowler'>
+                                        {players[event.onBowlBowlerId]?.name ??
+                                            'Player ' + (event.onBowlBowlerId + 1)}
+                                    </div>
+                                    <div className='bbb-batter'>
+                                        {players[event.onStrikeBatterId]?.name ??
+                                            'Player ' + (event.onStrikeBatterId + 1)}
+                                    </div>
+                                    <div className='bbb-summary'>{formatSummary(event)}</div>
+                                    <div className='bbb-runs'>
+                                        {calculateRunsIncludingExtras(enrichedEvents
+                                            .filter(event2 => event2.id <= event.id))}
+                                    </div>
+                                    <div className='bbb-wickets'>
+                                        {calculateWickets(enrichedEvents
+                                            .filter(event2 => event2.id <= event.id))}
+                                    </div>
+                                </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
 function formatSummary(event) {
-    return JSON.stringify(event);
+    return 'blah';
 }

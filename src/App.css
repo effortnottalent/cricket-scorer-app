@@ -307,3 +307,70 @@ body {
   display: flex;
   justify-content: center;
 }
+.bbb-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  border-top: 1px solid darkgray;
+  border-bottom: 1px solid darkgray;
+  height: 24px;
+}
+.bbb-header > .bbb-over {
+  width: 48px;
+}
+.bbb-header > .bbb-ball-number {
+  width: 48px;
+}
+.bbb-header > .bbb-bowler {
+  width: 128px;
+}
+.bbb-header > .bbb-summary {
+  flex-grow: 1;
+}
+.bbb-header > .bbb-batter {
+  width: 128px;
+}
+.bbb-header > .bbb-runs {
+  width: 48px;
+}
+.bbb-header > .bbb-wickets {
+  width: 48px;
+}
+.bbb-row {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid darkgray;
+}
+.bbb-balls {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.bbb-balls > .bbb-ball {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  height: 24px;
+}
+.bbb-row > .bbb-over {
+  width: 48px;
+  align-content: center;
+}
+.bbb-ball .bbb-ball-number {
+  width: 48px;
+}
+.bbb-ball .bbb-bowler {
+  width: 128px;
+}
+.bbb-ball .bbb-summary {
+  flex-grow: 1;
+}
+.bbb-ball .bbb-batter {
+  width: 128px;
+}
+.bbb-ball .bbb-runs {
+  width: 48px;
+}
+.bbb-ball .bbb-wickets {
+  width: 48px;
+}
