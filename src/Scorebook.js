@@ -313,12 +313,12 @@ function BowlerLog({ events }) {
         runs: calculateRunsAgainstBowler(overEvents),
         wickets: overEvents.reduce((acc, event) => acc += event.wicket ? 1 : 0, 0)
     }));
-    const cumulativeOverSummaries = overSummaries.map((_, index) => {
+    const cumulativeOverSummaries = overSummaries.map((_, index) => 
         overSummaries.slice(0, index + 1).reduce((acc, os) => ({
             runs: acc.runs += os.runs,
             wickets: acc.wickets += os.wickets 
-        }), [])
-    });
+        }), { runs: 0, wickets: 0 })
+    );
     return (
         <div className='bowler-log'>
             {eventsByOver.map((overEvents, index) => 
