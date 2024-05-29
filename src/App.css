@@ -170,19 +170,26 @@ body {
   font-size: 16px;
   transform: translate(-50%, -50%);
 }
-.bye-hit {
+.no-ball-run-out {
   position: absolute;
   top: 50%;
   left: 50%;
   font-size: 12px;
-  transform: translate(-50%, -20%);
+  transform: translate(-50%, -50%);
 }
-.leg-bye-hit {
+.bye-run-out {
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 12px;
-  transform: translate(-50%, -100%);
+  font-size: 9px;
+  transform: translate(-50%, 0%);
+}
+.leg-bye-run-out {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 9px;
+  transform: translate(-50%, -90%);
 }
 .run {
   margin: auto;

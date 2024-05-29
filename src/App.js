@@ -87,6 +87,57 @@ const initialEvents = [{
   runs: 0
 }, {
   runs: 0
+}, {
+  overCalled: true,
+  newBowlerId: 2
+}, {
+  runs: 0
+}, {
+  runs: 1
+}, {
+  runs: 0
+}, {
+  runs: 3
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  overCalled: true
+}, {
+  runs: 0
+}, {
+  runs: 2
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  extra: 'no-ball',
+  runs: 3,
+  wicket: {
+    type: 'run out'
+  }
+}, {
+  extra: 'bye',
+  runs: 2,
+  wicket: {
+    type: 'run out'
+  }
+},  {
+  extra: 'leg bye',
+  runs: 1,
+  wicket: {
+    type: 'run out'
+  }
+}, {
+  extra: 'wide'
+}, {
+  runs: 0
+}, {
+  runs: 0
+}, {
+  overCalled: true
 }];
 
 const initialPlayers = [

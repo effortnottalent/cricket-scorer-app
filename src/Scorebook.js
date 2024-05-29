@@ -8,7 +8,8 @@ import {
     calculateExtrasBreakdown,
     calculateRunsNotIncludingExtras,
     calculateBallsFaced,
-    calculateRunsAgainstBowler
+    groupEventsByOver,
+    calculateCumulativeOverSummaries
 } from './scoreCalculations.js';
 import { enrichEvents } from './scoreCalculations.js';
 
@@ -94,11 +95,6 @@ export default function Scorebook({ players, onChangePlayer, events }) {
         </div>
     );
 }
-
-const groupEventsByOver = (events) => events.reduce((acc, event) => {
-    event.ball === 0 ? acc.push([ event ]) : acc[acc.length - 1].push(event);
-    return acc;
-}, []);
 
 function OverByOverSummary({ events }) {
     const eventsByOver = groupEventsByOver(events);
@@ -309,16 +305,7 @@ function BatterLog({ events }) {
 
 function BowlerLog({ events }) {
     const eventsByOver = groupEventsByOver(events);
-    const overSummaries = eventsByOver.map(overEvents => ({
-        runs: calculateRunsAgainstBowler(overEvents),
-        wickets: overEvents.reduce((acc, event) => acc += event.wicket ? 1 : 0, 0)
-    }));
-    const cumulativeOverSummaries = overSummaries.map((_, index) => 
-        overSummaries.slice(0, index + 1).reduce((acc, os) => ({
-            runs: acc.runs += os.runs,
-            wickets: acc.wickets += os.wickets 
-        }), { runs: 0, wickets: 0 })
-    );
+    const cumulativeOverSummaries = calculateCumulativeOverSummaries(events);
     return (
         <div className='bowler-log'>
             {eventsByOver.map((overEvents, index) => 
@@ -448,12 +435,12 @@ const runDotByeSetPoints = [
     [ 0, 1, 2, 3 ]
 ];
 
-const ByeGlyph = ({runs, isLeg}) => (
+const ByeGlyph = ({runs, isLeg, isRunOut}) => (
     <GlyphContainer>
         <svg className={(isLeg ? 'leg-' : '') + 'bye-' + runs} viewBox="0 0 96 96">
             <g {...(isLeg ? {transform: 'rotate(180 48 48)'} : {})}>
                 <path d="M8,88l40-80l40,80h-80Z" fill="none" stroke="#000" strokeWidth="6"/>
-                {[...Array(runs)].map((_, i) => 
+                {!isRunOut && [...Array(runs)].map((_, i) => 
                     <RunDotGlyph
                         radius={6}
                         point={runDotByePoints[runDotByeSetPoints[runs - 1][i]]}
@@ -461,14 +448,19 @@ const ByeGlyph = ({runs, isLeg}) => (
                 )}
             </g>
         </svg>
+        {isRunOut &&
+        <span className={'run ' + (isLeg ? 'leg-' : '') + 'bye-run-out'}>
+            {runs !== 1 ? runs : ''}R
+        </span>
+        }
     </GlyphContainer>
 );
 
-const NoBallGlyph = ({runs, isHit}) => (
+const NoBallGlyph = ({runs, isHit, isRunOut}) => (
     <GlyphContainer>
         <svg className={(isHit ? 'hit-' : '') + 'no-ball-' + runs} viewBox="0 0 96 96">
             <ellipse rx="40" ry="40" transform="translate(48 48)" fill="none" stroke="#000" strokeWidth="6"/>
-            {!isHit && [...Array(runs)].map((_, i) => 
+            {!isHit && !isRunOut && [...Array(runs)].map((_, i) => 
                     <RunDotGlyph
                         radius={6}
                         point={runDotNoBallPoints[runDotByeSetPoints[runs - 1][i]]}
@@ -478,6 +470,11 @@ const NoBallGlyph = ({runs, isHit}) => (
         {isHit &&
         <span className='run hit-no-ball'>
             {runs}
+        </span>
+        }
+        {isRunOut &&
+        <span className='run no-ball no-ball-run-out'>
+            {runs !== 1 ? runs : ''}R
         </span>
         }
     </GlyphContainer>
@@ -496,13 +493,25 @@ export function BallLogEntry({event, overLength, isBatter}) {
                 />
             } else if(event.extra === 'no-ball' && 
                     event.wicket.type === 'run out') {
-                return 36 + event.runs;
+                glyph = <NoBallGlyph 
+                    runs={event.runs ?? 0} 
+                    isRunOut={true} 
+                    isHit={false} 
+                />;
             } else if(event.extra === 'bye' && 
                     event.wicket.type === 'run out') {
-                return 45 + event.runs;
+                glyph = <ByeGlyph 
+                    runs={event.runs ?? 0} 
+                    isRunOut={true} 
+                    isLeg={false} 
+                />;
             } else if(event.extra === 'leg bye' && 
                     event.wicket.type === 'run out') {
-                return 48 + event.runs;
+                glyph = <ByeGlyph 
+                    runs={event.runs ?? 0} 
+                    isRunOut={true} 
+                    isLeg={true} 
+                />;
             }
         } else {
              glyph = <WicketSpan />;

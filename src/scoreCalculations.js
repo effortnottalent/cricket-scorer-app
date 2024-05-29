@@ -41,6 +41,9 @@ export function enrichEvents(events) {
         if((event.runs ?? 0) % 2 !== 0) {
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
         } 
+        if(event.newBowlerId) {
+            offBowlBowlerId = event.newBowlerId;
+        }
         if(event.overCalled) {
             over++;
             ball = 0;
@@ -53,13 +56,6 @@ export function enrichEvents(events) {
                 event.extra === 'bye' ||
                 event.extra === 'leg bye')) {
             ball++;
-        }
-        if(event.newBowlerId) {
-            if(ball === 0) {
-                onBowlBowlerId = event.newBowlerId;
-            } else {
-                offBowlBowlerId = event.newBowlerId;
-            }
         }
         return enrichedEvent;
     }).filter(event => event != null);
@@ -115,9 +111,14 @@ export const calculateBallsFaced = (events) =>
 
 export const calculateWickets = (events) => 
     events.reduce((acc, event) => acc += 
-        (event.wicket && event.wicket.type !== 'retired') ? 
+        (event.wicket && event.wicket?.type !== 'retired') ? 
             1 : 0, 0);
 
+export const calculateBowlerWickets = (events) => 
+    events.reduce((acc, event) => acc += 
+        (event.wicket && [ 'bowled', 'caught', 'stumped', 'lbw']
+            .includes(event.wicket.type) ? 1 : 0), 0);
+            
 export function calculatePartnershipAtWicket(events, wicket) {
     const wicketEvents = events.filter(event => event.wicket);
     return calculateRunsIncludingExtras(events.filter(event =>
@@ -132,6 +133,25 @@ export function getOverNumberValue(events) {
     return events[events.length -1].overCalled ? 
         (lastEvent.over + 1) + '.0' :
         lastEvent.over + '.' + (lastEvent.ball + 1);
+}
+
+export const groupEventsByOver = (events) => events.reduce((acc, event) => {
+    event.ball === 0 ? acc.push([ event ]) : acc[acc.length - 1].push(event);
+    return acc;
+}, []);
+
+export function calculateCumulativeOverSummaries(events) {
+    const eventsByOver = groupEventsByOver(events);
+    const overSummaries = eventsByOver.map(overEvents => ({
+        runs: calculateRunsAgainstBowler(overEvents),
+        wickets: calculateBowlerWickets(overEvents)
+    }));
+    return overSummaries.map((_, index) => 
+        overSummaries.slice(0, index + 1).reduce((acc, os) => ({
+            runs: acc.runs += os.runs,
+            wickets: acc.wickets += os.wickets 
+        }), { runs: 0, wickets: 0 })
+    );
 }
 
 export function calculateScore(events) {
