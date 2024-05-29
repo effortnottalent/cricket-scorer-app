@@ -25,17 +25,17 @@ const initialEvents = [{
   notes: 'sunday rules umpire?'
 }, {
   runs: 1,
+  fieldPositionId: 3,
   extra: 'bye'
 }, {
-  runs: 0,
   wicket: {
     type: 'caught',
-    playerId: 7
   },
-  fieldPositionId: 13,
+  fieldPositionId: 1,
 }, {
   runs: 2,
-  extra: 'leg bye'
+  extra: 'leg bye',
+  fieldPositionId: 11,
 }, {
   overCalled: true
 }, {
@@ -55,20 +55,20 @@ const initialEvents = [{
   runs: 3,
   wicket: {
     type: 'run out',
-    fieldPositionId: 1
-  }
+  },
+  fieldPositionId: 3
 }, {
   extra: 'wide',
   wicket: {
-    type: 'stumped',
-    fieldPositionId: 1
+    type: 'stumped'
   }
 }, {
   runs: 0
 }, {
   runs: 0
 }, {
-  runs: 1
+  runs: 1,
+  fieldPositionId: 11,
 }, {
   runs: 0
 }, {
@@ -82,7 +82,8 @@ const initialEvents = [{
 }, {
   runs: 0
 }, {
-  runs: 2
+  runs: 2,
+  fieldPositionId: 10,
 }, {
   runs: 0
 }, {
@@ -117,25 +118,22 @@ const initialEvents = [{
   runs: 3,
   wicket: {
     type: 'run out'
-  }
+  },
+  fieldPositionId: 3,
 }, {
   extra: 'bye',
   runs: 2,
   wicket: {
     type: 'run out'
-  }
+  },
+  fieldPositionId: 4,
 },  {
   extra: 'leg bye',
   runs: 1,
   wicket: {
     type: 'run out'
-  }
-}, {
-  extra: 'wide'
-}, {
-  runs: 0
-}, {
-  runs: 0
+  },
+  fieldPositionId: 8,
 }, {
   overCalled: true
 }];

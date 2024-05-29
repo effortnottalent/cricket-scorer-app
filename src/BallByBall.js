@@ -54,5 +54,21 @@ export default function BallByBall({ events, players }) {
 }
 
 function formatSummary(event) {
-    return 'blah';
+    let wicketDetail = event.wicket?.type;
+    if(!['bowled', 'stumped', 'lbw', 'retired'].includes(wicketDetail)) {
+        if(event.fieldPositionId === 1) {
+            wicketDetail += ' & bowled';
+        } else if(event.fieldPositionId === 2) {
+            wicketDetail += ' behind';
+        }
+    }
+    const wicketSummary = event.wicket ? 'batter ' + 
+        (event.wicket.batterOutId ?? event.onStrikeBatterId) + ' ' + 
+        wicketDetail : '';
+    const runsSummary = event.runs ? 'went to ' + 
+        fieldPositionsList[event.fieldPositionId ?? 0].label + ',  ran ' 
+        + event.runs : '';
+    return [ event.extra, runsSummary, wicketSummary, event.notes ]
+        .filter(i => (i ?? '') !== '')
+        .join(', ');
 }

@@ -322,12 +322,15 @@ body {
   width: 48px;
 }
 .bbb-header > .bbb-bowler {
+  text-align: left;
   width: 128px;
 }
 .bbb-header > .bbb-summary {
+  text-align: left;
   flex-grow: 1;
 }
 .bbb-header > .bbb-batter {
+  text-align: left;
   width: 128px;
 }
 .bbb-header > .bbb-runs {
@@ -348,29 +351,42 @@ body {
 }
 .bbb-balls > .bbb-ball {
   display: flex;
-  flex-wrap: wrap;
-  align-content: center;
   height: 24px;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 .bbb-row > .bbb-over {
   width: 48px;
   align-content: center;
+  flex-shrink: 0;
 }
 .bbb-ball .bbb-ball-number {
+  flex-shrink: 0;
   width: 48px;
+  font-size: 12px;
 }
 .bbb-ball .bbb-bowler {
+  flex-shrink: 0;
   width: 128px;
+  font-size: 12px;
+  text-align: left;
 }
 .bbb-ball .bbb-summary {
   flex-grow: 1;
+  font-size: 12px;
+  text-align: left;
 }
 .bbb-ball .bbb-batter {
+  flex-shrink: 0;
   width: 128px;
+  font-size: 12px;
+  text-align: left;
 }
 .bbb-ball .bbb-runs {
+  flex-shrink: 0;
   width: 48px;
 }
 .bbb-ball .bbb-wickets {
+  flex-shrink: 0;
   width: 48px;
 }
