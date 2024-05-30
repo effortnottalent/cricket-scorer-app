@@ -89,7 +89,7 @@ function formatSummary(event, players) {
         }
     }
     const batterOut = (event.wicket?.batterOutId ?? event.onStrikeBatterId);
-    const wicketSummary = event.wicket ? (batterOut != event.onStrikeBatterId ? 
+    const wicketSummary = event.wicket ? (batterOut !== event.onStrikeBatterId ? 
         'batter ' + (players.filter(
             player => player.type === 'batter')[batterOut]?.name ??
         'Player ' + (batterOut + 1)) + ' ' : '') + wicketDetail : '';

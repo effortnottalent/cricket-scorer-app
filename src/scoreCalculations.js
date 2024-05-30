@@ -117,7 +117,7 @@ export const calculateWickets = (events) =>
 export const calculateBowlerWickets = (events) => 
     events.reduce((acc, event) => acc += 
         (event.wicket && [ 'bowled', 'caught', 'stumped', 'lbw']
-            .includes(event.wicket.type) ? 1 : 0), 0);
+            .includes(event.wicket) ? 1 : 0), 0);
             
 export function calculatePartnershipAtWicket(events, wicket) {
     const wicketEvents = events.filter(event => event.wicket);
@@ -157,7 +157,7 @@ export function calculateScore(events) {
     const enrichedEvents = enrichEvents(events);
     const runs = calculateRunsIncludingExtras(enrichedEvents);
     const wickets = enrichedEvents.filter(event => 
-        event.wicket && event.wicket.type !== 'retired').length;
+        event.wicket !== 'retired').length;
     const lastEvent = enrichedEvents[enrichedEvents.length - 1];
     const overs = getOverNumberValue(events);
     const extras = calculateExtrasTotal(events);

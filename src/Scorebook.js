@@ -430,7 +430,7 @@ const runDotWidePoints = [
     { x: 76, y: 76 },
 ];
 
-const WideGlyph = ({runs, wicketType}) => (
+const WideGlyph = ({runs, wicket}) => (
     <GlyphContainer>
         <svg className={'wide-' + runs} viewBox="0 0 96 96">
             <path d="M10,48h80" transform="translate(-2 0)" fill="none" stroke="#000" strokeWidth="6"/>
@@ -443,12 +443,12 @@ const WideGlyph = ({runs, wicketType}) => (
                 />
             )}
         </svg>
-        {wicketType === 'run out' &&
+        {wicket === 'run out' &&
             <span className={'run bowler-wide-runout-' + runs ?? 0}>
                 R
             </span>
         }
-        {wicketType === 'stumped' &&
+        {wicket === 'stumped' &&
             <span className={'run bowler-wide-stumped'}>
                 W
             </span>
@@ -533,24 +533,24 @@ export function BallLogEntry({event, overLength, isBatter}) {
             if(event.extra === 'wide') {
                 glyph = <WideGlyph 
                     runs={event.runs ?? 0} 
-                    wicketType={event.wicket.type}
+                    wicket={event.wicket}
                 />
             } else if(event.extra === 'no-ball' && 
-                    event.wicket.type === 'run out') {
+                    event.wicket === 'run out') {
                 glyph = <NoBallGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isHit={false} 
                 />;
             } else if(event.extra === 'bye' && 
-                    event.wicket.type === 'run out') {
+                    event.wicket === 'run out') {
                 glyph = <ByeGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isLeg={false} 
                 />;
             } else if(event.extra === 'leg bye' && 
-                    event.wicket.type === 'run out') {
+                    event.wicket === 'run out') {
                 glyph = <ByeGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 

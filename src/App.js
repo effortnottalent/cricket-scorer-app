@@ -31,9 +31,7 @@ const initialEvents = [{
   fieldPositionId: 3,
   extra: 'bye'
 }, {
-  wicket: {
-    type: 'caught',
-  },
+  wicket: 'caught',
   fieldPositionId: 1,
 }, {
   runs: 2,
@@ -43,8 +41,7 @@ const initialEvents = [{
   overCalled: true
 }, {
   runs: 1,
-  fieldPositionId: 21,
-  howzat: true
+  fieldPositionId: 21
 }, {
   runs: 4,
   fieldPositionId: 14,
@@ -56,15 +53,11 @@ const initialEvents = [{
 }, {
   extra: 'wide',
   runs: 3,
-  wicket: {
-    type: 'run out',
-  },
+  wicket: 'run out',
   fieldPositionId: 3
 }, {
   extra: 'wide',
-  wicket: {
-    type: 'stumped'
-  }
+  wicket: 'stumped'
 }, {
   runs: 0
 }, {
@@ -119,23 +112,17 @@ const initialEvents = [{
 }, {
   extra: 'no-ball',
   runs: 3,
-  wicket: {
-    type: 'run out'
-  },
+  wicket: 'run out',
   fieldPositionId: 3,
 }, {
   extra: 'bye',
   runs: 2,
-  wicket: {
-    type: 'run out'
-  },
+  wicket: 'run out',
   fieldPositionId: 4,
 },  {
   extra: 'leg bye',
   runs: 1,
-  wicket: {
-    type: 'run out'
-  },
+  wicket: 'run out',
   fieldPositionId: 8,
 }, {
   overCalled: true
