@@ -1,23 +1,40 @@
+import { fieldPositionsList } from './FieldPositions.js';
 
 let onStrikeBatterId = 0;
+let offStrikeBatterId = 1;
 let onBowlBowlerId = 0;
+let overCalled = false;
 
 export function getOnStrikeBatterId() {
     return onStrikeBatterId;
+}
+
+export function getOffStrikeBatterId() {
+    return offStrikeBatterId;
 }
 
 export function getOnBowlBowlerId() {
     return onBowlBowlerId;
 }
 
+export function isOverCalled() {
+    return overCalled;
+}
+
+export const getPlayerName = (players, id, type) => 
+    players.filter(player => player.type === type)
+        [id]?.name ?? 'Player ' + (id + 1);
+
 export function enrichEvents(events) {
     onStrikeBatterId = 0;
     onBowlBowlerId = 0;
-    let offStrikeBatterId = 1;
+    overCalled = false;
+    offStrikeBatterId = 1;
     let offBowlBowlerId = 1;
     let ball = 0;
     let over = 0;
     let id = 0;
+
     return events.map(event => {
 
         const enrichedEvent = {
@@ -29,6 +46,8 @@ export function enrichEvents(events) {
             ball,
             id: id++,
         };
+
+        overCalled = event.overCalled ?? false;
 
         if(event.wicket) {
             const nextBatterId = event.wicket.nextBatterId ?? 
@@ -111,7 +130,7 @@ export const calculateBallsFaced = (events) =>
 
 export const calculateWickets = (events) => 
     events.reduce((acc, event) => acc += 
-        (event.wicket && event.wicket?.type !== 'retired') ? 
+        (event.wicket && event.wicket !== 'retired') ? 
             1 : 0, 0);
 
 export const calculateBowlerWickets = (events) => 
@@ -128,9 +147,9 @@ export function calculatePartnershipAtWicket(events, wicket) {
 }
 
 export function getOverNumberValue(events) {
-    const enrichedEvents = enrichEvents(events);
-    const lastEvent = enrichedEvents[enrichedEvents.length - 1];
-    return lastEvent.over + '.' + (lastEvent.ball + 1);
+    const lastEvent = events[events.length - 1];
+    return (lastEvent.over + (isOverCalled ? 1 : 0)) + '.' + 
+        (isOverCalled ? 0 : (lastEvent.ball + 1));
 }
 
 export const groupEventsByOver = (events) => events.reduce((acc, event) => {
@@ -152,49 +171,30 @@ export function calculateCumulativeOverSummaries(events) {
     );
 }
 
-export function calculateScore(events) {
-
-    const enrichedEvents = enrichEvents(events);
-    const runs = calculateRunsIncludingExtras(enrichedEvents);
-    const wickets = enrichedEvents.filter(event => 
-        event.wicket !== 'retired').length;
-    const lastEvent = enrichedEvents[enrichedEvents.length - 1];
-    const overs = getOverNumberValue(events);
-    const extras = calculateExtrasTotal(events);
-    const batter1 = {
-        id: lastEvent.onStrikeBatterId,
-        runs: calculateRunsNotIncludingExtras(enrichedEvents.filter(event => 
-                event.onStrikeBatterId === lastEvent.onStrikeBatterId))
-    };
-    const batter2 = {
-        id: lastEvent.offStrikeBatterId,
-        runs: calculateRunsNotIncludingExtras(enrichedEvents.filter(event => 
-                event.onStrikeBatterId === lastEvent.offStrikeBatterId))
-    };
-    const wicketEvents = enrichedEvents.filter(event => 
-        event.wicket);
-    const lastWicketEvent = wicketEvents[wicketEvents.length - 1];
-    const lastWicketBatterId = lastWicketEvent.batterOut ?? 
-        lastWicketEvent.onStrikeBatterId;
-    const lastWicketRuns = calculateRunsIncludingExtras(enrichedEvents
-        .filter(event => event.id <= lastWicketEvent.id));
-    const lastWicketBatterRuns = calculateRunsNotIncludingExtras(enrichedEvents
-        .filter(event => event.onStrikeBatterId === lastWicketBatterId));
-    const partnership = calculatePartnershipAtWicket(events, calculateWickets(events));
-    const lastWicket = {
-        runs: lastWicketRuns,
-        batterId: lastWicketBatterId,
-        batterRuns: lastWicketBatterRuns,
-        partnership: partnership
-    };
-    return {
-        runs,
-        wickets,
-        overs,
-        extras,
-        batter1,
-        batter2,
-        lastWicket,
-    }
+export function formatLongSummary(event, players) {
+    return 'Ball ' + (event.over + 1) + '.' + event.ball + ': ' +
+        'batter ' + getPlayerName(players, event.onStrikeBatterId, 'batter') + 
+        ' facing bowler ' + getPlayerName(players, event.onStrikeBatterId, 'bowler') + 
+        ', ' + formatSummary(event, players);
 }
 
+export function formatSummary(event, players) {
+    let wicketDetail = event.wicket;
+    if(!['bowled', 'stumped', 'lbw', 'retired'].includes(wicketDetail)) {
+        if(event.fieldPositionId === 1) {
+            wicketDetail += ' & bowled';
+        } else if(event.fieldPositionId === 2) {
+            wicketDetail += ' behind';
+        }
+    }
+    const batterOut = (event.batterOutId ?? event.onStrikeBatterId);
+    const wicketSummary = event.wicket ? (batterOut !== event.onStrikeBatterId ? 
+        'batter ' + getPlayerName(players, event.onStrikeBatterId, 'batter')
+        + ' ' : '') + wicketDetail : '';
+    const runsSummary = 'went to ' + 
+        fieldPositionsList[event.fieldPositionId ?? 0].label + (event.runs ? 
+            ', ' + (event.boundary ? ' hit a ' : ' ran ') + event.runs : ', dot ball');
+    return [ event.extra, runsSummary, wicketSummary, event.notes ]
+        .filter(i => (i ?? '') !== '')
+        .join(', ');
+}

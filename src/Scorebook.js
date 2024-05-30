@@ -12,10 +12,10 @@ import {
     calculateRunsNotIncludingExtras,
     calculateBallsFaced,
     groupEventsByOver,
-    calculateCumulativeOverSummaries
-} from './scoreCalculations.js';
-import { enrichEvents } from './scoreCalculations.js';
-import { formatLongSummary } from './BallByBall.js';
+    calculateCumulativeOverSummaries,
+    formatLongSummary
+} from './calculations.js';
+import { enrichEvents } from './calculations.js';
 import { 
     EventsContext, 
     PlayersContext 
@@ -261,7 +261,7 @@ function BatterSummary() {
             <div className='batter-wicket'>
                 <div className='batter-wicket-label'>How out</div>
                 <div className='batter-wicket-value'>
-                    {events[events.length - 1]?.wicket?.type ?? ''}
+                    {events[events.length - 1]?.wicket ?? ''}
                 </div>
             </div>
             <div className='batter-fielder'>
@@ -511,7 +511,7 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
                     />
                 )}
         </svg>
-        {isHit &&
+        {isHit && !isRunOut &&
         <span className='run hit-no-ball'>
             {runs}
         </span>
@@ -541,6 +541,13 @@ export function BallLogEntry({event, overLength, isBatter}) {
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isHit={false} 
+                />;
+            } else if(event.extra === 'hit no-ball' && 
+                    event.wicket === 'run out') {
+                glyph = <NoBallGlyph 
+                    runs={event.runs ?? 0} 
+                    isRunOut={true} 
+                    isHit={true} 
                 />;
             } else if(event.extra === 'bye' && 
                     event.wicket === 'run out') {
