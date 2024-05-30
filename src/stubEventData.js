@@ -1,117 +1,158 @@
 
 export const initialEvents = [{
+    id: 0,
     runs: 0,
   }, {
+    id: 1,
     runs: 2,
     fieldPositionId: 19,
   }, {
+    id: 2,
     runs: 4,
     fieldPositionId: 26,
     boundary: true,
     notes: 'outrageous shot'
   }, {
+    id: 3,
     runs: 0,
     extra: 'wide',
     notes: 'sunday rules umpire?'
   }, {
+    id: 4,
     runs: 1,
     fieldPositionId: 3,
     extra: 'bye'
   }, {
+    id: 5,
     wicket: 'caught',
     fieldPositionId: 1,
   }, {
+    id: 6,
     runs: 2,
     extra: 'leg bye',
     fieldPositionId: 11,
   }, {
+    id: 7,
     overCalled: true
   }, {
+    id: 8,
     runs: 1,
     fieldPositionId: 21
   }, {
+    id: 9,
     runs: 4,
     fieldPositionId: 14,
     extra: 'no-ball'
   }, {
+    id: 10,
     runs: 3,
     fieldPositionId: 11,
     extra: 'hit no-ball'
   }, {
+    id: 11,
     extra: 'wide',
     runs: 3,
     wicket: 'run out',
     fieldPositionId: 3
   }, {
+    id: 12,
     extra: 'wide',
     wicket: 'stumped'
   }, {
+    id: 13,
     runs: 0
   }, {
+    id: 14,
     runs: 0
   }, {
+    id: 15,
     runs: 1,
     fieldPositionId: 11,
   }, {
+    id: 16,
     runs: 0
   }, {
+    id: 17,
     runs: 0
   }, {
+    id: 18,
     overCalled: true
   }, {
+    id: 19,
     runs: 0
   }, {
+    id: 20,
     runs: 0
   }, {
+    id: 21,
     runs: 0
   }, {
+    id: 22,
     runs: 2,
     fieldPositionId: 10,
   }, {
+    id: 23,
     runs: 0
   }, {
+    id: 24,
     runs: 0
   }, {
+    id: 25,
     overCalled: true,
     newBowlerId: 2
   }, {
+    id: 26,
     runs: 0
   }, {
+    id: 27,
     runs: 1
   }, {
+    id: 28,
     runs: 0
   }, {
+    id: 29,
     runs: 3
   }, {
+    id: 30,
     runs: 0
   }, {
+    id: 31,
     runs: 0
   }, {
+    id: 32,
     overCalled: true
   }, {
+    id: 33,
     runs: 0
   }, {
+    id: 34,
     runs: 2
   }, {
+    id: 35,
     runs: 0
   }, {
+    id: 36,
     runs: 0
   }, {
+    id: 37,
     extra: 'no-ball',
     runs: 3,
     wicket: 'run out',
     fieldPositionId: 3,
   }, {
+    id: 38,
     extra: 'bye',
     runs: 2,
     wicket: 'run out',
     fieldPositionId: 4,
   },  {
+    id: 39,
     extra: 'leg bye',
     runs: 1,
     wicket: 'run out',
     fieldPositionId: 8,
   }, {
+    id: 40,
     overCalled: true
   }];
   

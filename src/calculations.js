@@ -35,7 +35,7 @@ export function enrichEvents(events) {
     let over = 0;
     let id = 0;
 
-    return events.map(event => {
+    return events.slice().sort((a, b) => a.id - b.id).map(event => {
 
         const enrichedEvent = {
             ...event,

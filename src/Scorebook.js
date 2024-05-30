@@ -254,8 +254,7 @@ function ExtrasSummary() {
     )
 }
 
-function BatterSummary() {
-    const events = enrichEvents(useContext(EventsContext));
+function BatterSummary({events}) {
     return (
         <div className='batter-summary'>
             <div className='batter-wicket'>
@@ -293,7 +292,7 @@ function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
         playerContent = (
             <input
                 className={type + '-name-edit'}
-                value={player?.name}
+                value={player?.name ?? ''}
                 onChange={(e) => {
                     onChange({
                         ...player,

@@ -9,7 +9,7 @@ import './App.css';
 
 import Scoreboard from './Scoreboard';
 import BallByBall from './BallByBall.js';
-import AddEvent from './AddEvent.js';
+import AddOrUpdateEvent from './AddEvent.js';
 import Scorebook from './Scorebook.js';
 
 import { initialEvents } from './stubEventData.js';
@@ -33,6 +33,13 @@ function App() {
     })
   }
 
+  function handleEditEvent(event) {
+    eventDispatch({
+      type: 'editevent',
+      event: event
+    })
+  }
+
   function handleChangePlayer(player) {
     playerDispatch({
       type: 'editplayer',
@@ -43,28 +50,25 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        Cricket App
+        Cricket Scorer App
       </header>
-      <EventsContext.Provider value={events}>
-        <PlayersContext.Provider value={players}>
-          <AddEvent 
-            onAddEvent={handleAddEvent}
-            players={players}
-          />
-          <Scorebook 
-            players={players} 
-            onChangePlayer={handleChangePlayer} 
-          />
-          <Scoreboard 
-            events={events}
-            players={players} 
-          />
-          <BallByBall 
-            events={events}
-            players={players} 
-          />
-        </PlayersContext.Provider>
-      </EventsContext.Provider>
+      <AddOrUpdateEvent 
+        onAddEvent={handleAddEvent}
+        onEditEvent={handleEditEvent}
+        players={players}
+      />
+      <Scorebook 
+        players={players} 
+        onChangePlayer={handleChangePlayer} 
+      />
+      <Scoreboard 
+        events={events}
+        players={players} 
+      />
+      <BallByBall 
+        events={events}
+        players={players} 
+      />
     </div>
   );
 

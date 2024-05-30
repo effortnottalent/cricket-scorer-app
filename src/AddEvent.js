@@ -5,7 +5,9 @@ import {
     wicketScoredData
 } from './eventData';
 import { fieldPositionsList } from './FieldPositions';
-import { PlayersContext } from './App';
+import { 
+    PlayersContext 
+} from './App';
 import {
     formatSummary,
     getOffStrikeBatterId,
@@ -18,13 +20,13 @@ const defaultEvent = {
     notes: ''
 };
 
-export default function AddEvent({ onAddEvent }) {
-    const [ event, setEvent ] = useState({ ...defaultEvent });
+export default function AddOrUpdateEvent({ onAddEvent, onEditEvent, eventToEdit }) {
+    const [ event, setEvent ] = useState({ ...(eventToEdit ?? defaultEvent) });
     const players = useContext(PlayersContext);
 
     return (
         <div className='addevent'>
-            <h1>Add event</h1>
+            <h1>{eventToEdit ? 'Edit' : 'Add'} event</h1>
             <div className='addevent-form'>
                 <fieldset className='runs'>
                     <legend>Runs scored</legend>
