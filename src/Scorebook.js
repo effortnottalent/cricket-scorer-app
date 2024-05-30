@@ -32,9 +32,12 @@ export default function Scorebook({ players, onChangePlayer, events }) {
             <h1>Scorebook</h1>
             <div className='batters'>
                 <h2>Batters</h2>
-                <div class='batter-rows'>
+                <div className='batter-rows'>
                     {players.filter(player => player.type === 'batter').map(player => 
-                        <div className='batter-row'>
+                        <div 
+                            key={'batter' + player.id} 
+                            className='batter-row'
+                        >
                             <PlayerNameEntry
                                 player={player}
                                 type='batter'
@@ -56,9 +59,12 @@ export default function Scorebook({ players, onChangePlayer, events }) {
             </div>
             <div className='bowlers'>
                 <h2>Bowlers</h2>
-                <div class='bowler-rows'>
+                <div className='bowler-rows'>
                     {players.filter(player => player.type === 'bowler').map(player => 
-                        <div className='bowler-row'>
+                        <div 
+                            key={'bowler' + player.id} 
+                            className='bowler-row'
+                        >
                             <PlayerNameEntry
                                 player={player}
                                 type='bowler'
@@ -112,7 +118,10 @@ function OverByOverSummary({ events }) {
             {eventsByOver.map((over, i) => {
                 const ballsUpToOver = eventsByOver.slice(0, i + 1).flat();
                 return (
-                    <div className='overs-summary-entry'>
+                    <div 
+                        key={'overs-summary-' + i}
+                        className='overs-summary-entry'
+                    >
                         <div className='over-summary-over-value'>
                             {over[0].over + 1}
                         </div>
@@ -145,7 +154,10 @@ function WicketByWicketSummary({ events }) {
             </div>
             {[...Array(calculateWickets(events))].map((_, i) => {
                 return (
-                    <div className='wickets-summary-entry'>
+                    <div 
+                        key={'overs-summary-' + i}
+                        className='wickets-summary-entry'
+                    >
                         <div className='wicket-summary-wicket-value'>
                             {i + 1}
                         </div>
@@ -175,7 +187,7 @@ function ScoreTicker({ events }) {
     const tickerLength = 420;
     let score = 0;
     return (
-        <div class='ticker-score-section'>
+        <div className='ticker-score-section'>
             {events.map(event => {
                 const oldScore = score;
                 score += event.runs ?? 0;
@@ -190,11 +202,16 @@ function ScoreTicker({ events }) {
                     else if(i === 0) divClassName = 'strike-start';
                     else if(i === cumulScore - 1) divClassName = 'strike-end';
                     else divClassName = 'strike';
-                    return (<div className={divClassName}>{i + oldScore + 1}</div>)
+                    return (<div 
+                        key={'ticker-' + i}
+                        className={divClassName}
+                    >
+                        {i + oldScore + 1}
+                    </div>)
                 })
             })}
             {[...Array(tickerLength - score).keys()].map(i =>
-                <div>{i + score + 1}</div>
+                <div key={'ticker-' + i}>{i + score + 1}</div>
              )}
         </div>
     )
@@ -203,7 +220,7 @@ function ScoreTicker({ events }) {
 function ExtrasSummary({ events }) {
     const extrasBreakdown = calculateExtrasBreakdown(events);
     return (
-        <div class='extras-rows'>
+        <div className='extras-rows'>
             <div className='wides'>
                 <div className='wides-label'>Wides</div>
                 <div className='wides-value'>{extrasBreakdown.wides}</div>
@@ -297,8 +314,9 @@ function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
 function BatterLog({ events }) {
     return (
         <div className='batter-log'>
-            {events.map(event => 
+            {events.map((event, index) => 
                 <BallLogEntry
+                    key={'ball-log-' + index}
                     event={event}
                     isBatter={true}
                 />)}
@@ -312,7 +330,10 @@ function BowlerLog({ events }) {
     return (
         <div className='bowler-log'>
             {eventsByOver.map((overEvents, index) => 
-                <div className='bowler-over'>
+                <div
+                    key={'bowler-' + index} 
+                    className='bowler-over'
+                >
                     <OverLogEntry
                         overEvents={overEvents}
                         index={index}
@@ -329,8 +350,9 @@ function BowlerLog({ events }) {
 
 const OverLogEntry = ({overEvents, index}) => (
     <div key={'over-' + index} className='bowler-over-detail'>
-        {overEvents.map((ballEvents) => 
+        {overEvents.map((ballEvents, ballIndex) => 
             <BallLogEntry
+                key={'ball-log-' + index + '-' + ballIndex}
                 event={ballEvents}
                 overLength={overEvents.length}
                 isBatter={false}
@@ -374,15 +396,15 @@ const WicketSpan = ({runs, bowler}) => (
 const BatterOutGlyph = () => (
     <GlyphContainer>
         <svg viewBox="0 0 96 96">
-            <path d="M12,12L48,48L12,84" fill="none" stroke="#000" stroke-width="6"/>
-            <path d="M48,12L84,48L48,84" fill="none" stroke="#000" stroke-width="6"/>
+            <path d="M12,12L48,48L12,84" fill="none" stroke="#000" strokeWidth="6"/>
+            <path d="M48,12L84,48L48,84" fill="none" stroke="#000" strokeWidth="6"/>
         </svg>
     </GlyphContainer>
 );
 
 const RunDotGlyph = ({radius, point}) => (
     <ellipse rx={radius} ry={radius}
-        transform={'translate(' + point.x + ' ' + point.y + ')'} stroke-width="0"
+        transform={'translate(' + point.x + ' ' + point.y + ')'} strokeWidth="0"
     />
 );
 
@@ -400,6 +422,7 @@ const WideGlyph = ({runs, wicketType}) => (
             <path d="M48,9v80" transform="translate(0-1)" fill="none" stroke="#000" strokeWidth="6"/>
             {[...Array(runs)].map((_, i) => 
                 <RunDotGlyph
+                    key={'run-dot-' + i}
                     radius={8}
                     point={runDotWidePoints[i]}
                 />
@@ -446,6 +469,7 @@ const ByeGlyph = ({runs, isLeg, isRunOut}) => (
                 <path d="M8,88l40-80l40,80h-80Z" fill="none" stroke="#000" strokeWidth="6"/>
                 {!isRunOut && [...Array(runs)].map((_, i) => 
                     <RunDotGlyph
+                        key={'run-dot-' + i}
                         radius={6}
                         point={runDotByePoints[runDotByeSetPoints[runs - 1][i]]}
                     />
@@ -466,6 +490,7 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
             <ellipse rx="40" ry="40" transform="translate(48 48)" fill="none" stroke="#000" strokeWidth="6"/>
             {!isHit && !isRunOut && [...Array(runs)].map((_, i) => 
                     <RunDotGlyph
+                        key={'run-dot-' + i}
                         radius={6}
                         point={runDotNoBallPoints[runDotByeSetPoints[runs - 1][i]]}
                     />

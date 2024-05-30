@@ -20,12 +20,18 @@ export default function BallByBall({ events, players }) {
                 <div className='bbb-runs'>Runs</div>
                 <div className='bbb-wickets'>Wkts</div>
             </div>
-            {groupEventsByOver(enrichedEvents).map(overEvents => 
-                <div className="bbb-row">
+            {groupEventsByOver(enrichedEvents).map((overEvents, index) => 
+                <div 
+                    key={'bbb-row-' + index}
+                    className="bbb-row"
+                >
                     <div className='bbb-over'>{overEvents[0].over + 1}</div>
                         <div className='bbb-balls'>
-                        {overEvents.map(event => 
-                                <div className="bbb-ball">
+                        {overEvents.map((event, ballIndex) => 
+                                <div
+                                    key={'bbb-ball-' + ballIndex} 
+                                    className="bbb-ball"
+                                >
                                     <div className='bbb-ball-number'>{event.ball + 1}</div>
                                     <div className='bbb-bowler'>
                                         {players[event.onBowlBowlerId]?.name ??
