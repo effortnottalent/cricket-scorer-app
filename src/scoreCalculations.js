@@ -130,9 +130,7 @@ export function calculatePartnershipAtWicket(events, wicket) {
 export function getOverNumberValue(events) {
     const enrichedEvents = enrichEvents(events);
     const lastEvent = enrichedEvents[enrichedEvents.length - 1];
-    return events[events.length -1].overCalled ? 
-        (lastEvent.over + 1) + '.0' :
-        lastEvent.over + '.' + (lastEvent.ball + 1);
+    return lastEvent.over + '.' + (lastEvent.ball + 1);
 }
 
 export const groupEventsByOver = (events) => events.reduce((acc, event) => {

@@ -1,5 +1,6 @@
 import { 
-    useState
+    useState,
+    useContext
 } from 'react';
 import { 
     getOnBowlBowlerId,
@@ -15,18 +16,23 @@ import {
 } from './scoreCalculations.js';
 import { enrichEvents } from './scoreCalculations.js';
 import { formatLongSummary } from './BallByBall.js';
+import { 
+    EventsContext, 
+    PlayersContext 
+} from './App.js';
 
 const bowlerColours = [
-    '#22228a',
-    '#215854',
-    '#5b661f',
-    '#581d12',
-    '#44606b',
-    '#3a3a3b'
+    'darkblue',
+    'darkgreen',
+    'darkred',
+    'darkpurple',
+    'darkbrown',
+    'green'
 ];
 
-export default function Scorebook({ players, onChangePlayer, events }) {
-    const enrichedEvents = enrichEvents(events);
+export default function Scorebook({ onChangePlayer }) {
+    const events = enrichEvents(useContext(EventsContext));
+    const players = useContext(PlayersContext);
     return (
         <div className='scorebook'>
             <h1>Scorebook</h1>
@@ -46,11 +52,11 @@ export default function Scorebook({ players, onChangePlayer, events }) {
                                 isOnStrike={player.id === getOnStrikeBatterId()}
                             />
                             <BatterLog 
-                                events={enrichedEvents.filter(event => 
+                                events={events.filter(event => 
                                     event.onStrikeBatterId === player.id)} 
                             />
                             <BatterSummary
-                                events={enrichedEvents.filter(event => 
+                                events={events.filter(event => 
                                     event.onStrikeBatterId === player.id)} 
                             />
                         </div>
@@ -73,7 +79,7 @@ export default function Scorebook({ players, onChangePlayer, events }) {
                                 isOnStrike={player.id === getOnBowlBowlerId()}
                             />
                             <BowlerLog 
-                                events={enrichedEvents.filter(event => 
+                                events={events.filter(event => 
                                     event.onBowlBowlerId === player.id)} 
                             />
                         </div>
@@ -87,25 +93,26 @@ export default function Scorebook({ players, onChangePlayer, events }) {
             </div>
             <div className='extras'>
                 <h2>Extras</h2>
-                <ExtrasSummary events={events} />
+                <ExtrasSummary />
             </div>
             <div className='score-ticker'>
                 <h2>Score Ticker</h2>
-                <ScoreTicker events={enrichedEvents} />
+                <ScoreTicker />
             </div>
             <div className='overs-summary'>
                 <h2>Over-by-over Summary</h2>
-                <OverByOverSummary events={enrichedEvents} />
+                <OverByOverSummary />
             </div>
             <div className='wickets-summary'>
                 <h2>Wicket-by-wicket Summary</h2>
-                <WicketByWicketSummary events={enrichedEvents} />
+                <WicketByWicketSummary />
             </div>
         </div>
     );
 }
 
-function OverByOverSummary({ events }) {
+function OverByOverSummary() {
+    const events = enrichEvents(useContext(EventsContext));
     const eventsByOver = groupEventsByOver(events);
     return (
         <div className='overs-summary-row'>
@@ -141,7 +148,8 @@ function OverByOverSummary({ events }) {
     );
 }
 
-function WicketByWicketSummary({ events }) {
+function WicketByWicketSummary() {
+    const events = enrichEvents(useContext(EventsContext));
     const wicketEvents = events.filter(event => event.wicket);
     return (
         <div className='wickets-summary-row'>
@@ -183,7 +191,9 @@ function WicketByWicketSummary({ events }) {
     );
 }
 
-function ScoreTicker({ events }) {
+function ScoreTicker() {
+    const events = enrichEvents(useContext(EventsContext));
+    const players = useContext(PlayersContext);
     const tickerLength = 420;
     let score = 0;
     return (
@@ -205,6 +215,8 @@ function ScoreTicker({ events }) {
                     return (<div 
                         key={'ticker-' + i}
                         className={divClassName}
+                        style={{color: bowlerColours[event.onBowlBowlerId]}}
+                        title={formatLongSummary(event, players)}
                     >
                         {i + oldScore + 1}
                     </div>)
@@ -217,7 +229,8 @@ function ScoreTicker({ events }) {
     )
 }
 
-function ExtrasSummary({ events }) {
+function ExtrasSummary() {
+    const events = enrichEvents(useContext(EventsContext));
     const extrasBreakdown = calculateExtrasBreakdown(events);
     return (
         <div className='extras-rows'>
@@ -241,7 +254,8 @@ function ExtrasSummary({ events }) {
     )
 }
 
-function BatterSummary({ events }) {
+function BatterSummary() {
+    const events = enrichEvents(useContext(EventsContext));
     return (
         <div className='batter-summary'>
             <div className='batter-wicket'>
@@ -372,6 +386,7 @@ const GlyphContainer = ({children}) => (<span className='bowler-glyph'>{children
 
 const BallContainer = ({overLength, isBatter, children, event}) => (
     <div 
+        title={formatLongSummary(event, useContext(PlayersContext))}
         className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
         {children}
     </div>);

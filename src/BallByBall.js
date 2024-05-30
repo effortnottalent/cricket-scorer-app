@@ -1,3 +1,6 @@
+import {
+    useContext
+} from 'react';
 import { 
     calculateWickets,
     enrichEvents,
@@ -5,9 +8,14 @@ import {
     calculateRunsIncludingExtras
 } from './scoreCalculations.js';
 import { fieldPositionsList } from './FieldPositions.js';
+import { 
+    EventsContext, 
+    PlayersContext 
+} from './App.js';
 
-export default function BallByBall({ events, players }) {
-    const enrichedEvents = enrichEvents(events);
+export default function BallByBall() {
+    const events = enrichEvents(useContext(EventsContext));
+    const players = useContext(PlayersContext);
     return (
         <div className='ball-by-ball'>
             <h1>Ball-by-ball</h1>
@@ -20,7 +28,7 @@ export default function BallByBall({ events, players }) {
                 <div className='bbb-runs'>Runs</div>
                 <div className='bbb-wickets'>Wkts</div>
             </div>
-            {groupEventsByOver(enrichedEvents).map((overEvents, index) => 
+            {groupEventsByOver(events).map((overEvents, index) => 
                 <div 
                     key={'bbb-row-' + index}
                     className="bbb-row"
@@ -34,20 +42,22 @@ export default function BallByBall({ events, players }) {
                                 >
                                     <div className='bbb-ball-number'>{event.ball + 1}</div>
                                     <div className='bbb-bowler'>
-                                        {players[event.onBowlBowlerId]?.name ??
+                                        {players.filter(player => player.type === 'bowler')
+                                            [event.onBowlBowlerId]?.name ??
                                             'Player ' + (event.onBowlBowlerId + 1)}
                                     </div>
                                     <div className='bbb-batter'>
-                                        {players[event.onStrikeBatterId]?.name ??
+                                        {players.filter(player => player.type === 'batter')
+                                            [event.onStrikeBatterId]?.name ??
                                             'Player ' + (event.onStrikeBatterId + 1)}
                                     </div>
-                                    <div className='bbb-summary'>{formatSummary(event)}</div>
+                                    <div className='bbb-summary'>{formatSummary(event, players)}</div>
                                     <div className='bbb-runs'>
-                                        {calculateRunsIncludingExtras(enrichedEvents
+                                        {calculateRunsIncludingExtras(events
                                             .filter(event2 => event2.id <= event.id))}
                                     </div>
                                     <div className='bbb-wickets'>
-                                        {calculateWickets(enrichedEvents
+                                        {calculateWickets(events
                                             .filter(event2 => event2.id <= event.id))}
                                     </div>
                                 </div>
@@ -60,14 +70,16 @@ export default function BallByBall({ events, players }) {
 }
 
 export function formatLongSummary(event, players) {
-    return 'Ball ' + event.over + '.' + event.ball + ': ' +
-        'Batter ' + players[event.onStrikeBatterId]?.name ??
-        'Player ' + (event.onStrikeBatterId + 1) + ' facing bowler ' + 
-        players[event.onBowlBowlerId]?.name ?? 'Player ' + 
-        (event.onBowlBowlerId + 1) + ', ' + formatSummary(event);
+    return 'Ball ' + (event.over + 1) + '.' + event.ball + ': ' +
+        'Batter ' + (players.filter(player => player.type === 'batter')
+            [event.onStrikeBatterId]?.name ??
+            'Player ' + (event.onStrikeBatterId + 1)) + ' facing bowler ' + 
+        (players.filter(player => player.type === 'bowler')
+            [event.onBowlBowlerId]?.name ?? 'Player ' + 
+        (event.onBowlBowlerId + 1)) + ', ' + formatSummary(event, players);
 }
 
-function formatSummary(event) {
+function formatSummary(event, players) {
     let wicketDetail = event.wicket?.type;
     if(!['bowled', 'stumped', 'lbw', 'retired'].includes(wicketDetail)) {
         if(event.fieldPositionId === 1) {
@@ -76,13 +88,17 @@ function formatSummary(event) {
             wicketDetail += ' behind';
         }
     }
-    const wicketSummary = event.wicket ? 'batter ' + 
-        (event.wicket.batterOutId ?? event.onStrikeBatterId) + ' ' + 
-        wicketDetail : '';
+    const batterOut = (event.wicket?.batterOutId ?? event.onStrikeBatterId);
+    const wicketSummary = event.wicket ? (batterOut != event.onStrikeBatterId ? 
+        'batter ' + (players.filter(
+            player => player.type === 'batter')[batterOut]?.name ??
+        'Player ' + (batterOut + 1)) + ' ' : '') + wicketDetail : '';
     const runsSummary = event.runs ? 'went to ' + 
-        fieldPositionsList[event.fieldPositionId ?? 0].label + ',  ran ' 
+        fieldPositionsList[event.fieldPositionId ?? 0].label + ', ran ' 
         + event.runs : '';
-    return [ event.extra, runsSummary, wicketSummary, event.notes ]
+    const summary = [ event.extra, runsSummary, wicketSummary, event.notes ]
         .filter(i => (i ?? '') !== '')
         .join(', ');
+    if(summary === '') return 'dot ball';
+    return summary;
 }
