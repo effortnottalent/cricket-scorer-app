@@ -9,10 +9,12 @@ import {
 } from './eventData.js';
 import { fieldPositionsList } from './FieldPositions.js';
 import { 
+    EventsContext,
     EventsDispatchContext,
     PlayersContext 
 } from './Contexts.js';
 import {
+    enrichEvents,
     formatSummary,
     getOffStrikeBatterId,
     getOnBowlBowlerId,
@@ -25,6 +27,7 @@ export default function CrupdateEvent({ eventToEdit }) {
     const [ event, setEvent ] = useState(eventToEdit);
     const players = useContext(PlayersContext);
     const eventsDispatch = useContext(EventsDispatchContext);
+    const events = enrichEvents(useContext(EventsContext));
 
     const onStrikeBatterId = isEmpty(eventToEdit) ? getOnStrikeBatterId() : 
         event.onStrikeBatterId;
@@ -141,7 +144,7 @@ export default function CrupdateEvent({ eventToEdit }) {
                     )}
                 </fieldset>
             </div>
-            <fieldset className='notes'>
+            <fieldset className='utility'>
                 <label htmlFor='notes'>notes</label>
                 <input 
                     type='text' 
@@ -153,8 +156,6 @@ export default function CrupdateEvent({ eventToEdit }) {
                         notes: e.target.value
                     })}
                 ></input>
-            </fieldset>
-            <fieldset className='bowler'>
                 <label htmlFor='newBowlerId'>Change of bowler</label>
                 <select
                     name='newBowlerId'
@@ -172,6 +173,17 @@ export default function CrupdateEvent({ eventToEdit }) {
                             >{player.name ?? 'Player ' + (index + 1) }</option>
                     ))}
                 </select>
+                {events[events.length - 1].ball >= 5 && 
+                    <button
+                        className={event.extraBall ? 'selected' : ''}
+                        onClick={(e) => setEvent({
+                            ...event,
+                            extraBall: !event.extraBall
+                        })}
+                    >
+                        Extra ball
+                    </button>
+                }
             </fieldset>
             {Object.keys(event).length !== 0 &&
                 <fieldset className='confirm-ball'>
