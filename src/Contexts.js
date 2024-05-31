@@ -48,6 +48,10 @@ function eventsReducer(events, action) {
                 ...events.filter(e => e.id !== action.event.id),
                 action.event
             ];
+        case 'delete':
+            return [
+                ...events.filter(e => e.id !== action.event.id)
+            ];
         default:
           throw Error('Unknown action: ' + action.type);
     }

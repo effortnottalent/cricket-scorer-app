@@ -33,18 +33,10 @@ export default function CrupdateEvent({ eventToEdit }) {
     const onBowlBowlerId = isEmpty(eventToEdit) ? getOnBowlBowlerId() : 
         event.onBowlBowlerId;
 
-    const handleAddEvent = (event) => {
-        eventsDispatch({
-            type: 'add',
-            event
-        })
-    }
-    const handleEditEvent = (event) => {
-        eventsDispatch({
-            type: 'edit',
-            event
-        })
-    }
+    const handleEvent = (event, type) => eventsDispatch({ type, event });
+    const handleAddEvent = (event) => handleEvent(event, 'add');
+    const handleEditEvent = (event) => handleEvent(event, 'edit');
+    const handleDeleteEvent = (event) => handleEvent(event, 'delete');
 
     return (
         <div className='addevent'>
@@ -162,42 +154,28 @@ export default function CrupdateEvent({ eventToEdit }) {
                     })}
                 ></input>
             </fieldset>
-            <fieldset className='over'>
-                <legend>Over called</legend>
-                <button 
-                    className={event.overCalled ? 'selected' : ''}
-                    onClick={(e) => setEvent({
+            <fieldset className='bowler'>
+                <label htmlFor='newBowlerId'>Change of bowler</label>
+                <select
+                    name='newBowlerId'
+                    id='newBowlerId'
+                    onChange={(e) => setEvent({
                         ...event,
-                        overCalled: true
+                        newBowlerId: e.target.value
                     })}
                 >
-                    Over called
-                </button>
-                {event.overCalled && (
-                    <>
-                        <label htmlFor='newBowlerId'>Change of bowler</label>
-                        <select
-                            name='newBowlerId'
-                            id='newBowlerId'
-                            onChange={(e) => setEvent({
-                                ...event,
-                                newBowlerId: e.target.value
-                            })}
-                        >
-                            {players.filter(player => player.type === 'bowler')
-                                .map((player, index) => (
-                                    <option 
-                                        key={index} 
-                                        value={index}
-                                    >{player.name ?? 'Player ' + (index + 1) }</option>
-                            ))}
-                        </select>
-                    </>
-                )}
+                    {players.filter(player => player.type === 'bowler')
+                        .map((player, index) => (
+                            <option 
+                                key={index} 
+                                value={index}
+                            >{player.name ?? 'Player ' + (index + 1) }</option>
+                    ))}
+                </select>
             </fieldset>
             {Object.keys(event).length !== 0 &&
                 <fieldset className='confirm-ball'>
-                    {Object.keys(eventToEdit).length !== 0 &&
+                    {!isEmpty(eventToEdit) &&
                         <p>Ball {event.over + 1}.{event.ball + 1}</p>
                     }
                     <p>Batter {onStrikeBatterId + 1} - {getPlayerName(players, 
@@ -216,6 +194,16 @@ export default function CrupdateEvent({ eventToEdit }) {
                     >
                         Reset
                     </button>
+                    {!isEmpty(eventToEdit) &&
+                        <button onClick={() => {
+                            handleDeleteEvent(event);
+                            setEvent(isEmpty(eventToEdit) ? {} : eventToEdit);
+                        }}
+                        >
+                            Delete ball
+                        </button>
+                    }
+
                 </fieldset>
             }
         </div>

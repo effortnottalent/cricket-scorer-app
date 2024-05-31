@@ -32,9 +32,6 @@ export const initialEvents = [{
     extra: 'leg bye',
     fieldPositionId: 11,
   }, {
-    id: 7,
-    overCalled: true
-  }, {
     id: 8,
     runs: 1,
     fieldPositionId: 21
@@ -75,9 +72,6 @@ export const initialEvents = [{
     id: 17,
     runs: 0
   }, {
-    id: 18,
-    overCalled: true
-  }, {
     id: 19,
     runs: 0
   }, {
@@ -97,10 +91,7 @@ export const initialEvents = [{
     id: 24,
     runs: 0
   }, {
-    id: 25,
-    overCalled: true,
-    newBowlerId: 2
-  }, {
+    newBowlerId: 2,
     id: 26,
     runs: 0
   }, {
@@ -118,9 +109,6 @@ export const initialEvents = [{
   }, {
     id: 31,
     runs: 0
-  }, {
-    id: 32,
-    overCalled: true
   }, {
     id: 33,
     runs: 0
@@ -151,8 +139,5 @@ export const initialEvents = [{
     runs: 1,
     wicket: 'run out',
     fieldPositionId: 8,
-  }, {
-    id: 40,
-    overCalled: true
   }];
   

@@ -3,18 +3,24 @@ import { fieldPositionsList } from './FieldPositions.js';
 let onStrikeBatterId = 0;
 let offStrikeBatterId = 1;
 let onBowlBowlerId = 0;
-let overCalled = false;
 
 export function enrichEvents(events) {
     onStrikeBatterId = 0;
     onBowlBowlerId = 0;
-    overCalled = false;
     offStrikeBatterId = 1;
     let offBowlBowlerId = 1;
     let ball = 0;
     let over = 0;
 
     return events.slice().sort((a, b) => a.id - b.id).map(event => {
+
+        if(event.newBowlerId) {
+            if(ball === 0) {
+                onBowlBowlerId = event.newBowlerId;
+            } else {
+                offBowlBowlerId = event.newBowlerId;
+            }
+        }
 
         const enrichedEvent = {
             ...event,
@@ -24,8 +30,6 @@ export function enrichEvents(events) {
             over,
             ball
         };
-
-        overCalled = event.overCalled ?? false;
 
         if(event.wicket) {
             const nextBatterId = event.wicket.nextBatterId ?? 
@@ -38,21 +42,16 @@ export function enrichEvents(events) {
         if((event.runs ?? 0) % 2 !== 0) {
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
         } 
-        if(event.newBowlerId) {
-            offBowlBowlerId = event.newBowlerId;
+        if(!event.extra ||
+                event.extra === 'bye' ||
+                event.extra === 'leg bye') {
+            ball++;
         }
-        if(event.overCalled) {
+        if(ball === 6 && !event.extraBall) {
             over++;
             ball = 0;
             [onBowlBowlerId, offBowlBowlerId] = [offBowlBowlerId, onBowlBowlerId];
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
-            return null;
-        }
-        if(!event.overCalled && (
-                !event.extra ||
-                event.extra === 'bye' ||
-                event.extra === 'leg bye')) {
-            ball++;
         }
         return enrichedEvent;
     }).filter(event => event != null);
@@ -68,10 +67,6 @@ export function getOffStrikeBatterId(event) {
 
 export function getOnBowlBowlerId() {
     return onBowlBowlerId;
-}
-
-export function isOverCalled() {
-    return overCalled;
 }
 
 export function isEmpty(object) {
@@ -150,7 +145,8 @@ export function calculatePartnershipAtWicket(events, wicket) {
 }
 
 export const groupEventsByOver = (events) => events.reduce((acc, event) => {
-    event.ball === 0 ? acc.push([ event ]) : acc[acc.length - 1].push(event);
+    if(!acc[event.over]) acc[event.over] = [];
+    acc[event.over].push(event);
     return acc;
 }, []);
 

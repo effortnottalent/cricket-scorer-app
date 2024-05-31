@@ -10,8 +10,7 @@ import {
     calculateWickets,
     calculateRunsNotIncludingExtras,
     calculatePartnershipAtWicket,
-    getPlayerName,
-    isOverCalled
+    getPlayerName
 } from './calculations.js';
 import { 
     EventsContext, 
@@ -25,8 +24,7 @@ export default function Scoreboard() {
     const runs = calculateRunsIncludingExtras(events);
     const wickets = calculateWickets(events);
     const lastEvent = events[events.length - 1];
-    const overs = (lastEvent.over + (isOverCalled() ? 1 : 0)) + '.' + 
-        (isOverCalled ? 0 : (lastEvent.ball + 1));
+    const overs = lastEvent.over + '.' + lastEvent.ball;
     const extras = calculateExtrasTotal(events);
     const batter1 = {
         id: lastEvent.onStrikeBatterId,
@@ -41,10 +39,10 @@ export default function Scoreboard() {
     const wicketEvents = events.filter(event => 
         event.wicket);
     const lastWicketEvent = wicketEvents[wicketEvents.length - 1];
-    const lastWicketBatterId = lastWicketEvent.batterOut ?? 
-        lastWicketEvent.onStrikeBatterId;
+    const lastWicketBatterId = lastWicketEvent?.batterOut ?? 
+        lastWicketEvent?.onStrikeBatterId;
     const lastWicketRuns = calculateRunsIncludingExtras(events
-        .filter(event => event.id <= lastWicketEvent.id));
+        .filter(event => event.id <= (lastWicketEvent?.id ?? Number.MAX_SAFE_INTEGER)));
     const lastWicketBatterRuns = calculateRunsNotIncludingExtras(events
         .filter(event => event.onStrikeBatterId === lastWicketBatterId));
     const partnership = calculatePartnershipAtWicket(events, calculateWickets(events));
