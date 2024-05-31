@@ -1,38 +1,60 @@
-import { useContext, useState } from 'react';
+import { 
+    useContext, 
+    useState 
+} from 'react';
 import { 
     runsScoredData,
     extrasScoredData,
     wicketScoredData
-} from './eventData';
-import { fieldPositionsList } from './FieldPositions';
+} from './eventData.js';
+import { fieldPositionsList } from './FieldPositions.js';
 import { 
+    EventsDispatchContext,
     PlayersContext 
-} from './App';
+} from './Contexts.js';
 import {
     formatSummary,
     getOffStrikeBatterId,
     getOnBowlBowlerId,
     getOnStrikeBatterId,
-    getPlayerName
+    getPlayerName,
+    isEmpty
 } from './calculations.js';
 
-const defaultEvent = {
-    notes: ''
-};
-
-export default function AddOrUpdateEvent({ onAddEvent, onEditEvent, eventToEdit }) {
-    const [ event, setEvent ] = useState({ ...(eventToEdit ?? defaultEvent) });
+export default function CrupdateEvent({ eventToEdit }) {
+    const [ event, setEvent ] = useState(eventToEdit);
     const players = useContext(PlayersContext);
+    const eventsDispatch = useContext(EventsDispatchContext);
+
+    const onStrikeBatterId = isEmpty(eventToEdit) ? getOnStrikeBatterId() : 
+        event.onStrikeBatterId;
+    const offStrikeBatterId = isEmpty(eventToEdit) ? getOffStrikeBatterId() : 
+        event.onStrikeBatterId;
+    const onBowlBowlerId = isEmpty(eventToEdit) ? getOnBowlBowlerId() : 
+        event.onBowlBowlerId;
+
+    const handleAddEvent = (event) => {
+        eventsDispatch({
+            type: 'add',
+            event
+        })
+    }
+    const handleEditEvent = (event) => {
+        eventsDispatch({
+            type: 'edit',
+            event
+        })
+    }
 
     return (
         <div className='addevent'>
-            <h1>{eventToEdit ? 'Edit' : 'Add'} event</h1>
+            <h1>{ isEmpty(eventToEdit) ? 'Add' : 'Edit'} Ball</h1>
             <div className='addevent-form'>
                 <fieldset className='runs'>
                     <legend>Runs scored</legend>
                     {runsScoredData.map((data, index) => {
                         const selected = data.runs === event.runs && 
-                            (event.boundary === (data.boundary ?? false));
+                            ((event.boundary ?? false) === (data.boundary ?? false));
                         return <button 
                             className={selected ? 'selected' : ''}
                             key={index}
@@ -86,6 +108,7 @@ export default function AddOrUpdateEvent({ onAddEvent, onEditEvent, eventToEdit 
                             <select 
                                 name='fieldPositionId' 
                                 id='fieldPositionId'
+                                value={event.fieldPositionId}
                                 onChange={(e) => setEvent({
                                     ...event,
                                     fieldPositionId: e.target.value
@@ -111,7 +134,7 @@ export default function AddOrUpdateEvent({ onAddEvent, onEditEvent, eventToEdit 
                                     batterOutId: e.target.value
                                 })}
                             >
-                                {[getOnStrikeBatterId(), getOffStrikeBatterId()]
+                                {[onStrikeBatterId, offStrikeBatterId]
                                     .map((batterId, index) => 
                                         (<option 
                                             key={index} 
@@ -132,7 +155,7 @@ export default function AddOrUpdateEvent({ onAddEvent, onEditEvent, eventToEdit 
                     type='text' 
                     name='notes' 
                     id='notes' 
-                    value={event.notes} 
+                    value={event.notes ?? ''} 
                     onChange={(e) => setEvent({
                         ...event,
                         notes: e.target.value
@@ -172,23 +195,27 @@ export default function AddOrUpdateEvent({ onAddEvent, onEditEvent, eventToEdit 
                     </>
                 )}
             </fieldset>
-            {  !(event.runs === undefined &&
-                event.wicket === undefined &&
-                event.notes === '' &&
-                event.extras === undefined) &&
-                
+            {Object.keys(event).length !== 0 &&
                 <fieldset className='confirm-ball'>
-                    <p>Batter {getOnStrikeBatterId() + 1} - {getPlayerName(players, 
-                            getOnStrikeBatterId(), 'batter')} - on strike, facing 
-                        bowler {getOnBowlBowlerId() + 1} - {getPlayerName(players, 
-                            getOnBowlBowlerId(), 'bowler')}</p>
-                    <p>{formatSummary(event)}</p>
+                    {Object.keys(eventToEdit).length !== 0 &&
+                        <p>Ball {event.over + 1}.{event.ball + 1}</p>
+                    }
+                    <p>Batter {onStrikeBatterId + 1} - {getPlayerName(players, 
+                            onStrikeBatterId, 'batter')} - on strike, facing 
+                        bowler {onBowlBowlerId + 1} - {getPlayerName(players, 
+                            onBowlBowlerId, 'bowler')}</p>
+                    <p>{formatSummary(event, players)}</p>
                     <legend>Confirm ball</legend>
                     <button onClick={() => {
-                        onAddEvent(event); 
-                        setEvent({ ...defaultEvent });
+                        event.id ? handleEditEvent(event) : handleAddEvent(event);
+                        setEvent(isEmpty(eventToEdit) ? {} : event);
                     } }>Confirm</button>
-                    <button onClick={() => setEvent({ ...defaultEvent })}>Clear</button>
+                    <button onClick={() => {
+                        setEvent(isEmpty(eventToEdit) ? {} : eventToEdit);
+                    }}
+                    >
+                        Reset
+                    </button>
                 </fieldset>
             }
         </div>

@@ -6,17 +6,17 @@ import {
     getOnBowlBowlerId,
     getOnStrikeBatterId,
     calculateRunsIncludingExtras,
-    getOverNumberValue,
     calculateExtrasTotal,
     calculateWickets,
     calculateRunsNotIncludingExtras,
     calculatePartnershipAtWicket,
-    getPlayerName
+    getPlayerName,
+    isOverCalled
 } from './calculations.js';
 import { 
     EventsContext, 
     PlayersContext 
-} from './App.js';
+} from './Contexts.js';
 
 export default function Scoreboard() {
     const events = enrichEvents(useContext(EventsContext));
@@ -25,7 +25,8 @@ export default function Scoreboard() {
     const runs = calculateRunsIncludingExtras(events);
     const wickets = calculateWickets(events);
     const lastEvent = events[events.length - 1];
-    const overs = getOverNumberValue(events);
+    const overs = (lastEvent.over + (isOverCalled() ? 1 : 0)) + '.' + 
+        (isOverCalled ? 0 : (lastEvent.ball + 1));
     const extras = calculateExtrasTotal(events);
     const batter1 = {
         id: lastEvent.onStrikeBatterId,

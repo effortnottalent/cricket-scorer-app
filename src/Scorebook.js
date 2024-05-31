@@ -1,6 +1,8 @@
 import { 
     useState,
-    useContext
+    useContext,
+    useRef,
+    useEffect
 } from 'react';
 import { 
     getOnBowlBowlerId,
@@ -18,21 +20,38 @@ import {
 import { enrichEvents } from './calculations.js';
 import { 
     EventsContext, 
-    PlayersContext 
-} from './App.js';
+    PlayersContext,
+    PlayersDispatchContext
+} from './Contexts.js';
 
 const bowlerColours = [
     'darkblue',
-    'darkgreen',
-    'darkred',
-    'darkpurple',
-    'darkbrown',
-    'green'
+    'green',
+    'red',
+    'purple',
+    'brown',
+    'orange'
 ];
 
-export default function Scorebook({ onChangePlayer }) {
+export default function Scorebook({ onSelectEventToEdit }) {
+
     const events = enrichEvents(useContext(EventsContext));
     const players = useContext(PlayersContext);
+    const playersDispatch = useContext(PlayersDispatchContext);
+
+    const handleEditPlayer = (player) => {
+        playersDispatch({
+            type: 'edit',
+            player
+        });
+    }
+    const handleAddPlayer = (player) => {
+        playersDispatch({
+            type: 'add',
+            player
+        });
+    }
+
     return (
         <div className='scorebook'>
             <h1>Scorebook</h1>
@@ -48,10 +67,11 @@ export default function Scorebook({ onChangePlayer }) {
                                 player={player}
                                 type='batter'
                                 index={player.id}
-                                onChange={onChangePlayer}
+                                onEditPlayer={handleEditPlayer}
                                 isOnStrike={player.id === getOnStrikeBatterId()}
                             />
                             <BatterLog 
+                                onSelectEventToEdit={onSelectEventToEdit}
                                 events={events.filter(event => 
                                     event.onStrikeBatterId === player.id)} 
                             />
@@ -75,20 +95,18 @@ export default function Scorebook({ onChangePlayer }) {
                                 player={player}
                                 type='bowler'
                                 index={player.id}
-                                onChange={onChangePlayer}
+                                onEditPlayer={handleEditPlayer}
                                 isOnStrike={player.id === getOnBowlBowlerId()}
                             />
                             <BowlerLog 
+                                onSelectEventToEdit={onSelectEventToEdit}
                                 events={events.filter(event => 
                                     event.onBowlBowlerId === player.id)} 
                             />
                         </div>
                     )}
                 </div>
-                <button onClick={() => onChangePlayer({
-                        type: 'bowler',
-                        id: players.filter(player => player.type === 'bowler').length
-                    })}
+                <button onClick={() => handleAddPlayer({ type: 'bowler' })}
                 >Add bowler</button>
             </div>
             <div className='extras'>
@@ -285,7 +303,7 @@ function BatterSummary({events}) {
     )
 }
 
-function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
+function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike }) {
     const [isEditing, setIsEditing] = useState(false);
     let playerContent;
     if(isEditing) {
@@ -293,15 +311,17 @@ function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
             <input
                 className={type + '-name-edit'}
                 value={player?.name ?? ''}
-                onChange={(e) => {
-                    onChange({
+                onChange={(e) => 
+                    onEditPlayer({
                         ...player,
                         name: e.target.value,
                         type: type,
                         id: index
-                    });
+                    })
+                }
+                onBlur={(e) => {
+                    setIsEditing(false);
                 }}
-                onBlur={() => setIsEditing(false)}
             />
         );
     } else {
@@ -324,9 +344,27 @@ function PlayerNameEntry({ player, type, index, onChange, isOnStrike }) {
     );
 }
 
-function BatterLog({ events }) {
+function BatterLog({ events, onSelectEventToEdit }) {
+    const clickToEditBallRef = useRef(null);
+
+    useEffect(() => {
+        const currentRef = clickToEditBallRef.current;
+        const handleClick = (event) => {
+            let dataElement = event.target;
+            while(!dataElement.dataset.eventId) dataElement = dataElement.parentElement;
+            onSelectEventToEdit(events.find(e => e.id === Number(dataElement.dataset.eventId)));
+        }
+        currentRef.addEventListener('click', handleClick);
+        return () => {
+            currentRef.removeEventListener('click', handleClick);
+        };
+    }, [onSelectEventToEdit, events]);
+
     return (
-        <div className='batter-log'>
+        <div 
+            ref={clickToEditBallRef} 
+            className='batter-log'
+        >
             {events.map((event, index) => 
                 <BallLogEntry
                     key={'ball-log-' + index}
@@ -337,11 +375,29 @@ function BatterLog({ events }) {
     );
 }
 
-function BowlerLog({ events }) {
+function BowlerLog({ events, onSelectEventToEdit }) {
     const eventsByOver = groupEventsByOver(events);
     const cumulativeOverSummaries = calculateCumulativeOverSummaries(events);
+    const clickToEditBallRef = useRef(null);
+
+    useEffect(() => {
+        const currentRef = clickToEditBallRef.current;
+        const handleClick = (event) => {
+            let dataElement = event.target;
+            while(!dataElement.dataset.eventId) dataElement = dataElement.parentElement;
+            onSelectEventToEdit(events.find(e => e.id === Number(dataElement.dataset.eventId)));
+        }
+        currentRef.addEventListener('click', handleClick);
+        return () => {
+            currentRef.removeEventListener('click', handleClick);
+        };
+    }, [onSelectEventToEdit, events]);
+
     return (
-        <div className='bowler-log'>
+        <div
+            ref={clickToEditBallRef} 
+            className='bowler-log'
+        >
             {eventsByOver.map((overEvents, index) => 
                 <div
                     key={'bowler-' + index} 
@@ -385,6 +441,7 @@ const GlyphContainer = ({children}) => (<span className='bowler-glyph'>{children
 
 const BallContainer = ({overLength, isBatter, children, event}) => (
     <div 
+        data-event-id={event.id}
         title={formatLongSummary(event, useContext(PlayersContext))}
         className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
         {children}

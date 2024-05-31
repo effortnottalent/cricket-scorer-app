@@ -11,7 +11,7 @@ import {
 import { 
     EventsContext, 
     PlayersContext 
-} from './App.js';
+} from './Contexts.js';
 
 export default function BallByBall() {
     const events = enrichEvents(useContext(EventsContext));
