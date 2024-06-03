@@ -12,7 +12,7 @@ import {
     calculatePartnershipAtWicket,
     calculateExtrasBreakdown,
     calculateRunsNotIncludingExtras,
-    calculateBallsFaced,
+    calculateBatterBallsFaced,
     groupEventsByOver,
     calculateCumulativeOverSummaries,
     formatLongSummary
@@ -290,7 +290,7 @@ function BatterSummary({events}) {
             <div className='batter-balls'>
                 <div className='batter-balls-label'>Balls</div>
                 <div className='batter-balls-value'>
-                    {calculateBallsFaced(events)}
+                    {calculateBatterBallsFaced(events)}
                 </div>
             </div>
             <div className='batter-runs'>

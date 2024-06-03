@@ -4,6 +4,8 @@ let onStrikeBatterId = 0;
 let offStrikeBatterId = 1;
 let onBowlBowlerId = 0;
 
+export const RUN_OUT_NO_BATTER_ERROR_MSG = 'On a run-out, the batter out needs to be specified';
+
 export function enrichEvents(events) {
     onStrikeBatterId = 0;
     onBowlBowlerId = 0;
@@ -32,12 +34,17 @@ export function enrichEvents(events) {
         };
 
         if(event.wicket) {
-            const nextBatterId = event.wicket.nextBatterId ?? 
+            if(event.wicket === 'run out' && !event.batterOut)
+                throw Error(RUN_OUT_NO_BATTER_ERROR_MSG);
+            const nextBatterId = event.nextBatterId ?? 
                 Math.max(onStrikeBatterId, offStrikeBatterId) + 1;
             const remainingBatter = [ onStrikeBatterId, offStrikeBatterId ]
-                .filter(batter => batter !== (event.batterOut ?? onStrikeBatterId))[0];
-            [ onStrikeBatterId, offStrikeBatterId ] = event.wicket.battersCrossed ? 
+                .filter(batter => batter !== (event.batterOut ?? 
+                    onStrikeBatterId))[0];
+            [ onStrikeBatterId, offStrikeBatterId ] = (event.batterOut === offStrikeBatterId) ? 
                 [ remainingBatter, nextBatterId ] : [ nextBatterId, remainingBatter ];
+            if(event.battersCrossed) 
+                [ onStrikeBatterId, offStrikeBatterId ] = [ offStrikeBatterId, onStrikeBatterId ];
         }
         if((event.runs ?? 0) % 2 !== 0) {
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
@@ -47,14 +54,14 @@ export function enrichEvents(events) {
                 event.extra === 'leg bye') {
             ball++;
         }
-        if(ball === 6 && !event.extraBall) {
+        if(ball >= 6 && !event.extraBall) {
             over++;
             ball = 0;
             [onBowlBowlerId, offBowlBowlerId] = [offBowlBowlerId, onBowlBowlerId];
             [onStrikeBatterId, offStrikeBatterId] = [offStrikeBatterId, onStrikeBatterId];
         }
         return enrichedEvent;
-    }).filter(event => event != null);
+    });
 }
 
 export function getOnStrikeBatterId() {
@@ -122,7 +129,7 @@ export const calculateRunsAgainstBowler = (events) => events.reduce((acc, event)
     return acc;
 }, 0);
 
-export const calculateBallsFaced = (events) => 
+export const calculateBatterBallsFaced = (events) => 
     events.filter(event => 
         !(['wide', 'no-ball'].includes(event.extra))).length;
 
