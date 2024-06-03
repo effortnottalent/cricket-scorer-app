@@ -40,7 +40,7 @@ function eventsReducer(events, action) {
                 ...events,
                 { 
                     ...action.event,
-                    id: events.length
+                    id: events.reduce((acc, event) => Math.max(event.id, acc)) + 1
                 }
             ];
         case 'edit':
