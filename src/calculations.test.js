@@ -1,3 +1,4 @@
+import { fieldPositionsList } from './FieldPositions.js';
 import {
     RUN_OUT_NO_BATTER_ERROR_MSG,
     RUN_OUT_WRONG_BATTER,
@@ -11,7 +12,9 @@ import {
     calculateBatterBallsFaced,
     calculatePartnershipAtWicket,
     groupEventsByOver,
-    calculateCumulativeOverSummaries
+    calculateCumulativeOverSummaries,
+    formatSummary,
+    formatLongSummary
 } from './calculations.js';
 
 describe('enrich events tests', () => {
@@ -465,5 +468,133 @@ it('calculates over summaries correctly', () => {
 });
 
 describe('build event summaries', () => {
+
+it('summarises dot balls', () => {
+    const event = {
+        runs: 0,
+        fieldPositionId: 7
+    };
+    const expected = `went to ${fieldPositionsList[event.fieldPositionId].label}, dot ball`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises runs', () => {
+    const event = {
+        runs: 2,
+        fieldPositionId: 4
+    };
+    const expected = `went to ${fieldPositionsList[event.fieldPositionId].label}, ran ${event.runs}`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+
+it('summarises boundaries', () => {
+    const event = {
+        runs: 6,
+        fieldPositionId: 4,
+        boundary: true
+    };
+    const expected = `went to ${fieldPositionsList[event.fieldPositionId].label}, hit a ${event.runs}`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises bowled', () => {
+    const event = {
+        wicket: 'bowled',
+    };
+    const expected = `bowled!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises caught & bowled', () => {
+    const event = {
+        wicket: 'caught',
+        fieldPositionId: 1
+    };
+    const expected = `caught & bowled!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises lbw', () => {
+    const event = {
+        wicket: 'lbw'
+    };
+    const expected = `lbw!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises caught', () => {
+    const event = {
+        wicket: 'caught',
+        fieldPositionId: 9
+    };
+    const expected = `caught at ${fieldPositionsList[event.fieldPositionId].label}`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises stumped', () => {
+    const event = {
+        wicket: 'stumped',
+    };
+    const expected = `stumped!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+it('summarises stumped on a wide (that\'s allowed!)', () => {
+    const event = {
+        wicket: 'stumped',
+        extra: 'wide',
+        runs: 0
+    };
+    const expected = `wide, stumped!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises wide no run', () => {
+    const event = {
+        extra: 'wide',
+        fieldPositionId: 9,
+    }; 
+    const expected = `wide, went to ${fieldPositionsList[event.fieldPositionId].label}`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises no ball bye', () => {
+    const event = {
+        extra: 'no-ball',
+        fieldPositionId: 4,
+        runs: 2
+    }; 
+    const expected = `no-ball, went to ${fieldPositionsList[event.fieldPositionId].label}, ran 2`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises hit no ball', () => {
+    const event = {
+        extra: 'hit no-ball',
+        fieldPositionId: 12,
+        runs: 3
+    }; 
+    const expected = `hit no-ball, went to ${fieldPositionsList[event.fieldPositionId].label}, ran 3`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('generates a long summary', () => {
+    const event = {
+        extra: 'hit no-ball',
+        fieldPositionId: 12,
+        runs: 3
+    }; 
+    const players = [{
+        name: 'Simon Batto',
+        type: 'batter',
+        id: 0
+    },{
+        name: 'Clive Bowley',
+        type: 'bowler',
+        id: 0
+    }];
+    const expected = `Ball 1.1: batter ${players[0].name} facing bowler ${players[1].name}, hit no-ball, went to ${fieldPositionsList[event.fieldPositionId].label}, ran 3`;
+    expect(formatLongSummary(enrichEvents([event])[0], players)).toEqual(expected);
+})
 
 })

@@ -180,28 +180,37 @@ export const getBatterEvents = (events, id) => events.filter(event =>
     (event.onStrikeBatterId === id || event.batterOut === id));
 
 export function formatLongSummary(event, players) {
-    return 'Ball ' + (event.over + 1) + '.' + event.ball + ': ' +
+    return 'Ball ' + (event.over + 1) + '.' + (event.ball + 1) + ': ' +
         'batter ' + getPlayerName(players, event.onStrikeBatterId, 'batter') + 
-        ' facing bowler ' + getPlayerName(players, event.onStrikeBatterId, 'bowler') + 
+        ' facing bowler ' + getPlayerName(players, event.onBowlBowlerId, 'bowler') + 
         ', ' + formatSummary(event, players);
 }
 
 export function formatSummary(event, players) {
-    let wicketDetail = event.wicket;
-    if(!['bowled', 'stumped', 'lbw', 'retired'].includes(wicketDetail)) {
-        if(event.fieldPositionId === 1) {
-            wicketDetail += ' & bowled';
-        } else if(event.fieldPositionId === 2) {
-            wicketDetail += ' behind';
+    const batterOut = Number(event.batterOut ?? event.onStrikeBatterId);
+    let wicketSummary = '';
+    let noDisplayRunsSummary = false;
+    if(event.wicket) {
+        if(['bowled', 'lbw', 'stumped'].includes(event.wicket)) {
+            wicketSummary = `${event.wicket}!`;
+            noDisplayRunsSummary = true;
+        }
+        else if(event.wicket === 'caught' && event.fieldPositionId === 1) {
+            wicketSummary = 'caught & bowled!';
+            noDisplayRunsSummary = true;
+        }
+        else if(event.wicket === 'caught') {
+            wicketSummary = `caught at ${fieldPositionsList[event.fieldPositionId].label}`;
+            noDisplayRunsSummary = true;
+        }
+        else if(!isNaN(batterOut) && batterOut !== event.onStrikeBatterId) {
+            wicketSummary = 'batter ' + getPlayerName(players, batterOut, 'batter');
         }
     }
-    const batterOut = Number(event.batterOut ?? event.onStrikeBatterId);
-    const wicketSummary = event.wicket ? (!isNaN(batterOut) && batterOut !== event.onStrikeBatterId ? 
-        'batter ' + getPlayerName(players, batterOut, 'batter')
-        + ' ' : '') + wicketDetail : '';
-    const runsSummary = 'went to ' + 
+    const runsSummary = noDisplayRunsSummary ? '' : 'went to ' + 
         fieldPositionsList[event.fieldPositionId ?? 0].label + (event.runs ? 
-            ', ' + (event.boundary ? ' hit a ' : ' ran ') + event.runs : ', dot ball');
+            ', ' + (event.boundary ? 'hit a ' : 'ran ') + event.runs : (
+                event.extra ? '' : ', dot ball'));
     return [ event.extra, runsSummary, wicketSummary, event.notes ]
         .filter(i => (i ?? '') !== '')
         .join(', ');

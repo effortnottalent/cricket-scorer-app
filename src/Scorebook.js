@@ -25,7 +25,7 @@ import {
     PlayersDispatchContext
 } from './Contexts.js';
 
-const bowlerColours = [
+export const bowlerColours = [
     'darkblue',
     'green',
     'red',
@@ -405,44 +405,43 @@ function BowlerLog({ events, onSelectEventToEdit }) {
                     className='bowler-over'
                 >
                     <OverLogEntry
-                        overEvents={overEvents}
+                        events={overEvents}
                         index={index}
                     />
-                    <OverLogSummary
-                        overSummary={cumulativeOverSummaries[index]}
-                        index={index}
-                    />
+                    <div 
+                        data-testid='over-summary' 
+                        key={index} 
+                        className='bowler-over-summary'
+                    >
+                        {cumulativeOverSummaries[index].runs} - {cumulativeOverSummaries[index].wickets}
+                    </div>
                 </div>
             )}
         </div>
     );
 }
 
-const OverLogEntry = ({overEvents, index}) => (
+export const OverLogEntry = ({events, index}) => (
     <div key={index} className='bowler-over-detail'>
-        {overEvents.map((ballEvents, ballIndex) => 
+        {events.map((ballEvents, ballIndex) => 
             <BallLogEntry
                 key={ballIndex}
                 event={ballEvents}
-                overLength={overEvents.length}
+                overLength={events.length}
                 isBatter={false}
             />
         )}
     </div>);
 
-const OverLogSummary = ({overSummary, index}) => (
-    <div key={index} className='bowler-over-summary'>
-        {overSummary.runs} - {overSummary.wickets}
-    </div>);
-
 const overClass = (overLength) => (overLength > 9 ? ' bowler-twelve-ball-over' : 
-    (overLength > 6 ? ' bowler-nine-ball-over' : ''));
+    (overLength > 6 ? ' bowler-nine-ball-over' : ' bowler-six-ball-over'));
 
-const GlyphContainer = ({children}) => (<span className='bowler-glyph'>{children}</span>);
+const GlyphContainer = ({children}) => (<span className='glyph-container'>{children}</span>);
 
 const BallContainer = ({overLength, isBatter, children, event}) => (
     <div 
         data-event-id={event.id}
+        data-testid='ball-container'
         title={formatLongSummary(event, useContext(PlayersContext))}
         className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
         {children}
@@ -456,10 +455,9 @@ const HitRunsSpan = ({runs, bowler}) => (
         {runs === 0 ? '•' : runs}
     </span>);
 
-const WicketSpan = ({runs, bowler}) => (
+const WicketSpan = () => (
     <span 
         className='run'
-        {...(bowler !== undefined ? {style: {color: bowlerColours[bowler]}} : '')}
     >
         W
     </span>
@@ -467,7 +465,7 @@ const WicketSpan = ({runs, bowler}) => (
     
 const BatterOutGlyph = () => (
     <GlyphContainer>
-        <svg viewBox="0 0 96 96">
+        <svg data-testid='batter-out' viewBox="0 0 96 96">
             <path d="M12,12L48,48L12,84" fill="none" stroke="#000" strokeWidth="6"/>
             <path d="M48,12L84,48L48,84" fill="none" stroke="#000" strokeWidth="6"/>
         </svg>
@@ -475,7 +473,7 @@ const BatterOutGlyph = () => (
 );
 
 const RunDotGlyph = ({radius, point}) => (
-    <ellipse rx={radius} ry={radius}
+    <ellipse data-testid='run-dot-glyph' rx={radius} ry={radius}
         transform={'translate(' + point.x + ' ' + point.y + ')'} strokeWidth="0"
     />
 );
@@ -489,7 +487,7 @@ const runDotWidePoints = [
 
 const WideGlyph = ({runs, wicket}) => (
     <GlyphContainer>
-        <svg className={'wide-' + runs} viewBox="0 0 96 96">
+        <svg data-testid='wide' className={'wide-' + runs} viewBox="0 0 96 96">
             <path d="M10,48h80" transform="translate(-2 0)" fill="none" stroke="#000" strokeWidth="6"/>
             <path d="M48,9v80" transform="translate(0-1)" fill="none" stroke="#000" strokeWidth="6"/>
             {[...Array(runs)].map((_, index) => 
@@ -536,7 +534,10 @@ const runDotByeSetPoints = [
 
 const ByeGlyph = ({runs, isLeg, isRunOut}) => (
     <GlyphContainer>
-        <svg className={(isLeg ? 'leg-' : '') + 'bye-' + runs} viewBox="0 0 96 96">
+        <svg
+            data-testid={(isLeg ? 'leg-' : '') + 'bye'}   
+            className={(isLeg ? 'leg-' : '') + 'bye-' + runs} 
+            viewBox="0 0 96 96">
             <g {...(isLeg ? {transform: 'rotate(180 48 48)'} : {})}>
                 <path d="M8,88l40-80l40,80h-80Z" fill="none" stroke="#000" strokeWidth="6"/>
                 {!isRunOut && [...Array(runs)].map((_, index) => 
@@ -558,7 +559,10 @@ const ByeGlyph = ({runs, isLeg, isRunOut}) => (
 
 const NoBallGlyph = ({runs, isHit, isRunOut}) => (
     <GlyphContainer>
-        <svg className={(isHit ? 'hit-' : '') + 'no-ball-' + runs} viewBox="0 0 96 96">
+        <svg 
+            data-testid='no-ball' 
+            className={(isHit ? 'hit-' : '') + 'no-ball-' + runs} 
+            viewBox="0 0 96 96">
             <ellipse rx="40" ry="40" transform="translate(48 48)" fill="none" stroke="#000" strokeWidth="6"/>
             {!isHit && !isRunOut && [...Array(runs)].map((_, index) => 
                     <RunDotGlyph
@@ -583,11 +587,10 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
 
 export function BallLogEntry({event, overLength, isBatter, playerId}) {
     let glyph = null;
+    if(overLength === undefined) overLength = 6;
     const batterOut = (event.batterOut ?? event.onStrikeBatterId);
     if(event.wicket) {
         if(isBatter) {
-            // if the batter is out => batteroutglyph
-            // if the batter is out and scored some runs => runs + batteroutglyph
             if(batterOut === playerId) {
                 if(event.runs !== 0 && batterOut === event.onStrikeBatterId) {
                     glyph = <><HitRunsSpan runs={event.runs} /><BatterOutGlyph /></>;

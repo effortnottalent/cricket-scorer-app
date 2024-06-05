@@ -6,7 +6,8 @@ import {
     enrichEvents,
     groupEventsByOver,
     calculateRunsIncludingExtras,
-    formatSummary
+    formatSummary,
+    getPlayerName
 } from './calculations.js';
 import { 
     EventsContext, 
@@ -42,14 +43,10 @@ export default function BallByBall() {
                                 >
                                     <div className='bbb-ball-number'>{event.ball + 1}</div>
                                     <div className='bbb-bowler'>
-                                        {players.filter(player => player.type === 'bowler')
-                                            [event.onBowlBowlerId]?.name ??
-                                            'Player ' + (event.onBowlBowlerId + 1)}
+                                        {getPlayerName(players, event.onBowlBowlerId, 'bowler')}
                                     </div>
                                     <div className='bbb-batter'>
-                                        {players.filter(player => player.type === 'batter')
-                                            [event.onStrikeBatterId]?.name ??
-                                            'Player ' + (event.onStrikeBatterId + 1)}
+                                        {getPlayerName(players, event.onStrikeBatterId, 'batter')}
                                     </div>
                                     <div className='bbb-summary'>{formatSummary(event, players)}</div>
                                     <div className='bbb-runs'>
