@@ -2,9 +2,10 @@ import { render, screen } from '@testing-library/react'
 import { 
     BallLogEntry, 
     OverLogEntry,
-    OverLogSummary,
+    BowlerLog,
     bowlerColours 
 } from './Scorebook.js';
+import { enrichEvents } from './calculations.js';
 
 describe('ball log items', () => {
 
@@ -369,5 +370,51 @@ it('renders an over with two wides and two no-balls as twelve balls', () => {
     expect(received.length).toEqual(6);
     ballContainer.map(e => expect(e).toHaveClass('bowler-twelve-ball-over'));
 });
+
+});
+
+describe('ball log items', () => {
+
+it('should render bowler summary correctly', () => {
+
+    const events = new Array(6).fill().map(() => ({
+        runs: 0,
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        over: 0
+    }));
+    events[3] = {
+        ...events[3],
+        runs: 2
+    };
+    events[4] = {
+        ...events[4],
+        wicket: 'bowled'
+    };
+    render(<BowlerLog events={events} />);
+    expect(screen.getByTestId('over-summary')).toHaveTextContent('2 - 1');
+});
+
+it('should render bowler over log entry correctly', () => {
+
+    const events = new Array(6).fill().map(() => ({
+        runs: 0,
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        over: 0
+    }));
+    events[3] = {
+        ...events[3],
+        runs: 2
+    };
+    events[4] = {
+        ...events[4],
+        wicket: 'bowled'
+    };
+    render(<BowlerLog events={events} />);
+    const received = screen.getAllByTestId('over-log-entry');
+    expect(received.length).toEqual(1);
+})
+
 
 });

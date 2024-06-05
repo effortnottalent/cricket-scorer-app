@@ -376,7 +376,7 @@ function BatterLog({ events, onSelectEventToEdit, playerId }) {
     );
 }
 
-function BowlerLog({ events, onSelectEventToEdit }) {
+export const BowlerLog = ({ events, onSelectEventToEdit }) => {
     const eventsByOver = groupEventsByOver(events);
     const cumulativeOverSummaries = calculateCumulativeOverSummaries(events);
     const clickToEditBallRef = useRef(null);
@@ -422,7 +422,11 @@ function BowlerLog({ events, onSelectEventToEdit }) {
 }
 
 export const OverLogEntry = ({events, index}) => (
-    <div key={index} className='bowler-over-detail'>
+    <div
+        data-testid='over-log-entry' 
+        key={index} 
+        className='bowler-over-detail'
+    >
         {events.map((ballEvents, ballIndex) => 
             <BallLogEntry
                 key={ballIndex}
