@@ -30,14 +30,14 @@ export default function BallByBall() {
             </div>
             {groupEventsByOver(events).map((overEvents, index) => 
                 <div 
-                    key={'bbb-row-' + index}
+                    key={index}
                     className="bbb-row"
                 >
                     <div className='bbb-over'>{overEvents[0].over + 1}</div>
                         <div className='bbb-balls'>
                         {overEvents.map((event, ballIndex) => 
                                 <div
-                                    key={'bbb-ball-' + ballIndex} 
+                                    key={ballIndex} 
                                     className="bbb-ball"
                                 >
                                     <div className='bbb-ball-number'>{event.ball + 1}</div>

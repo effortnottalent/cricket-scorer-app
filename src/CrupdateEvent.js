@@ -6,7 +6,7 @@ import {
     runsScoredData,
     extrasScoredData,
     wicketScoredData
-} from './eventData.js';
+} from './eventRefData.js';
 import { fieldPositionsList } from './FieldPositions.js';
 import { 
     EventsContext,

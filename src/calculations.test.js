@@ -1,6 +1,6 @@
-import FieldPositions from './FieldPositions.js';
 import {
     RUN_OUT_NO_BATTER_ERROR_MSG,
+    RUN_OUT_WRONG_BATTER,
     calculateRunsIncludingExtras,
     calculateExtrasBreakdown,
     enrichEvents,
@@ -311,7 +311,16 @@ it('throws an error when a run out is called without a batter out', () => {
     expect(() => enrichEvents(events)).toThrow(RUN_OUT_NO_BATTER_ERROR_MSG);
 });
 
+it('throws an error when a run out is called on a batter not at the crease', () => {
+    const events = [{
+        wicket: 'run out',
+        batterOut: 5
+    }];
+    expect(() => enrichEvents(events)).toThrow(`${RUN_OUT_WRONG_BATTER}: 5 not in 0, 1`);
 });
+
+});
+
 
 describe('get player name tests', () => {
 

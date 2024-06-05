@@ -5,6 +5,7 @@ let offStrikeBatterId = 1;
 let onBowlBowlerId = 0;
 
 export const RUN_OUT_NO_BATTER_ERROR_MSG = 'On a run-out, the batter out needs to be specified';
+export const RUN_OUT_WRONG_BATTER = 'On a run-out, the batter out needs to be one of the two at the crease';
 
 export function enrichEvents(events) {
     onStrikeBatterId = 0;
@@ -34,8 +35,12 @@ export function enrichEvents(events) {
         };
 
         if(event.wicket) {
-            if(event.wicket === 'run out' && !event.batterOut)
+            if(event.wicket === 'run out' && event.batterOut === undefined)
                 throw Error(RUN_OUT_NO_BATTER_ERROR_MSG);
+            if(event.wicket === 'run out' && 
+                    ![ onStrikeBatterId, offStrikeBatterId ]
+                        .includes(event.batterOut))
+                throw Error(`${RUN_OUT_WRONG_BATTER}: ${event.batterOut} not in ${onStrikeBatterId}, ${offStrikeBatterId}`);
             const nextBatterId = event.nextBatterId ?? 
                 Math.max(onStrikeBatterId, offStrikeBatterId) + 1;
             const remainingBatter = [ onStrikeBatterId, offStrikeBatterId ]
@@ -171,6 +176,9 @@ export function calculateCumulativeOverSummaries(events) {
     );
 }
 
+export const getBatterEvents = (events, id) => events.filter(event => 
+    (event.onStrikeBatterId === id || event.batterOut === id));
+
 export function formatLongSummary(event, players) {
     return 'Ball ' + (event.over + 1) + '.' + event.ball + ': ' +
         'batter ' + getPlayerName(players, event.onStrikeBatterId, 'batter') + 
@@ -187,7 +195,7 @@ export function formatSummary(event, players) {
             wicketDetail += ' behind';
         }
     }
-    const batterOut = Number(event.batterOutId ?? event.onStrikeBatterId);
+    const batterOut = Number(event.batterOut ?? event.onStrikeBatterId);
     const wicketSummary = event.wicket ? (!isNaN(batterOut) && batterOut !== event.onStrikeBatterId ? 
         'batter ' + getPlayerName(players, batterOut, 'batter')
         + ' ' : '') + wicketDetail : '';

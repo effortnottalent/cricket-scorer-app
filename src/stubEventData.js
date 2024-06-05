@@ -50,6 +50,7 @@ export const initialEvents = [{
     extra: 'wide',
     runs: 3,
     wicket: 'run out',
+    batterOut: 0,
     fieldPositionId: 3
   }, {
     id: 12,
@@ -126,18 +127,21 @@ export const initialEvents = [{
     extra: 'no-ball',
     runs: 3,
     wicket: 'run out',
+    batterOut: 3,
     fieldPositionId: 3,
   }, {
     id: 38,
     extra: 'bye',
     runs: 2,
     wicket: 'run out',
+    batterOut: 4,
     fieldPositionId: 4,
   },  {
     id: 39,
     extra: 'leg bye',
     runs: 1,
     wicket: 'run out',
+    batterOut: 6,
     fieldPositionId: 8,
   }];
   

@@ -15,7 +15,8 @@ import {
     calculateBatterBallsFaced,
     groupEventsByOver,
     calculateCumulativeOverSummaries,
-    formatLongSummary
+    formatLongSummary,
+    getBatterEvents
 } from './calculations.js';
 import { enrichEvents } from './calculations.js';
 import { 
@@ -60,7 +61,7 @@ export default function Scorebook({ onSelectEventToEdit }) {
                 <div className='batter-rows'>
                     {players.filter(player => player.type === 'batter').map(player => 
                         <div 
-                            key={'batter' + player.id} 
+                            key={player.id} 
                             className='batter-row'
                         >
                             <PlayerNameEntry
@@ -72,12 +73,11 @@ export default function Scorebook({ onSelectEventToEdit }) {
                             />
                             <BatterLog 
                                 onSelectEventToEdit={onSelectEventToEdit}
-                                events={events.filter(event => 
-                                    event.onStrikeBatterId === player.id)} 
+                                playerId={player.id}
+                                events={getBatterEvents(events, player.id)} 
                             />
                             <BatterSummary
-                                events={events.filter(event => 
-                                    event.onStrikeBatterId === player.id)} 
+                                events={getBatterEvents(events, player.id)} 
                             />
                         </div>
                     )}
@@ -88,7 +88,7 @@ export default function Scorebook({ onSelectEventToEdit }) {
                 <div className='bowler-rows'>
                     {players.filter(player => player.type === 'bowler').map(player => 
                         <div 
-                            key={'bowler' + player.id} 
+                            key={player.id} 
                             className='bowler-row'
                         >
                             <PlayerNameEntry
@@ -140,11 +140,11 @@ function OverByOverSummary() {
                 <div className='over-summary-wickets-label'>Wickets</div>
                 <div className='over-summary-bowler-label'>Bowler</div>
             </div>
-            {eventsByOver.map((over, i) => {
-                const ballsUpToOver = eventsByOver.slice(0, i + 1).flat();
+            {eventsByOver.map((over, index) => {
+                const ballsUpToOver = eventsByOver.slice(0, index + 1).flat();
                 return (
                     <div 
-                        key={'overs-summary-' + i}
+                        key={index}
                         className='overs-summary-entry'
                     >
                         <div className='over-summary-over-value'>
@@ -178,29 +178,29 @@ function WicketByWicketSummary() {
                 <div className='wickets-summary-partnership-label'>Partnership</div>
                 <div className='wickets-summary-bowler-label'>Bowler</div>
             </div>
-            {[...Array(calculateWickets(events))].map((_, i) => {
+            {[...Array(calculateWickets(events))].map((_, index) => {
                 return (
                     <div 
-                        key={'overs-summary-' + i}
+                        key={index}
                         className='wickets-summary-entry'
                     >
                         <div className='wicket-summary-wicket-value'>
-                            {i + 1}
+                            {index + 1}
                         </div>
                         <div className='wickets-summary-batterout-value'>
-                            {(wicketEvents[i].batterOut ?? 
-                                wicketEvents[i].onStrikeBatterId) + 1}
+                            {(wicketEvents[index].batterOut ?? 
+                                wicketEvents[index].onStrikeBatterId) + 1}
                         </div>
                         <div className='wicket-summary-runs-value'>
                             {calculateRunsIncludingExtras(events
-                                .filter(event => event.id <= wicketEvents[i]?.id ?? 
+                                .filter(event => event.id <= wicketEvents[index]?.id ?? 
                                     Number.MAX_SAFE_INTEGER))}
                         </div>
                         <div className='wicket-summary-partnership-value'>
-                            {calculatePartnershipAtWicket(events, i)}
+                            {calculatePartnershipAtWicket(events, index)}
                         </div>
                         <div className='wicket-summary-bowler-value'>
-                            {wicketEvents[i].onBowlBowlerId + 1}
+                            {wicketEvents[index].onBowlBowlerId + 1}
                         </div>
                     </div>
                 );
@@ -223,25 +223,25 @@ function ScoreTicker() {
                         event.extra === 'no-ball' || 
                         event.extra === 'hit no-ball')
                     score++;
-                return [...Array(score - oldScore).keys()].map(i => {
+                return [...Array(score - oldScore).keys()].map(index => {
                     const cumulScore = score - oldScore;
                     let divClassName;
                     if(cumulScore === 1) divClassName = 'diag';
-                    else if(i === 0) divClassName = 'strike-start';
-                    else if(i === cumulScore - 1) divClassName = 'strike-end';
+                    else if(index === 0) divClassName = 'strike-start';
+                    else if(index === cumulScore - 1) divClassName = 'strike-end';
                     else divClassName = 'strike';
                     return (<div 
-                        key={'ticker-' + i}
+                        key={index}
                         className={divClassName}
                         style={{color: bowlerColours[event.onBowlBowlerId]}}
                         title={formatLongSummary(event, players)}
                     >
-                        {i + oldScore + 1}
+                        {index + oldScore + 1}
                     </div>)
                 })
             })}
-            {[...Array(tickerLength - score).keys()].map(i =>
-                <div key={'ticker-' + i}>{i + score + 1}</div>
+            {[...Array(tickerLength - score).keys()].map(index =>
+                <div key={index}>{index + score + 1}</div>
              )}
         </div>
     )
@@ -344,7 +344,7 @@ function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike }) {
     );
 }
 
-function BatterLog({ events, onSelectEventToEdit }) {
+function BatterLog({ events, onSelectEventToEdit, playerId }) {
     const clickToEditBallRef = useRef(null);
 
     useEffect(() => {
@@ -367,9 +367,10 @@ function BatterLog({ events, onSelectEventToEdit }) {
         >
             {events.map((event, index) => 
                 <BallLogEntry
-                    key={'ball-log-' + index}
+                    key={index}
                     event={event}
                     isBatter={true}
+                    playerId={playerId}
                 />)}
         </div>
     );
@@ -400,7 +401,7 @@ function BowlerLog({ events, onSelectEventToEdit }) {
         >
             {eventsByOver.map((overEvents, index) => 
                 <div
-                    key={'bowler-' + index} 
+                    key={index} 
                     className='bowler-over'
                 >
                     <OverLogEntry
@@ -418,10 +419,10 @@ function BowlerLog({ events, onSelectEventToEdit }) {
 }
 
 const OverLogEntry = ({overEvents, index}) => (
-    <div key={'over-' + index} className='bowler-over-detail'>
+    <div key={index} className='bowler-over-detail'>
         {overEvents.map((ballEvents, ballIndex) => 
             <BallLogEntry
-                key={'ball-log-' + index + '-' + ballIndex}
+                key={ballIndex}
                 event={ballEvents}
                 overLength={overEvents.length}
                 isBatter={false}
@@ -430,7 +431,7 @@ const OverLogEntry = ({overEvents, index}) => (
     </div>);
 
 const OverLogSummary = ({overSummary, index}) => (
-    <div key={`over-summary-` + index} className='bowler-over-summary'>
+    <div key={index} className='bowler-over-summary'>
         {overSummary.runs} - {overSummary.wickets}
     </div>);
 
@@ -491,11 +492,11 @@ const WideGlyph = ({runs, wicket}) => (
         <svg className={'wide-' + runs} viewBox="0 0 96 96">
             <path d="M10,48h80" transform="translate(-2 0)" fill="none" stroke="#000" strokeWidth="6"/>
             <path d="M48,9v80" transform="translate(0-1)" fill="none" stroke="#000" strokeWidth="6"/>
-            {[...Array(runs)].map((_, i) => 
+            {[...Array(runs)].map((_, index) => 
                 <RunDotGlyph
-                    key={'run-dot-' + i}
+                    key={index}
                     radius={8}
-                    point={runDotWidePoints[i]}
+                    point={runDotWidePoints[index]}
                 />
             )}
         </svg>
@@ -538,11 +539,11 @@ const ByeGlyph = ({runs, isLeg, isRunOut}) => (
         <svg className={(isLeg ? 'leg-' : '') + 'bye-' + runs} viewBox="0 0 96 96">
             <g {...(isLeg ? {transform: 'rotate(180 48 48)'} : {})}>
                 <path d="M8,88l40-80l40,80h-80Z" fill="none" stroke="#000" strokeWidth="6"/>
-                {!isRunOut && [...Array(runs)].map((_, i) => 
+                {!isRunOut && [...Array(runs)].map((_, index) => 
                     <RunDotGlyph
-                        key={'run-dot-' + i}
+                        key={index}
                         radius={6}
-                        point={runDotByePoints[runDotByeSetPoints[runs - 1][i]]}
+                        point={runDotByePoints[runDotByeSetPoints[runs - 1][index]]}
                     />
                 )}
             </g>
@@ -559,11 +560,11 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
     <GlyphContainer>
         <svg className={(isHit ? 'hit-' : '') + 'no-ball-' + runs} viewBox="0 0 96 96">
             <ellipse rx="40" ry="40" transform="translate(48 48)" fill="none" stroke="#000" strokeWidth="6"/>
-            {!isHit && !isRunOut && [...Array(runs)].map((_, i) => 
+            {!isHit && !isRunOut && [...Array(runs)].map((_, index) => 
                     <RunDotGlyph
-                        key={'run-dot-' + i}
+                        key={index}
                         radius={6}
-                        point={runDotNoBallPoints[runDotByeSetPoints[runs - 1][i]]}
+                        point={runDotNoBallPoints[runDotByeSetPoints[runs - 1][index]]}
                     />
                 )}
         </svg>
@@ -580,11 +581,20 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
     </GlyphContainer>
 );
 
-export function BallLogEntry({event, overLength, isBatter}) {
+export function BallLogEntry({event, overLength, isBatter, playerId}) {
     let glyph = null;
+    const batterOut = (event.batterOut ?? event.onStrikeBatterId);
     if(event.wicket) {
         if(isBatter) {
-            glyph = <BatterOutGlyph />;
+            // if the batter is out => batteroutglyph
+            // if the batter is out and scored some runs => runs + batteroutglyph
+            if(batterOut === playerId) {
+                if(event.runs !== 0 && batterOut === event.onStrikeBatterId) {
+                    glyph = <><HitRunsSpan runs={event.runs} /><BatterOutGlyph /></>;
+                } else {
+                    glyph = <BatterOutGlyph />;
+                }
+            }
         } else if(event.extra) {
             if(event.extra === 'wide') {
                 glyph = <WideGlyph 
