@@ -111,26 +111,25 @@ export default function Scorebook({ onSelectEventToEdit }) {
             </div>
             <div className='extras'>
                 <h2>Extras</h2>
-                <ExtrasSummary />
+                <ExtrasSummary events={events} />
             </div>
             <div className='score-ticker'>
                 <h2>Score Ticker</h2>
-                <ScoreTicker />
+                <ScoreTicker events={events} />
             </div>
             <div className='overs-summary'>
                 <h2>Over-by-over Summary</h2>
-                <OverByOverSummary />
+                <OverByOverSummary events={events} />
             </div>
             <div className='wickets-summary'>
                 <h2>Wicket-by-wicket Summary</h2>
-                <WicketByWicketSummary />
+                <WicketByWicketSummary events={events} />
             </div>
         </div>
     );
 }
 
-function OverByOverSummary() {
-    const events = enrichEvents(useContext(EventsContext));
+function OverByOverSummary({events}) {
     const eventsByOver = groupEventsByOver(events);
     return (
         <div className='overs-summary-row'>
@@ -166,8 +165,7 @@ function OverByOverSummary() {
     );
 }
 
-function WicketByWicketSummary() {
-    const events = enrichEvents(useContext(EventsContext));
+function WicketByWicketSummary({ events }) {
     const wicketEvents = events.filter(event => event.wicket);
     return (
         <div className='wickets-summary-row'>
@@ -209,8 +207,7 @@ function WicketByWicketSummary() {
     );
 }
 
-function ScoreTicker() {
-    const events = enrichEvents(useContext(EventsContext));
+function ScoreTicker({ events }) {
     const players = useContext(PlayersContext);
     const tickerLength = 420;
     let score = 0;
@@ -247,8 +244,7 @@ function ScoreTicker() {
     )
 }
 
-function ExtrasSummary() {
-    const events = enrichEvents(useContext(EventsContext));
+function ExtrasSummary({ events }) {
     const extrasBreakdown = calculateExtrasBreakdown(events);
     return (
         <div className='extras-rows'>
