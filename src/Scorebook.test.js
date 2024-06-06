@@ -3,7 +3,8 @@ import {
     BallLogEntry, 
     OverLogEntry,
     BowlerLog,
-    bowlerColours 
+    bowlerColours, 
+    getEventForEdit
 } from './Scorebook.js';
 import { enrichEvents } from './calculations.js';
 
@@ -24,6 +25,22 @@ it('shows dot ball for batter for no runs', () => {
     expect(received).toHaveClass('run-dot');
     expect(received).toHaveStyle(`color: ${bowlerColours[event.onBowlBowlerId]}`);
 });
+
+it('shows ball has tooltip set', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        runs: 0
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
+        playerId={0} />);
+    const received = screen.getByTestId('ball-container');
+    expect(received).toBeInTheDocument();
+    expect(received).toHaveAttribute('title');
+});
+
 
 it('shows dot ball for bowler for no runs', () => {
     const event = {
@@ -50,7 +67,23 @@ it('shows number of runs for batter', () => {
         event={event}
         isBatter={true}
         playerId={0} />);
-    const received = screen.getByText('2');
+        const received = screen.getByText(event.runs);
+    expect(received).toBeInTheDocument();
+    expect(received).toHaveStyle(`color: ${bowlerColours[event.onBowlBowlerId]}`);
+});
+
+it('shows number of runs for batter when hit no ball', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        extra: 'hit no-ball',
+        runs: 3
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
+        playerId={0} />);
+    const received = screen.getByText(event.runs);
     expect(received).toBeInTheDocument();
     expect(received).toHaveStyle(`color: ${bowlerColours[event.onBowlBowlerId]}`);
 });
@@ -81,6 +114,24 @@ it('renders simple wicket for batter', () => {
         playerId={0} />);
     const received = screen.getByTestId('batter-out');
     expect(received).toBeInTheDocument();
+});
+
+it('renders runs and wicket when batter on strike run out', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        wicket: 'run out',
+        runs: 2,
+        batterOut: 0
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
+        playerId={0} />);
+    const runs = screen.getByText('2');
+    const wicket = screen.getByTestId('batter-out');
+    expect(runs).toBeInTheDocument();
+    expect(wicket).toBeInTheDocument();
 });
 
 it('renders simple wicket for bowler', () => {
@@ -320,6 +371,27 @@ it('renders a bye, two runs, run out', () => {
     expect(runOutSpan).toBeInTheDocument();
 });
 
+it('renders a leg bye, three runs, run out', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        extra: 'leg bye',
+        runs: 3,
+        wicket: 'run out',
+        batterOut: 1
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={false}
+        playerId={0} />);
+    const received = screen.getByTestId('leg-bye');
+    const runDots = screen.queryAllByTestId('run-dot-glyph');
+    const runOutSpan = screen.queryByText('3R');
+    expect(received).toBeInTheDocument();
+    expect(runDots.length).toEqual(0);
+    expect(runOutSpan).toBeInTheDocument();
+});
+
 });
 
 describe('over log items', () => {
@@ -414,7 +486,17 @@ it('should render bowler over log entry correctly', () => {
     render(<BowlerLog events={events} />);
     const received = screen.getAllByTestId('over-log-entry');
     expect(received.length).toEqual(1);
-})
+});
 
+it('should properly pick out the event id from the batter/bowler log', () => {
+    const events = new Array(9).fill().map((_, id) => ({ id }));
+    render(
+        <div id={1} data-eventid={7}>
+            <div id={2}>
+                <div id={3} data-testid='top-level'/></div></div>
+    );
+    const received = screen.getByTestId('top-level');
+    expect(getEventForEdit(events, received).id).toEqual(7);
+})
 
 });

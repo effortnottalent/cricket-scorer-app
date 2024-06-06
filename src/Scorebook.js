@@ -349,11 +349,7 @@ function BatterLog({ events, onSelectEventToEdit, playerId }) {
 
     useEffect(() => {
         const currentRef = clickToEditBallRef.current;
-        const handleClick = (event) => {
-            let dataElement = event.target;
-            while(!dataElement.dataset.eventId) dataElement = dataElement.parentElement;
-            onSelectEventToEdit(events.find(e => e.id === Number(dataElement.dataset.eventId)));
-        }
+        const handleClick = (e) => onSelectEventToEdit(getEventForEdit(events, e.target));
         currentRef.addEventListener('click', handleClick);
         return () => {
             currentRef.removeEventListener('click', handleClick);
@@ -376,6 +372,11 @@ function BatterLog({ events, onSelectEventToEdit, playerId }) {
     );
 }
 
+export function getEventForEdit(events, target) {
+    while(!target.dataset.eventid) target = target.parentElement;
+    return events.find(event => event.id === Number(target.dataset.eventid));
+}
+
 export const BowlerLog = ({ events, onSelectEventToEdit }) => {
     const eventsByOver = groupEventsByOver(events);
     const cumulativeOverSummaries = calculateCumulativeOverSummaries(events);
@@ -383,11 +384,7 @@ export const BowlerLog = ({ events, onSelectEventToEdit }) => {
 
     useEffect(() => {
         const currentRef = clickToEditBallRef.current;
-        const handleClick = (event) => {
-            let dataElement = event.target;
-            while(!dataElement.dataset.eventId) dataElement = dataElement.parentElement;
-            onSelectEventToEdit(events.find(e => e.id === Number(dataElement.dataset.eventId)));
-        }
+        const handleClick = (e) => onSelectEventToEdit(getEventForEdit(events, e.target));
         currentRef.addEventListener('click', handleClick);
         return () => {
             currentRef.removeEventListener('click', handleClick);
@@ -444,7 +441,7 @@ const GlyphContainer = ({children}) => (<span className='glyph-container'>{child
 
 const BallContainer = ({overLength, isBatter, children, event}) => (
     <div 
-        data-event-id={event.id}
+        data-eventid={event.id}
         data-testid='ball-container'
         title={formatLongSummary(event, useContext(PlayersContext))}
         className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
