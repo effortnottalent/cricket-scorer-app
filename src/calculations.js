@@ -200,7 +200,7 @@ export function formatSummary(event, players) {
             noDisplayRunsSummary = true;
         }
         else if(event.wicket === 'caught') {
-            wicketSummary = `caught at ${fieldPositionsList[event.fieldPositionId].label}`;
+            wicketSummary = `caught at ${fieldPositionsList[event.fieldPositionId]?.label ?? 0}`;
             noDisplayRunsSummary = true;
         }
         else if(!isNaN(batterOut) && batterOut !== event.onStrikeBatterId) {

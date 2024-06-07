@@ -50,9 +50,13 @@ export default function CrupdateEvent({ eventToEdit }) {
                     {runsScoredData.map((data, index) => {
                         const selected = data.runs === event.runs && 
                             ((event.boundary ?? false) === (data.boundary ?? false));
+                        const disabled = ['bowled', 'caught', 'lbw', 'stumped']
+                            .includes(event.wicket);
                         return <button 
+                            data-testid='selectable'
                             className={selected ? 'selected' : ''}
                             key={index}
+                            disabled={disabled}
                             onClick={(e) => setEvent({
                                 ...event,
                                 runs: selected ? undefined : data.runs,
@@ -68,6 +72,7 @@ export default function CrupdateEvent({ eventToEdit }) {
                     {extrasScoredData.map((data, index) => {
                         const selected = data.extra === event.extra;
                         return <button 
+                            data-testid='selectable'
                             className={selected ? 'selected' : ''}
                             key={index}
                             onClick={(e) => setEvent({
@@ -84,6 +89,7 @@ export default function CrupdateEvent({ eventToEdit }) {
                     {wicketScoredData.map((data, index) => {
                         const selected = data.type === event.wicket;
                         return <button 
+                            data-testid='selectable'
                             className={selected ? 'selected' : ''}
                             key={index}
                             onClick={(e) => setEvent({
@@ -94,10 +100,9 @@ export default function CrupdateEvent({ eventToEdit }) {
                             {data.label}
                         </button>
                     })}
-                    {event.wicket !== 'bowled' && 
+                    {!['bowled', 'lbw'].includes(event.wicket) && 
                         (event.runs !== undefined || 
-                        event.wicket === 'run out' ||
-                        event.wicket === 'caught') &&
+                        ['run out', 'caught'].includes(event.wicket)) &&
                         <>
                             <label htmlFor='fieldPositionId'>Field position</label>
                             <select 
@@ -120,7 +125,7 @@ export default function CrupdateEvent({ eventToEdit }) {
                     }
                     {(event.wicket === 'run out' &&
                         <>
-                            <label htmlFor='batterOutId'>Batter Out</label>
+                            <label htmlFor='batterOutId'>Batter out</label>
                             <select 
                                 name='batterOutId' 
                                 id='batterOutId'
@@ -175,6 +180,7 @@ export default function CrupdateEvent({ eventToEdit }) {
                 </select>
                 {events[events.length - 1].ball >= 5 && 
                     <button
+                        data-testid='selectable'
                         className={event.extraBall ? 'selected' : ''}
                         onClick={(e) => setEvent({
                             ...event,

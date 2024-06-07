@@ -1,12 +1,17 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react';
 import { 
     BallLogEntry, 
     OverLogEntry,
     BowlerLog,
     bowlerColours, 
-    getEventForEdit
+    getEventForEdit,
+    OverByOverSummary,
+    WicketByWicketSummary,
+    ScoreTicker,
+    PlayerNameEntry
 } from './Scorebook.js';
 import { enrichEvents } from './calculations.js';
+import { act } from 'react';
 
 describe('ball log items', () => {
 
@@ -443,6 +448,59 @@ it('renders an over with two wides and two no-balls as twelve balls', () => {
     ballContainer.map(e => expect(e).toHaveClass('bowler-twelve-ball-over'));
 });
 
+it('renders the over-by-over summary with three overs', () => {
+    const events = new Array(18).fill().map(() => ({runs: 0}));
+
+    render(<OverByOverSummary events={enrichEvents(events)} />);
+    const received = screen.getByTestId('over-by-over-summary');
+    const overSummaries = screen.queryAllByTestId('overs-summary-entry');
+    expect(received).toBeInTheDocument();
+    expect(overSummaries.length).toEqual(3);
+});
+
+it('renders the wicket-by-wicket summary with two wickets', () => {
+    const events = new Array(18).fill().map(() => ({runs: 0}));
+    events[4] = {
+        ...events[4],
+        wicket: 'bowled'
+    };
+    events[16] = {
+        ...events[16],
+        wicket: 'lbw'
+    };
+
+    render(<WicketByWicketSummary events={events} />);
+    const received = screen.getByTestId('wicket-by-wicket-summary');
+    const wicketSummaries = screen.queryAllByTestId('wickets-summary-entry');
+    expect(received).toBeInTheDocument();
+    expect(wicketSummaries.length).toEqual(2);
+});
+
+if('renders the ticket section correctly for the runs scored', () => {
+    const events = new Array(18).fill().map(() => ({runs: 0}));
+    events[2] = { runs: 1 };
+    events[4] = { runs: 2 };
+    events[6] = { runs: 3 };
+    events[7] = { runs: 1 };
+    events[12] = { runs: 6 };
+    render(<ScoreTicker events={events} />);
+    const tickerItems = screen.queryAllByTestId('ticker-score-item');
+    expect(tickerItems.length).toEqual(13);
+    expect(tickerItems[0]).toHaveClass('diag');
+    expect(tickerItems[1]).toHaveClass('strike-start');
+    expect(tickerItems[2]).toHaveClass('strike-end');
+    expect(tickerItems[3]).toHaveClass('strike-start');
+    expect(tickerItems[4]).toHaveClass('strike');
+    expect(tickerItems[5]).toHaveClass('strike-end');
+    expect(tickerItems[6]).toHaveClass('diag');
+    expect(tickerItems[7]).toHaveClass('strike-start');
+    expect(tickerItems[8]).toHaveClass('strike');
+    expect(tickerItems[9]).toHaveClass('strike');
+    expect(tickerItems[10]).toHaveClass('strike');
+    expect(tickerItems[11]).toHaveClass('strike');
+    expect(tickerItems[12]).toHaveClass('strike-end');
+});
+
 });
 
 describe('ball log items', () => {
@@ -500,3 +558,57 @@ it('should properly pick out the event id from the batter/bowler log', () => {
 })
 
 });
+
+describe('player name tests', () => {
+
+it('has an asterisk when on strike/bowl', () => {
+    render(
+        <PlayerNameEntry
+            player={[{}]}
+            type={'batter'}
+            index={0}
+            isOnStrike={true}
+        />);
+    const received = screen.getByTestId('player-name');
+    expect(received).toHaveTextContent('*');
+});
+
+it('has no asterisk when on strike/bowl', () => {
+    render(
+        <PlayerNameEntry
+            player={[{}]}
+            type={'batter'}
+            index={0}
+            isOnStrike={false}
+        />);
+    const received = screen.getByTestId('player-name');
+    expect(received).not.toHaveTextContent('*');
+});
+
+it('fires update when clicked and text entered', () => {
+    const mockOnEditPlayer = jest.fn();
+    render(
+        <PlayerNameEntry
+            type={'batter'}
+            index={0}
+            isOnStrike={false}
+            onEditPlayer={mockOnEditPlayer}
+        />);
+    const playerName = 'John Muffins';
+    const label = screen.queryByTestId('player-name-label');
+    expect(label).toBeInTheDocument();
+    act(() => fireEvent.click(label));
+    const editBox = screen.queryByTestId('player-name-edit');
+    expect(editBox).toBeInTheDocument();
+    act(() => fireEvent.change(editBox, { target: { value: playerName }}));
+    act(() => fireEvent.blur(editBox));
+    const label2 = screen.queryByTestId('player-name-label');
+    expect(label2).toBeInTheDocument();
+    expect(mockOnEditPlayer).toHaveBeenLastCalledWith({
+        id: 0, 
+        name: playerName, 
+        type: 'batter'
+    });
+});
+
+})

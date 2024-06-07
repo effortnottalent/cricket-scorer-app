@@ -129,10 +129,13 @@ export default function Scorebook({ onSelectEventToEdit }) {
     );
 }
 
-function OverByOverSummary({events}) {
+export function OverByOverSummary({events}) {
     const eventsByOver = groupEventsByOver(events);
     return (
-        <div className='overs-summary-row'>
+        <div 
+            data-testid='over-by-over-summary' 
+            className='overs-summary-row'
+        >
             <div className='overs-summary-entry'>
                 <div className='over-summary-over-label'>Over</div>
                 <div className='over-summary-runs-label'>Runs</div>
@@ -145,6 +148,7 @@ function OverByOverSummary({events}) {
                     <div 
                         key={index}
                         className='overs-summary-entry'
+                        data-testid='overs-summary-entry'
                     >
                         <div className='over-summary-over-value'>
                             {over[0].over + 1}
@@ -165,10 +169,13 @@ function OverByOverSummary({events}) {
     );
 }
 
-function WicketByWicketSummary({ events }) {
+export function WicketByWicketSummary({ events }) {
     const wicketEvents = events.filter(event => event.wicket);
     return (
-        <div className='wickets-summary-row'>
+        <div 
+            data-testid="wicket-by-wicket-summary"
+            className='wickets-summary-row'
+        >
             <div className='wickets-summary-entry'>
                 <div className='wickets-summary-wicket-label'>Wicket</div>
                 <div className='wickets-summary-batterout-label'>Batter out</div>
@@ -179,6 +186,7 @@ function WicketByWicketSummary({ events }) {
             {[...Array(calculateWickets(events))].map((_, index) => {
                 return (
                     <div 
+                        data-testid="wickets-summary-entry"
                         key={index}
                         className='wickets-summary-entry'
                     >
@@ -207,7 +215,7 @@ function WicketByWicketSummary({ events }) {
     );
 }
 
-function ScoreTicker({ events }) {
+export function ScoreTicker({ events }) {
     const players = useContext(PlayersContext);
     const tickerLength = 420;
     let score = 0;
@@ -228,6 +236,7 @@ function ScoreTicker({ events }) {
                     else if(index === cumulScore - 1) divClassName = 'strike-end';
                     else divClassName = 'strike';
                     return (<div 
+                        data-testid='ticker-score-item'
                         key={index}
                         className={divClassName}
                         style={{color: bowlerColours[event.onBowlBowlerId]}}
@@ -299,12 +308,13 @@ function BatterSummary({events}) {
     )
 }
 
-function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike }) {
+export function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike }) {
     const [isEditing, setIsEditing] = useState(false);
     let playerContent;
     if(isEditing) {
         playerContent = (
             <input
+                data-testid={'player-name-edit'}
                 className={type + '-name-edit'}
                 value={player?.name ?? ''}
                 onChange={(e) => 
@@ -323,6 +333,7 @@ function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike }) {
     } else {
         playerContent = (
             <div 
+                data-testid={'player-name-label'}
                 className={type + '-name-label'}
                 onClick={() => setIsEditing(true)}>
                 {type === 'bowler' ? '█ ' : ''}{player?.name ?? 'Player ' + (index + 1)}
@@ -332,6 +343,7 @@ function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike }) {
     }
     return (
         <div 
+            data-testid={'player-name'}
             className={type + '-name'} 
             {...(type === 'bowler' ? {style: {color: bowlerColours[index]}} : '')}>
             {index + 1} &nbsp;
