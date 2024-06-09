@@ -22,7 +22,7 @@ export default function FieldPositionPicker({event, setEvent}) {
     };
     return (
         <FieldPositionGlyph 
-            initialPoint={event.hitToPoint ?? fieldPositionsList[event.fieldPositionId]}
+            initialPoint={event?.hitToPoint ?? fieldPositionsList[event?.fieldPositionId] ?? undefined}
             editing={editing}
             handleClick={handleClick}
             />
@@ -90,6 +90,7 @@ export const FieldPositionGlyph = ({ initialPoint, handleClick, editing }) => {
                 fill="yellow" />
             {hitBallToPoint &&
                 <line
+                    data-testid='ball-hit-line'
                     x1={batterPoint.x} 
                     y1={batterPoint.y}
                     x2={hitBallToPoint.x} 
