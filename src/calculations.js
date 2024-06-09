@@ -1,11 +1,11 @@
-import { fieldPositionsList } from './FieldPositions.js';
+import { fieldPositionsList } from './FieldPositionPicker.js';
 
 let onStrikeBatterId = 0;
 let offStrikeBatterId = 1;
 let onBowlBowlerId = 0;
 
-export const RUN_OUT_NO_BATTER_ERROR_MSG = 'On a run-out, the batter out needs to be specified';
-export const RUN_OUT_WRONG_BATTER = 'On a run-out, the batter out needs to be one of the two at the crease';
+export const getBatterOutId = (event) => 
+    (((event.batterOutOnStrike ?? true)) ? event.onStrikeBatterId : event.offStrikeBatterId);
 
 export function enrichEvents(events) {
     onStrikeBatterId = 0;
@@ -35,18 +35,12 @@ export function enrichEvents(events) {
         };
 
         if(event.wicket) {
-            if(event.wicket === 'run out' && event.batterOut === undefined)
-                throw Error(RUN_OUT_NO_BATTER_ERROR_MSG);
-            if(event.wicket === 'run out' && 
-                    ![ onStrikeBatterId, offStrikeBatterId ]
-                        .includes(event.batterOut))
-                throw Error(`${RUN_OUT_WRONG_BATTER}: ${event.batterOut} not in ${onStrikeBatterId}, ${offStrikeBatterId}`);
             const nextBatterId = event.nextBatterId ?? 
                 Math.max(onStrikeBatterId, offStrikeBatterId) + 1;
             const remainingBatter = [ onStrikeBatterId, offStrikeBatterId ]
-                .filter(batter => batter !== (event.batterOut ?? 
+                .filter(batter => batter !== (getBatterOutId(enrichedEvent) ?? 
                     onStrikeBatterId))[0];
-            [ onStrikeBatterId, offStrikeBatterId ] = (event.batterOut === offStrikeBatterId) ? 
+            [ onStrikeBatterId, offStrikeBatterId ] = (getBatterOutId(enrichedEvent) === offStrikeBatterId) ? 
                 [ remainingBatter, nextBatterId ] : [ nextBatterId, remainingBatter ];
             if(event.battersCrossed) 
                 [ onStrikeBatterId, offStrikeBatterId ] = [ offStrikeBatterId, onStrikeBatterId ];
@@ -177,7 +171,7 @@ export function calculateCumulativeOverSummaries(events) {
 }
 
 export const getBatterEvents = (events, id) => events.filter(event => 
-    (event.onStrikeBatterId === id || event.batterOut === id));
+    (event.onStrikeBatterId === id || getBatterOutId(event) === id));
 
 export function formatLongSummary(event, players) {
     return 'Ball ' + (event.over + 1) + '.' + (event.ball + 1) + ': ' +
@@ -187,7 +181,7 @@ export function formatLongSummary(event, players) {
 }
 
 export function formatSummary(event, players) {
-    const batterOut = Number(event.batterOut ?? event.onStrikeBatterId);
+
     let wicketSummary = '';
     let noDisplayRunsSummary = false;
     if(event.wicket) {
@@ -203,8 +197,8 @@ export function formatSummary(event, players) {
             wicketSummary = `caught at ${fieldPositionsList[event.fieldPositionId]?.label ?? 0}`;
             noDisplayRunsSummary = true;
         }
-        else if(!isNaN(batterOut) && batterOut !== event.onStrikeBatterId) {
-            wicketSummary = 'batter ' + getPlayerName(players, batterOut, 'batter');
+        else if(getBatterOutId(event) !== event.onStrikeBatterId) {
+            wicketSummary = 'batter ' + getPlayerName(players, getBatterOutId(event), 'batter');
         }
     }
     const runsSummary = noDisplayRunsSummary ? '' : 'went to ' + 

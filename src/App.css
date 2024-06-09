@@ -12,15 +12,9 @@ body {
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 10vh;
+  min-height: 5vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,10 +23,18 @@ body {
   color: white;
 }
 
+.addevent-form button {
+  height: 96px;
+  width: 96px;
+}
+
 .App-link {
   color: #61dafb;
 }
-
+.field-position-glyph {
+  max-height: 256px;
+  pointer-events: none;
+}
 .selected {
   background-color: darkgray;
 }

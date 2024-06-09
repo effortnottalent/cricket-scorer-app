@@ -127,7 +127,7 @@ it('renders runs and wicket when batter on strike run out', () => {
         onBowlBowlerId: 0,
         wicket: 'run out',
         runs: 2,
-        batterOut: 0
+        batterOutOnStrike: true
     };
     render(<BallLogEntry 
         event={event}
@@ -222,7 +222,7 @@ it('renders a wide, run out on two runs', () => {
         extra: 'wide',
         wicket: 'run out',
         runs: 2,
-        batterOut: 1
+        batterOutOnStrike: false
     };
     render(<BallLogEntry 
         event={event}
@@ -303,7 +303,7 @@ it('renders a no ball, two runs and run out', () => {
         extra: 'no-ball',
         runs: 2,
         wicket: 'run out',
-        batterOut: 1
+        batterOutOnStrike: false
     };
     render(<BallLogEntry 
         event={event}
@@ -362,7 +362,7 @@ it('renders a bye, two runs, run out', () => {
         extra: 'bye',
         runs: 2,
         wicket: 'run out',
-        batterOut: 1
+        batterOutOnStrike: false
     };
     render(<BallLogEntry 
         event={event}
@@ -383,7 +383,7 @@ it('renders a leg bye, three runs, run out', () => {
         extra: 'leg bye',
         runs: 3,
         wicket: 'run out',
-        batterOut: 1
+        batterOutOnStrike: false
     };
     render(<BallLogEntry 
         event={event}
@@ -459,7 +459,7 @@ it('renders the over-by-over summary with three overs', () => {
 });
 
 it('renders the wicket-by-wicket summary with two wickets', () => {
-    const events = new Array(18).fill().map(() => ({runs: 0}));
+    const events = enrichEvents(new Array(18).fill().map(() => ({runs: 0})));
     events[4] = {
         ...events[4],
         wicket: 'bowled'

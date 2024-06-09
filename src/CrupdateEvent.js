@@ -7,7 +7,7 @@ import {
     extrasScoredData,
     wicketScoredData
 } from './eventRefData.js';
-import { fieldPositionsList } from './FieldPositions.js';
+import FieldPositionPicker, { fieldPositionsList } from './FieldPositionPicker.js';
 import { 
     EventsContext,
     EventsDispatchContext,
@@ -100,56 +100,45 @@ export default function CrupdateEvent({ eventToEdit }) {
                             {data.label}
                         </button>
                     })}
-                    {!['bowled', 'lbw'].includes(event.wicket) && 
-                        (event.runs !== undefined || 
-                        ['run out', 'caught'].includes(event.wicket)) &&
-                        <>
-                            <label htmlFor='fieldPositionId'>Field position</label>
-                            <select 
-                                name='fieldPositionId' 
-                                id='fieldPositionId'
-                                value={event.fieldPositionId}
-                                onChange={(e) => setEvent({
-                                    ...event,
-                                    fieldPositionId: e.target.value
-                                })}
-                            >
-                                {fieldPositionsList.map((fp, index) => 
+                </fieldset>
+                {!['bowled', 'lbw'].includes(event.wicket) && 
+                    (event.runs !== undefined || 
+                    ['run out', 'caught'].includes(event.wicket)) &&
+                    <fieldset className='fieldPosition'>
+                        <legend>Field position</legend>
+                        <FieldPositionPicker
+                            event={event}
+                            setEvent={setEvent}
+                        />
+                    </fieldset>
+                }
+                {(event.wicket === 'run out' &&
+                    <fieldset className='batterOut'>
+                        <legend>Batter out</legend>
+                        <label htmlFor='batterOutId'>Batter out</label>
+                        <select 
+                            name='batterOutId' 
+                            id='batterOutId'
+                            onChange={(e) => setEvent({
+                                ...event,
+                                batterOutId: e.target.value
+                            })}
+                        >
+                            {[onStrikeBatterId, offStrikeBatterId]
+                                .map((batterId, index) => 
                                     (<option 
                                         key={index} 
-                                        value={index}
-                                    >{fp.label}</option>)
-                                )}
-                            </select>
-                        </>
-                    }
-                    {(event.wicket === 'run out' &&
-                        <>
-                            <label htmlFor='batterOutId'>Batter out</label>
-                            <select 
-                                name='batterOutId' 
-                                id='batterOutId'
-                                onChange={(e) => setEvent({
-                                    ...event,
-                                    batterOutId: e.target.value
-                                })}
-                            >
-                                {[onStrikeBatterId, offStrikeBatterId]
-                                    .map((batterId, index) => 
-                                        (<option 
-                                            key={index} 
-                                            value={batterId}
-                                        >
-                                            {getPlayerName(players, batterId, 'batter')}
-                                        </option>)
-                                )}
-                            </select>
-                        </>
-
-                    )}
-                </fieldset>
+                                        value={batterId}
+                                    >
+                                        {getPlayerName(players, batterId, 'batter')}
+                                    </option>)
+                            )}
+                        </select>
+                    </fieldset>
+                )}
             </div>
             <fieldset className='utility'>
+                <legend>Other information</legend>
                 <label htmlFor='notes'>notes</label>
                 <input 
                     type='text' 
@@ -203,7 +192,7 @@ export default function CrupdateEvent({ eventToEdit }) {
                     <p>{formatSummary(event, players)}</p>
                     <legend>Confirm ball</legend>
                     <button onClick={() => {
-                        event.id ? handleEditEvent(event) : handleAddEvent(event);
+                        event.id !== undefined ? handleEditEvent(event) : handleAddEvent(event);
                         setEvent(isEmpty(eventToEdit) ? {} : event);
                     } }>Confirm</button>
                     <button onClick={() => {

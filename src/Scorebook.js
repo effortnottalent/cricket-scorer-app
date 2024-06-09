@@ -16,7 +16,8 @@ import {
     groupEventsByOver,
     calculateCumulativeOverSummaries,
     formatLongSummary,
-    getBatterEvents
+    getBatterEvents,
+    getBatterOutId
 } from './calculations.js';
 import { enrichEvents } from './calculations.js';
 import { 
@@ -194,8 +195,7 @@ export function WicketByWicketSummary({ events }) {
                             {index + 1}
                         </div>
                         <div className='wickets-summary-batterout-value'>
-                            {(wicketEvents[index].batterOut ?? 
-                                wicketEvents[index].onStrikeBatterId) + 1}
+                            {getBatterOutId(wicketEvents[index]) + 1}
                         </div>
                         <div className='wicket-summary-runs-value'>
                             {calculateRunsIncludingExtras(events
@@ -597,11 +597,10 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
 export function BallLogEntry({event, overLength, isBatter, playerId}) {
     let glyph = null;
     if(overLength === undefined) overLength = 6;
-    const batterOut = (event.batterOut ?? event.onStrikeBatterId);
     if(event.wicket) {
         if(isBatter) {
-            if(batterOut === playerId) {
-                if(event.runs !== 0 && batterOut === event.onStrikeBatterId) {
+            if(getBatterOutId(event) === playerId) {
+                if(event.runs !== 0 && getBatterOutId(event) === event.onStrikeBatterId) {
                     glyph = <><HitRunsSpan runs={event.runs} /><BatterOutGlyph /></>;
                 } else {
                     glyph = <BatterOutGlyph />;

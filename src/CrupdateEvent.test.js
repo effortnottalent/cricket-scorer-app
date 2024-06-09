@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import CrupdateEvent from "./CrupdateEvent";
 import { act } from 'react';
 import { extrasScoredData, runsScoredData, wicketScoredData } from './eventRefData';
-import { getOffStrikeBatterId, getOnBowlBowlerId, getOnStrikeBatterId } from './calculations';
+import { fieldPositionsList } from './FieldPositionPicker';
 
 describe('general event tests', () => {
 
@@ -25,11 +25,11 @@ it('should show fielder list if runs are selected', () => {
     render(<CrupdateEvent eventToEdit={{}} />);
     runsScoredData.map(label => {
         const received = screen.getByText(label.label);
-        expect(screen.queryByLabelText('Field position')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('field-position-container')).not.toBeInTheDocument();
         act(() => fireEvent.click(received));
-        expect(screen.queryByLabelText('Field position')).toBeInTheDocument();
+        expect(screen.queryByTestId('field-position-container')).toBeInTheDocument();
         act(() => fireEvent.click(received));
-        expect(screen.queryByLabelText('Field position')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('field-position-container')).not.toBeInTheDocument();
     });
 });
 
@@ -38,11 +38,11 @@ it('should show fielder list if run out or caught', () => {
     render(<CrupdateEvent eventToEdit={{}} />);
     ['Caught', 'Run out'].map(label => {
         const received = screen.getByText(label);
-        expect(screen.queryByLabelText('Field position')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('field-position-container')).not.toBeInTheDocument();
         act(() => fireEvent.click(received));
-        expect(screen.queryByLabelText('Field position')).toBeInTheDocument();
+        expect(screen.queryByTestId('field-position-container')).toBeInTheDocument();
         act(() => fireEvent.click(received));
-        expect(screen.queryByLabelText('Field position')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('field-position-container')).not.toBeInTheDocument();
     });
 });
 
@@ -94,13 +94,14 @@ it('should render the event being edited', () => {
         wicket: 'run out',
         fieldPositionId: 6,
         notes: 'test notes for edit',
-        batterOut: 1,
+        batterOutOnStrike: false,
         getOnStrikeBatterId: 0,
         getOffStrikeBatterId: 1,
         getOnBowlBowlerId: 0,
         extraBall: true
     }
     render(<CrupdateEvent eventToEdit={event} />);
+    expect(screen.queryByText('Edit Ball')).toBeInTheDocument();
     runsScoredData.map(runs => {
         const element = screen.getByText(runs.label);
         ((runs.runs === event.runs) && 
@@ -117,8 +118,8 @@ it('should render the event being edited', () => {
         (wicket.type === event.wicket) ?
             expect(element).toHaveClass('selected') : expect(element).not.toHaveClass('selected');
     });
-    expect(screen.getByLabelText('Field position'))
-        .toHaveValue('' + event.fieldPositionId);
+    expect(screen.getByTestId('field-position-label'))
+        .toContainHTML(fieldPositionsList[event.fieldPositionId].label);
     // no players in context, need to fix
     // expect(screen.getByLabelText('Batter out')).toHaveValue('' + event.batterOut);
     expect(screen.getByLabelText('notes'))

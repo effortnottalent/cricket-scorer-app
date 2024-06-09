@@ -19,16 +19,17 @@ function App() {
     <div className="App">
       <header className="App-header">
         Cricket Scorer App
+        {Object.keys(eventToEdit).length !== 0 &&
+          <button onClick={() => setEventToEdit({})}>Add Ball</button>
+        }
       </header>
       <Contexts>
         {Object.keys(eventToEdit).length !== 0 ? 
-          <>
-            <button onClick={() => setEventToEdit({})}>Add Ball</button>
-            <CrupdateEvent 
-              key={eventToEdit.id} 
-              eventToEdit={eventToEdit}
-            />
-          </> :
+          <CrupdateEvent 
+            key={eventToEdit.id} 
+            eventToEdit={eventToEdit}
+          />
+          :
           <CrupdateEvent eventToEdit={{}} />
         }
         <Scorebook onSelectEventToEdit={(id) => setEventToEdit(id)} />

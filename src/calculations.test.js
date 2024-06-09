@@ -1,4 +1,4 @@
-import { fieldPositionsList } from './FieldPositions.js';
+import { fieldPositionsList } from './FieldPositionPicker.js';
 import {
     RUN_OUT_NO_BATTER_ERROR_MSG,
     RUN_OUT_WRONG_BATTER,
@@ -14,25 +14,46 @@ import {
     groupEventsByOver,
     calculateCumulativeOverSummaries,
     formatSummary,
-    formatLongSummary
+    formatLongSummary,
+    getBatterOutId
 } from './calculations.js';
+
+describe('batter out tests', () => {
+
+it('gives on strike batter out when flag not set', () => {
+    const event = {
+        wicket: 'run out'
+    };
+    const [ received ] = enrichEvents([event]);
+    expect(getBatterOutId(received)).toEqual(0);
+});
+
+it('gives off strike batter out when flag set', () => {
+    const event = {
+        wicket: 'run out',
+        batterOutOnStrike: false
+    };
+    const [ received ] = enrichEvents([event]);
+    expect(getBatterOutId(received)).toEqual(1);
+});
+
+});
 
 describe('enrich events tests', () => {
 
 it('initial setup', () => {
-    const events = [{
+    const event = {
         id: 0,
         runs: 0
-    }];
-    const received = enrichEvents(events);
-    expect(received.length).toEqual(1);
-    expect(received[0].onStrikeBatterId).toEqual(0);
-    expect(received[0].offStrikeBatterId).toEqual(1);
-    expect(received[0].onBowlBowlerId).toEqual(0);
-    expect(received[0].ball).toEqual(0);
-    expect(received[0].over).toEqual(0);
-    expect(received[0].id).toEqual(0);
-    expect(received[0].runs).toEqual(0);
+    };
+    const [ received ] = enrichEvents([ event] );
+    expect(received.onStrikeBatterId).toEqual(0);
+    expect(received.offStrikeBatterId).toEqual(1);
+    expect(received.onBowlBowlerId).toEqual(0);
+    expect(received.ball).toEqual(0);
+    expect(received.over).toEqual(0);
+    expect(received.id).toEqual(0);
+    expect(received.runs).toEqual(0);
 });
 
 it('swaps batter ends upon an odd number of runs', () => {
@@ -170,7 +191,7 @@ it('increments on strike batter upon wicket', () => {
     }, {
         runs: 0
     }];
-    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events).slice(-2);
+    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events);
     expect(receivedBeforeOver.onStrikeBatterId).toEqual(0);
     expect(receivedBeforeOver.offStrikeBatterId).toEqual(1);
     expect(receivedAfterOver.onStrikeBatterId).toEqual(2);
@@ -180,11 +201,11 @@ it('increments on strike batter upon wicket', () => {
 it('assigns a correct batter given run out, specifying batter off strike', () => {
     const events = [{
         wicket: 'run out',
-        batterOut: 1
+        batterOutOnStrike: false
     }, {
         runs: 0
     }];
-    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events).slice(-2);
+    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events);
     expect(receivedBeforeOver.onStrikeBatterId).toEqual(0);
     expect(receivedBeforeOver.offStrikeBatterId).toEqual(1);
     expect(receivedAfterOver.onStrikeBatterId).toEqual(0);
@@ -194,12 +215,12 @@ it('assigns a correct batter given run out, specifying batter off strike', () =>
 it('assigns a correct batter given run out and batter crossed', () => {
     const events = [{
         wicket: 'run out',
-        batterOut: 1,
+        batterOutOnStrike: false,
         battersCrossed: true
     }, {
         runs: 0
     }];
-    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events).slice(-2);
+    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events);
     expect(receivedBeforeOver.onStrikeBatterId).toEqual(0);
     expect(receivedBeforeOver.offStrikeBatterId).toEqual(1);
     expect(receivedAfterOver.onStrikeBatterId).toEqual(2);
@@ -209,12 +230,12 @@ it('assigns a correct batter given run out and batter crossed', () => {
 it('assigns a correct batter given run out after one run', () => {
     const events = [{
         wicket: 'run out',
-        batterOut: 1,
+        batterOutOnStrike: false,
         runs: 1
     }, {
         runs: 0
     }];
-    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events).slice(-2);
+    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events);
     expect(receivedBeforeOver.onStrikeBatterId).toEqual(0);
     expect(receivedBeforeOver.offStrikeBatterId).toEqual(1);
     expect(receivedAfterOver.onStrikeBatterId).toEqual(2);
@@ -224,13 +245,13 @@ it('assigns a correct batter given run out after one run', () => {
 it('assigns a correct batter given run out and crossed after one run', () => {
     const events = [{
         wicket: 'run out',
-        batterOut: 1,
+        batterOutOnStrike: false,
         runs: 1,
         battersCrossed: true
     }, {
         runs: 0
     }];
-    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events).slice(-2);
+    const [ receivedBeforeOver, receivedAfterOver ] = enrichEvents(events);
     expect(receivedBeforeOver.onStrikeBatterId).toEqual(0);
     expect(receivedBeforeOver.offStrikeBatterId).toEqual(1);
     expect(receivedAfterOver.onStrikeBatterId).toEqual(0);
@@ -307,21 +328,6 @@ it('correctly sets the new bowler when not set on ball 0', () => {
     expect(receivedAfterOver.onBowlBowlerId).toEqual(2);
 });
 
-it('throws an error when a run out is called without a batter out', () => {
-    const events = [{
-        wicket: 'run out',
-    }];
-    expect(() => enrichEvents(events)).toThrow(RUN_OUT_NO_BATTER_ERROR_MSG);
-});
-
-it('throws an error when a run out is called on a batter not at the crease', () => {
-    const events = [{
-        wicket: 'run out',
-        batterOut: 5
-    }];
-    expect(() => enrichEvents(events)).toThrow(`${RUN_OUT_WRONG_BATTER}: 5 not in 0, 1`);
-});
-
 });
 
 
@@ -367,7 +373,7 @@ const fixture = [{
 }, {
     id: 4,
     wicket: 'run out',
-    batterOut: 1
+    batterOutOnStrike: false
 }, {
     id: 5,
     extra: 'wide'

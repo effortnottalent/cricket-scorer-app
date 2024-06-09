@@ -15,7 +15,7 @@ export const runsScoredData = [{
     runs: 4,
     boundary: true
 }, {
-    label: 'Four (not a boundary)',
+    label: 'Four (B)',
     runs: 4,
 }, {
     label: 'Five',
@@ -25,7 +25,7 @@ export const runsScoredData = [{
     runs: 6,
     boundary: true
 }, {
-    label: 'Six (not a boundary)',
+    label: 'Six (B)',
     runs: 6
 }];
 
