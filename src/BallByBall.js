@@ -25,11 +25,9 @@ export default function BallByBall() {
             <div className="ballbyball__header">
                 <div>Over</div>
                 <div>Ball</div>
-                <div>Bowler</div>
-                <div>Batter</div>
-                <div>Summary</div>
-                <div>Runs</div>
-                <div>Wkts</div>
+                <div className='ballbyball__medium'>Play</div>
+                <div className='ballbyball__grow'>Summary</div>
+                <div>Score</div>
             </div>
             {groupEventsByOver(events).map((overEvents, index) => 
                 <div 
@@ -44,18 +42,18 @@ export default function BallByBall() {
                                 className="ballbyball__ballrow"
                             >
                                 <div>{event.ball + 1}</div>
-                                <div>
+                                <div className='ballbyball__medium'>
                                     {getPlayerName(players, event.onBowlBowlerId, 'bowler')}
-                                </div>
-                                <div>
+                                    &nbsp;to&nbsp;
                                     {getPlayerName(players, event.onStrikeBatterId, 'batter')}
                                 </div>
-                                <div>{formatSummary(event, players)}</div>
+                                <div className='ballbyball__grow'>
+                                    {formatSummary(event, players)}
+                                </div>
                                 <div>
                                     {calculateRunsIncludingExtras(events
                                         .filter(event2 => event2.id <= event.id))}
-                                </div>
-                                <div>
+                                    &nbsp;for&nbsp;
                                     {calculateWickets(events
                                         .filter(event2 => event2.id <= event.id))}
                                 </div>

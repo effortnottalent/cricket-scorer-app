@@ -1,21 +1,40 @@
+div {
+    min-width: 4em;
+}
 .ballbyball__header {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
     align-content: center;
-    justify-content: space-evenly;
+    min-width: 100vw;
+    font-weight: bold;
+    div {
+        align-content: center;
+        text-align: center;
+    }
 }
 .ballbyball__overrow {
     display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: space-evenly;
-}
-.ballbyball__overnumber {
-    
+    flex-direction: row;
+    min-width: 100vw;
+    div {
+        align-content: center;
+        text-align: center;
+    }
 }
 .ballbyball__overballs {
-    
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 .ballbyball__ballrow {
-
+    display: flex;
+    flex-direction: row;
+}
+.ballbyball__grow {
+    flex-grow: 1;
+    text-align: left !important;
+}
+.ballbyball__medium {
+    min-width: 12em;
 }
