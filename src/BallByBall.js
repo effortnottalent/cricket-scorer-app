@@ -14,50 +14,52 @@ import {
     PlayersContext 
 } from './Contexts.js';
 
+import './BallByBall.scss';
+
 export default function BallByBall() {
     const events = enrichEvents(useContext(EventsContext));
     const players = useContext(PlayersContext);
     return (
-        <div className='ball-by-ball'>
+        <div className='ballbyball'>
             <h1>Ball-by-ball</h1>
-            <div className="bbb-header">
-                <div className='bbb-over'>Over</div>
-                <div className='bbb-ball-number'>Ball</div>
-                <div className='bbb-bowler'>Bowler</div>
-                <div className='bbb-batter'>Batter</div>
-                <div className='bbb-summary'>Summary</div>
-                <div className='bbb-runs'>Runs</div>
-                <div className='bbb-wickets'>Wkts</div>
+            <div className="ballbyball__header">
+                <div>Over</div>
+                <div>Ball</div>
+                <div>Bowler</div>
+                <div>Batter</div>
+                <div>Summary</div>
+                <div>Runs</div>
+                <div>Wkts</div>
             </div>
             {groupEventsByOver(events).map((overEvents, index) => 
                 <div 
                     key={index}
-                    className="bbb-row"
+                    className="ballbyball__overrow"
                 >
-                    <div className='bbb-over'>{overEvents[0].over + 1}</div>
-                        <div className='bbb-balls'>
-                        {overEvents.map((event, ballIndex) => 
-                                <div
-                                    key={ballIndex} 
-                                    className="bbb-ball"
-                                >
-                                    <div className='bbb-ball-number'>{event.ball + 1}</div>
-                                    <div className='bbb-bowler'>
-                                        {getPlayerName(players, event.onBowlBowlerId, 'bowler')}
-                                    </div>
-                                    <div className='bbb-batter'>
-                                        {getPlayerName(players, event.onStrikeBatterId, 'batter')}
-                                    </div>
-                                    <div className='bbb-summary'>{formatSummary(event, players)}</div>
-                                    <div className='bbb-runs'>
-                                        {calculateRunsIncludingExtras(events
-                                            .filter(event2 => event2.id <= event.id))}
-                                    </div>
-                                    <div className='bbb-wickets'>
-                                        {calculateWickets(events
-                                            .filter(event2 => event2.id <= event.id))}
-                                    </div>
+                    <div className='ballbyball__overnumber'>{overEvents[0].over + 1}</div>
+                    <div className='ballbyball__overballs'>
+                    {overEvents.map((event, ballIndex) => 
+                            <div
+                                key={ballIndex} 
+                                className="ballbyball__ballrow"
+                            >
+                                <div>{event.ball + 1}</div>
+                                <div>
+                                    {getPlayerName(players, event.onBowlBowlerId, 'bowler')}
                                 </div>
+                                <div>
+                                    {getPlayerName(players, event.onStrikeBatterId, 'batter')}
+                                </div>
+                                <div>{formatSummary(event, players)}</div>
+                                <div>
+                                    {calculateRunsIncludingExtras(events
+                                        .filter(event2 => event2.id <= event.id))}
+                                </div>
+                                <div>
+                                    {calculateWickets(events
+                                        .filter(event2 => event2.id <= event.id))}
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>

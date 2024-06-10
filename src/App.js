@@ -2,41 +2,60 @@ import {
   useState
 } from 'react';
 
-import './App.css';
+import './App.scss';
 
-import Scoreboard from './Scoreboard';
 import BallByBall from './BallByBall.js';
 import CrupdateEvent from './CrupdateEvent.js';
 import Scorebook from './Scorebook.js';
 
 import { Contexts } from './Contexts.js';
+import Scoreboard from './Scoreboard.js';
 
 
 function App() {
   const [ eventToEdit, setEventToEdit ] = useState({});
+  const [ activePane, setActivePane ] = useState('ballbyball');
 
   return (
-    <div className="App">
-      <header className="App-header">
-        Cricket Scorer App
-        {Object.keys(eventToEdit).length !== 0 &&
-          <button onClick={() => setEventToEdit({})}>Add Ball</button>
-        }
-      </header>
-      <Contexts>
-        {Object.keys(eventToEdit).length !== 0 ? 
-          <CrupdateEvent 
-            key={eventToEdit.id} 
-            eventToEdit={eventToEdit}
-          />
-          :
-          <CrupdateEvent eventToEdit={{}} />
-        }
+    <Contexts>
+    <main className="appcontent">
+      {activePane === 'addball' && 
+        <CrupdateEvent 
+          eventToEdit={Object.keys(eventToEdit).length !== 0 ? 
+            eventToEdit : {}}
+        />
+      }
+      {activePane === 'scorebook' && 
         <Scorebook onSelectEventToEdit={(id) => setEventToEdit(id)} />
-        <Scoreboard />
-        <BallByBall />
-      </Contexts>
-    </div>
+      }
+      {activePane === 'ballbyball' && 
+        <>
+          <Scoreboard />
+          <BallByBall />
+        </>
+      }
+      </main>
+      <footer className="menufooter">
+        <button 
+          className="menufooter__node"
+          onClick={() => setActivePane('ballbyball')}
+        >
+          Ball-by-ball
+        </button>
+        <button 
+          className="menufooter__node"
+          onClick={() => setActivePane('scorebook')}
+        >
+          Scorebook
+        </button>
+        <button 
+          className="menufooter__node"
+          onClick={() => setActivePane('addball')}
+        >
+          Add ball
+        </button>
+      </footer>
+    </Contexts>
   );
 
 }
