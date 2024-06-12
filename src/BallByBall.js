@@ -23,13 +23,15 @@ export default function BallByBall() {
         <div className='ballbyball'>
             <h1>Ball-by-ball</h1>
             <div className="ballbyball__header">
-                <div>Over</div>
-                <div>Ball</div>
-                <div className='ballbyball__medium'>Play</div>
-                <div className='ballbyball__grow'>Summary</div>
-                <div>Score</div>
+                <div className='ballbyball__overnumber'>&nbsp;</div>
+                <div className='ballbyball__overball'>&nbsp;</div>
+                <div className='ballbyball__player'>Player</div>
+                <div className='ballbyball__summary'>Summary</div>
+                <div className='ballbyball__score'>Score</div>
             </div>
-            {groupEventsByOver(events).map((overEvents, index) => 
+            {groupEventsByOver(events)
+                .toReversed()
+                .map((overEvents, index) => 
                 <div 
                     key={index}
                     className="ballbyball__overrow"
@@ -41,16 +43,16 @@ export default function BallByBall() {
                                 key={ballIndex} 
                                 className="ballbyball__ballrow"
                             >
-                                <div>{event.ball + 1}</div>
-                                <div className='ballbyball__medium'>
+                                <div className='ballbyball__overball'>{event.ball + 1}</div>
+                                <div className='ballbyball__player'>
                                     {getPlayerName(players, event.onBowlBowlerId, 'bowler')}
                                     &nbsp;to&nbsp;
                                     {getPlayerName(players, event.onStrikeBatterId, 'batter')}
                                 </div>
-                                <div className='ballbyball__grow'>
+                                <div className='ballbyball__summary'>
                                     {formatSummary(event, players)}
                                 </div>
-                                <div>
+                                <div className='ballbyball__score'>
                                     {calculateRunsIncludingExtras(events
                                         .filter(event2 => event2.id <= event.id))}
                                     &nbsp;for&nbsp;

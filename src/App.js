@@ -30,8 +30,12 @@ function App() {
       }
       {activePane === 'ballbyball' && 
         <>
-          <Scoreboard />
-          <BallByBall />
+          <div class='appcontent__scoreboard'>
+            <Scoreboard />
+          </div>
+          <div class='appcontent__ballbyball'>
+            <BallByBall />
+          </div>
         </>
       }
       </main>

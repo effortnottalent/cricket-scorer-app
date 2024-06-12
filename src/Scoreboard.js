@@ -17,6 +17,8 @@ import {
     PlayersContext 
 } from './Contexts.js';
 
+import './Scoreboard.scss';
+
 export default function Scoreboard() {
     const events = enrichEvents(useContext(EventsContext));
     const players = useContext(PlayersContext);
@@ -55,26 +57,51 @@ export default function Scoreboard() {
 
     return (
         <div className='scoreboard'>
-            <h1>Scoreboard</h1>
-            <ul>
-                <li>{runs} for {wickets} in {overs} overs</li>
-                <li>Extras: {extras}</li>
-                {lastWicket && (<li>Last wicket fell at&nbsp;
-                    {lastWicket.runs}, with batter {lastWicket.batterId + 1}
-                    &nbsp;- {getPlayerName(players, lastWicket.batterId, 'batter')} 
-                    &nbsp;- making {lastWicket.batterRuns} in a partnership of&nbsp;
-                    {lastWicket.partnership}</li>)}
-                <li>Batter {batter1.id + 1} - {getPlayerName(players, 
-                        batter1.id, 'batter')} - is on {batter1.runs}</li>
-                <li>Batter {batter2.id + 1} - {getPlayerName(players, 
-                        batter2.id, 'batter')} -  is on {batter2.runs}</li>
-                <li>Current partnership is {runs - (lastWicket ? 
-                    lastWicket.runs : 0)}</li>
-                <li>Batter {getOnStrikeBatterId() + 1} - {getPlayerName(players, 
-                        getOnStrikeBatterId(), 'batter')} - on strike, facing 
-                    bowler {getOnBowlBowlerId() + 1} - {getPlayerName(players, 
-                        getOnBowlBowlerId(), 'bowler')}</li>
-            </ul>
+            <h1 className='scoreboard__header'>Scoreboard</h1>
+            <div className='scoreboard__container'>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>
+                        Bat {batter1.id + 1}: {getPlayerName(players, batter1.id, 'batter')}
+                    </div>
+                    <div className='scoreboard__value'>
+                        {batter1.runs}
+                    </div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>Runs</div>
+                    <div className='scoreboard__value'>{runs}</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>
+                        Bat {batter2.id + 1}: {getPlayerName(players, batter2.id, 'batter')}
+                    </div>
+                    <div className='scoreboard__value'>{batter2.runs}</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>Last wicket</div>
+                    <div className='scoreboard__value'>{lastWicket.runs}</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>Wickets</div>
+                    <div className='scoreboard__value'>{wickets}</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>Last man</div>
+                    <div className='scoreboard__value'>{lastWicket.batterRuns}</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>First innings</div>
+                    <div className='scoreboard__value'>TBC</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>Overs</div>
+                    <div className='scoreboard__value'>{overs}</div>
+                </div>
+                <div className='scoreboard__item'>
+                    <div className='scoreboard__label'>Runs required</div>
+                    <div className='scoreboard__value'>TBC</div>
+                </div>
+            </div>
         </div>
     );
 }

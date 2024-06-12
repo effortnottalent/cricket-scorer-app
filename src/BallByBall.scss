@@ -1,40 +1,69 @@
-div {
-    min-width: 4em;
-}
-.ballbyball__header {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    align-content: center;
-    min-width: 100vw;
-    font-weight: bold;
+@import './variables.scss';
+
+.ballbyball {
     div {
-        align-content: center;
-        text-align: center;
+        padding: $padding_tablecell;
     }
-}
-.ballbyball__overrow {
-    display: flex;
-    flex-direction: row;
-    min-width: 100vw;
-    div {
+    &__header {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
         align-content: center;
-        text-align: center;
+        font-weight: bold;
+        border-top: 1px solid $hr-color;
+        border-bottom: 1px solid $hr-color;
+        div {
+            width: 2em;
+            align-content: center;
+            text-align: center;
+            background-color: $table_header_backgroundcolor;
+        }
     }
-}
-.ballbyball__overballs {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-.ballbyball__ballrow {
-    display: flex;
-    flex-direction: row;
-}
-.ballbyball__grow {
-    flex-grow: 1;
-    text-align: left !important;
-}
-.ballbyball__medium {
-    min-width: 12em;
+    &__overrow {
+        display: flex;
+        flex-direction: row;
+        box-shadow: 0px 1px $hr_color;
+        div {
+            text-align: center;
+        }
+    }
+    &__overnumber {
+        align-content: center;
+        background-color: $table_header_backgroundcolor;
+        font-weight: bold;
+        width: 1em;
+        min-width: 1em;
+    }
+    &__overballs {
+        flex-grow: 1;
+    }
+    &__overball {
+        align-content: center;
+        font-weight: bold;
+        width: 1em;
+        min-width: 1em;
+    }
+    &__ballrow {
+        display: flex;
+        flex-direction: row;
+        border-bottom: 1px solid $hr-color_light;
+        div {
+            background-color: $table_cell_backgroundcolor;
+        }
+        &:last-child {
+            border-bottom: 0px;
+        }
+    }
+    &__summary {
+        flex-grow: 1;
+        text-align: left !important;
+    }
+    &__player {
+        min-width: 6em;
+        width: 6em;
+    }
+    &__score {
+        min-width: 6em;
+        width: 6em;
+    }
 }
