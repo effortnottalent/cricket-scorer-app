@@ -26,6 +26,8 @@ import {
     PlayersDispatchContext
 } from './Contexts.js';
 
+import './Scorebook.scss';
+
 export const bowlerColours = [
     'darkblue',
     'green',
@@ -55,59 +57,56 @@ export default function Scorebook({ onSelectEventToEdit }) {
     }
 
     return (
-        <div className='scorebook'>
-            <h1>Scorebook</h1>
-            <div className='batters'>
+        <div className='scorebook__container'>
+            <h1 className='scorebook__header'>Scorebook</h1>
+            <div className='scorebook__batters'>
                 <h2>Batters</h2>
-                <div className='batter-rows'>
-                    {players.filter(player => player.type === 'batter').map(player => 
-                        <div 
-                            key={player.id} 
-                            className='batter-row'
-                        >
-                            <PlayerNameEntry
-                                player={player}
-                                type='batter'
-                                index={player.id}
-                                onEditPlayer={handleEditPlayer}
-                                isOnStrike={player.id === getOnStrikeBatterId()}
-                            />
-                            <BatterLog 
-                                onSelectEventToEdit={onSelectEventToEdit}
-                                playerId={player.id}
-                                events={getBatterEvents(events, player.id)} 
-                            />
-                            <BatterSummary
-                                events={getBatterEvents(events, player.id)} 
-                            />
-                        </div>
-                    )}
-                </div>
+                {players.filter(player => player.type === 'batter').map(player => 
+                    <div 
+                        key={player.id} 
+                        className='scorebook__batter'
+                    >
+                        <PlayerNameEntry
+                            player={player}
+                            type='batter'
+                            index={player.id}
+                            onEditPlayer={handleEditPlayer}
+                            isOnStrike={player.id === getOnStrikeBatterId()}
+                        />
+                        <BatterLog 
+                            onSelectEventToEdit={onSelectEventToEdit}
+                            playerId={player.id}
+                            events={getBatterEvents(events, player.id)} 
+                        />
+                        <BatterSummary
+                            events={getBatterEvents(events, player.id)} 
+                        />
+                    </div>
+                )}
             </div>
-            <div className='bowlers'>
-                <h2>Bowlers</h2>
-                <div className='bowler-rows'>
-                    {players.filter(player => player.type === 'bowler').map(player => 
-                        <div 
-                            key={player.id} 
-                            className='bowler-row'
-                        >
-                            <PlayerNameEntry
-                                player={player}
-                                type='bowler'
-                                index={player.id}
-                                onEditPlayer={handleEditPlayer}
-                                isOnStrike={player.id === getOnBowlBowlerId()}
-                            />
-                            <BowlerLog 
-                                onSelectEventToEdit={onSelectEventToEdit}
-                                events={events.filter(event => 
-                                    event.onBowlBowlerId === player.id)} 
-                            />
-                        </div>
-                    )}
-                </div>
-                <button onClick={() => handleAddPlayer({ type: 'bowler' })}
+            <h2>Bowlers</h2>
+            <div className='scorebook__bowlers'>
+                {players.filter(player => player.type === 'bowler').map(player => 
+                    <div 
+                        key={player.id} 
+                        className='scorebook__bowler'
+                    >
+                        <PlayerNameEntry
+                            player={player}
+                            type='bowler'
+                            index={player.id}
+                            onEditPlayer={handleEditPlayer}
+                            isOnStrike={player.id === getOnBowlBowlerId()}
+                        />
+                        <BowlerLog 
+                            onSelectEventToEdit={onSelectEventToEdit}
+                            events={events.filter(event => 
+                                event.onBowlBowlerId === player.id)} 
+                        />
+                    </div>
+                )}
+                <button 
+                    onClick={() => handleAddPlayer({ type: 'bowler' })}
                 >Add bowler</button>
             </div>
             <div className='extras'>
@@ -279,28 +278,32 @@ function ExtrasSummary({ events }) {
 
 function BatterSummary({events}) {
     return (
-        <div className='batter-summary'>
-            <div className='batter-wicket'>
-                <div className='batter-wicket-label'>How out</div>
-                <div className='batter-wicket-value'>
-                    {events[events.length - 1]?.wicket ?? ''}
-                </div>
-            </div>
-            <div className='batter-fielder'>
-                <div className='batter-fielder-label'>Fielder</div>
-                <div className='batter-fielder-value'>
-                    {events[events.length - 1]?.wicket?.playerId ?? ''}
-                </div>
-            </div>
-            <div className='batter-balls'>
-                <div className='batter-balls-label'>Balls</div>
-                <div className='batter-balls-value'>
+        <div className='scorebook__battersummary'>
+            {events[events.length - 1]?.wicket && 
+                <>
+                    <div className='scorebook__howout'>
+                        <div className='scorebook__label'>How out</div>
+                        <div className='scorebook__value'>
+                            {events[events.length - 1]?.wicket ?? ''}
+                        </div>
+                    </div>
+                    <div className='scorebook__outfielder'>
+                        <div className='scorebook__label'>Fielder</div>
+                        <div className='scorebook__value'>
+                            {events[events.length - 1]?.wicket?.playerId ?? ''}
+                        </div>
+                    </div>
+                </>
+            }
+            <div className='scorebook__ballsfaced'>
+                <div className='scorebook__label'>Balls</div>
+                <div className='scorebook__value'>
                     {calculateBatterBallsFaced(events)}
                 </div>
             </div>
-            <div className='batter-runs'>
-                <div className='batter-runs-label'>Runs</div>
-                <div className='batter-runs-value'>
+            <div className='scorebook__batterrunsscored'>
+                <div className='scorebook__label'>Runs</div>
+                <div className='scorebook__value'>
                     {calculateRunsNotIncludingExtras(events)}
                 </div>
             </div>
@@ -315,7 +318,7 @@ export function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike 
         playerContent = (
             <input
                 data-testid={'player-name-edit'}
-                className={type + '-name-edit'}
+                className={'scorebook__' + type + 'name--edit'}
                 value={player?.name ?? ''}
                 onChange={(e) => 
                     onEditPlayer({
@@ -334,21 +337,28 @@ export function PlayerNameEntry({ player, type, index, onEditPlayer, isOnStrike 
         playerContent = (
             <div 
                 data-testid={'player-name-label'}
-                className={type + '-name-label'}
                 onClick={() => setIsEditing(true)}>
-                {type === 'bowler' ? '█ ' : ''}{player?.name ?? 'Player ' + (index + 1)}
+                {player?.name ?? 'Player ' + (index + 1)}
                 {isOnStrike && ' *'}
             </div>
         );
     }
     return (
-        <div 
-            data-testid={'player-name'}
-            className={type + '-name'} 
-            {...(type === 'bowler' ? {style: {color: bowlerColours[index]}} : '')}>
-            {index + 1} &nbsp;
-            {playerContent}
-        </div>
+        <>
+            <div 
+                className={'scorebook__' + type + 'number'}
+                {...(type === 'bowler' ? {style: {color: bowlerColours[index]}} : '')}
+            >
+                {index + 1}
+            </div>
+            <div 
+                data-testid={'player-name'}
+                className={'scorebook__' + type + 'name'} 
+                {...(type === 'bowler' ? {style: {color: bowlerColours[index]}} : '')}
+            >
+                {playerContent}
+            </div>
+        </>
     );
 }
 
@@ -367,7 +377,7 @@ function BatterLog({ events, onSelectEventToEdit, playerId }) {
     return (
         <div 
             ref={clickToEditBallRef} 
-            className='batter-log'
+            className='scorebook__batterlog'
         >
             {events.map((event, index) => 
                 <BallLogEntry
@@ -402,12 +412,13 @@ export const BowlerLog = ({ events, onSelectEventToEdit }) => {
     return (
         <div
             ref={clickToEditBallRef} 
-            className='bowler-log'
+            className='scorebook__bowlerlog'
         >
             {eventsByOver.map((overEvents, index) => 
-                <div
+                <div 
                     key={index} 
-                    className='bowler-over'
+                    className='scorebook__bowlerover'
+                    data-testid='over-log-entry'
                 >
                     <OverLogEntry
                         events={overEvents}
@@ -416,7 +427,7 @@ export const BowlerLog = ({ events, onSelectEventToEdit }) => {
                     <div 
                         data-testid='over-summary' 
                         key={index} 
-                        className='bowler-over-summary'
+                        className='scorebook__bowleroversummary'
                     >
                         {cumulativeOverSummaries[index].runs} - {cumulativeOverSummaries[index].wickets}
                     </div>
@@ -426,39 +437,33 @@ export const BowlerLog = ({ events, onSelectEventToEdit }) => {
     );
 }
 
-export const OverLogEntry = ({events, index}) => (
-    <div
-        data-testid='over-log-entry' 
-        key={index} 
-        className='bowler-over-detail'
-    >
-        {events.map((ballEvents, ballIndex) => 
-            <BallLogEntry
-                key={ballIndex}
-                event={ballEvents}
-                overLength={events.length}
-                isBatter={false}
-            />
-        )}
-    </div>);
+export const OverLogEntry = ({events, index}) => 
+    events.map((ballEvents, ballIndex) => 
+        <BallLogEntry
+            key={ballIndex}
+            event={ballEvents}
+            overLength={events.length}
+            isBatter={false}
+        />
+    );
 
-const overClass = (overLength) => (overLength > 9 ? ' bowler-twelve-ball-over' : 
-    (overLength > 6 ? ' bowler-nine-ball-over' : ' bowler-six-ball-over'));
+const overClass = (overLength) => (overLength > 9 ? '--twelve' : 
+    (overLength > 6 ? '--nine' : ''));
 
-const GlyphContainer = ({children}) => (<span className='glyph-container'>{children}</span>);
+const GlyphContainer = ({children}) => (<span className='scorebook__glyph'>{children}</span>);
 
 const BallContainer = ({overLength, isBatter, children, event}) => (
     <div 
         data-eventid={event.id}
         data-testid='ball-container'
         title={formatLongSummary(event, useContext(PlayersContext))}
-        className={(isBatter ? 'batter' : 'bowler') + '-ball' + overClass(overLength)}>
+        className={'scorebook__' + (isBatter ? 'batter' : 'bowler') + 'ball' + overClass(overLength)}>
         {children}
     </div>);
 
 const HitRunsSpan = ({runs, bowler}) => (
     <span 
-        className={runs === 0 ? 'run run-dot' : 'run'}
+        className='scorebook__logentry'
         {...(bowler !== undefined ? {style: {color: bowlerColours[bowler]}} : '')}
     >
         {runs === 0 ? '•' : runs}
@@ -466,7 +471,7 @@ const HitRunsSpan = ({runs, bowler}) => (
 
 const WicketSpan = () => (
     <span 
-        className='run'
+        className='scorebook__logentry'
     >
         W
     </span>
@@ -508,12 +513,12 @@ const WideGlyph = ({runs, wicket}) => (
             )}
         </svg>
         {wicket === 'run out' &&
-            <span className={'run bowler-wide-runout-' + runs ?? 0}>
+            <span className={'scorebook__wide--runout' + runs ?? 0}>
                 R
             </span>
         }
         {wicket === 'stumped' &&
-            <span className={'run bowler-wide-stumped'}>
+            <span className={'scorebook__wide--stumped'}>
                 W
             </span>
         }
@@ -545,7 +550,6 @@ const ByeGlyph = ({runs, isLeg, isRunOut}) => (
     <GlyphContainer>
         <svg
             data-testid={(isLeg ? 'leg-' : '') + 'bye'}   
-            className={(isLeg ? 'leg-' : '') + 'bye-' + runs} 
             viewBox="0 0 96 96">
             <g {...(isLeg ? {transform: 'rotate(180 48 48)'} : {})}>
                 <path d="M8,88l40-80l40,80h-80Z" fill="none" stroke="#000" strokeWidth="6"/>
@@ -559,7 +563,7 @@ const ByeGlyph = ({runs, isLeg, isRunOut}) => (
             </g>
         </svg>
         {isRunOut &&
-        <span className={'run ' + (isLeg ? 'leg-' : '') + 'bye-run-out'}>
+        <span className={'scorebook__' + (isLeg ? 'leg' : '') + 'bye'}>
             {runs !== 1 ? runs : ''}R
         </span>
         }
@@ -570,7 +574,6 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
     <GlyphContainer>
         <svg 
             data-testid='no-ball' 
-            className={(isHit ? 'hit-' : '') + 'no-ball-' + runs} 
             viewBox="0 0 96 96">
             <ellipse rx="40" ry="40" transform="translate(48 48)" fill="none" stroke="#000" strokeWidth="6"/>
             {!isHit && !isRunOut && [...Array(runs)].map((_, index) => 
@@ -582,12 +585,12 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
                 )}
         </svg>
         {isHit && !isRunOut &&
-        <span className='run hit-no-ball'>
+        <span className='scorebook__noball'>
             {runs}
         </span>
         }
         {isRunOut &&
-        <span className='run no-ball no-ball-run-out'>
+        <span className='scorebook__noball'>
             {runs !== 1 ? runs : ''}R
         </span>
         }
@@ -601,7 +604,7 @@ export function BallLogEntry({event, overLength, isBatter, playerId}) {
         if(isBatter) {
             if(getBatterOutId(event) === playerId) {
                 if(event.runs !== 0 && getBatterOutId(event) === event.onStrikeBatterId) {
-                    glyph = <><HitRunsSpan runs={event.runs} /><BatterOutGlyph /></>;
+                    glyph = <>{!event.extra && <HitRunsSpan runs={event.runs} />}<BatterOutGlyph /></>;
                 } else {
                     glyph = <BatterOutGlyph />;
                 }

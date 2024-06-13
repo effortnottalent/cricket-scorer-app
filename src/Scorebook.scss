@@ -1,0 +1,274 @@
+@import './variables.scss';
+.scorebook {
+    &__header {
+        margin: 0;
+    }
+    &__value {
+        font-weight: bold;
+    }
+    &__batter {
+        border-top: 1px solid $hr_color;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        height: 3em;
+    }
+    &__batter:last-child {
+        border-bottom: 1px solid $hr_color;
+    }
+    &__battersummary {
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        height: 100%;
+        > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .scorebook__label {
+            height: 40%
+        }
+    }
+    &__howout {
+        width: 6em;
+        min-width: 6em;
+        font-size: calc(100% - 2pt);
+    }
+    &__outfielder {
+        width: 6em;
+        min-width: 6em;
+        font-size: calc(100% - 2pt);
+    }
+    &__ballsfaced {
+        width: 3em;
+        min-width: 3em;
+        font-size: calc(100% - 2pt);
+        > .scorebook__value {
+            font-size: calc(100% + 4pt);
+        }
+    }
+    &__batterrunsscored {
+        width: 3em;
+        min-width: 3em;
+        font-size: calc(100% - 2pt);
+        > .scorebook__value {
+            font-size: calc(100% + 4pt);
+        }
+    }
+    &__batternumber, &__bowlernumber {
+        width: 1.5em;
+        min-width: 1.5em;
+        text-align: center;
+        font-weight: bold;
+    }
+    &__battername, &__bowlername {
+        display: flex;
+        width: 4em;
+        min-width: 4em;
+        height: 3em;
+        align-items: center;
+    }
+    &__battername {
+        border-right: 1px solid $hr-color;
+    }
+    &__bowler {
+        border-top: 1px solid $hr_color;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    }
+    &__bowler:nth-last-child(2) {
+        border-bottom: 1px solid $hr-color;
+    }
+    &__batterlog {
+        display: flex;
+        padding-left: 4px;
+        flex: 1;
+    }
+    &__batterball {
+        display: flex;
+    }
+    &__bowlerball {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        position: relative;
+        &--nine {
+            display: flex;
+            width: 16px;
+            height: 24px;
+            position: relative;
+        }
+        &--twelve {
+            display: flex;
+            width: 16px;
+            height: 16px;
+            position: relative;
+        }
+    }
+    &__logentry {
+        margin: auto;
+    }
+    &__bowlerlog {
+        display: flex;
+    }
+    &__bowlerover {
+        display: flex;
+        width: 48px;
+        height: 96px;
+        border-left: 1px solid $hr-color;
+        flex-wrap: wrap;
+    }
+    &__bowlerover:last-child {
+        border-right: 1px solid $hr-color;
+    }
+    &__glyph {
+        height: 16px;
+        width: 16px;
+        margin: auto;
+    }
+    &__bowleroversummary {
+        width: 100%;
+        height: 16px;
+        border-top: 1px solid $hr-color;
+        text-align: center;
+    }
+    &__noball {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: calc(100% - 6pt);
+    }
+    &__legbye {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: calc(100% - 7pt);
+    }
+    &__bye {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: calc(100% - 7pt);
+    }
+    &__wide {
+        &--stumped {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 10px;
+            transform: translate(-130%, -120%);
+            font-size: calc(100% - 7pt);
+        }
+        &--runout0 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 10px;
+            transform: translate(-160%, -110%);
+        }
+        &--runout1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: calc(100% - 7pt);
+            transform: translate(50%, -110%);
+        }
+        &--runout2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: calc(100% - 7pt);
+            transform: translate(-160%, 10%);
+        }
+        &--runout3 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: calc(100% - 7pt);
+            transform: translate(50%, 10%);
+        }
+    }
+}
+  .bowler-maiden {
+    position: absolute;
+    height: 144px;
+    width: 96px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .extras-rows {
+    display: flex;
+    border-top: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;
+  }
+  .extras-rows div {
+    display: flex;
+    flex: 1;
+    height: 50px;
+    align-items: center;
+  }
+  .extras-rows > div {
+    flex-direction: column;
+  }
+  .ticker-score-section {
+    position: relative;
+    width: 100%;
+    border-top: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;  
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(24px, 1fr));
+  }
+  .ticker-score-section > div {
+    font-size: 12px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%, auto;
+  }
+  .diag {
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='16' y1='80' x2='80' y2='16' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+  }
+  .strike-start {
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='24' y1='48' x2='96' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+  }
+  .strike {
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='0' y1='48' x2='96' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+  }
+  .strike-end {
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='0' y1='48' x2='72' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
+  }
+  .overs-summary-row {
+    display: flex;
+    border-top: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;
+  }
+  .overs-summary-entry {
+    display: flex;
+    border-right: 1px solid darkgray;
+    flex-direction: column;
+  }
+  .overs-summary-entry > div {
+    width: 64px;
+    display: flex;
+    justify-content: center;
+  }
+  .wickets-summary-row {
+    display: flex;
+    border-top: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;
+  }
+  .wickets-summary-entry {
+    display: flex;
+    border-right: 1px solid darkgray;
+    flex-direction: column;
+  }
+  .wickets-summary-entry > div {
+    width: 96px;
+    display: flex;
+    justify-content: center;
+  }

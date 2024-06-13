@@ -548,10 +548,34 @@ it('summarises stumped', () => {
 it('summarises stumped on a wide (that\'s allowed!)', () => {
     const event = {
         wicket: 'stumped',
-        extra: 'wide',
-        runs: 0
+        extra: 'wide'
     };
     const expected = `wide, stumped!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises run out on a wide', () => {
+    const event = {
+        wicket: 'run out',
+        extra: 'wide',
+        fieldPositionId: 7,
+        runs: 3
+    };
+    const expected = `wide, went to ${fieldPositionsList[event.fieldPositionId].label}, ran ${event.runs}, run out!`;
+    expect(formatSummary(event)).toEqual(expected);
+});
+
+it('summarises off strike run out on a wide', () => {
+    const event = {
+        wicket: 'run out',
+        extra: 'wide',
+        fieldPositionId: 7,
+        batterOutOnStrike: false, 
+        runs: 1,
+        onStrikeBatterId: 0,
+        offStrikeBatterId: 1,
+    };
+    const expected = `wide, went to ${fieldPositionsList[event.fieldPositionId].label}, ran ${event.runs}, batter Player 2 run out!`;
     expect(formatSummary(event)).toEqual(expected);
 });
 

@@ -1,0 +1,13 @@
+@import './variables.scss';
+.addevent-form button {
+    height: 96px;
+    width: 96px;
+  }
+  
+  .field-position-glyph {
+    max-height: 256px;
+    pointer-events: none;
+  }
+  .selected {
+    background-color: darkgray;
+  }

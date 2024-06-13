@@ -23,6 +23,8 @@ import {
     isEmpty
 } from './calculations.js';
 
+import './CrupdateEvent.scss';
+
 export default function CrupdateEvent({ eventToEdit }) {
     const [ event, setEvent ] = useState(eventToEdit);
     const players = useContext(PlayersContext);

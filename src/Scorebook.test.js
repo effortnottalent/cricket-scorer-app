@@ -27,7 +27,6 @@ it('shows dot ball for batter for no runs', () => {
         playerId={0} />);
     const received = screen.getByText('•');
     expect(received).toBeInTheDocument();
-    expect(received).toHaveClass('run-dot');
     expect(received).toHaveStyle(`color: ${bowlerColours[event.onBowlBowlerId]}`);
 });
 
@@ -59,7 +58,6 @@ it('shows dot ball for bowler for no runs', () => {
         playerId={0} />);
     const received = screen.getByText('•');
     expect(received).toBeInTheDocument();
-    expect(received).toHaveClass('run-dot');
 });
 
 it('shows number of runs for batter', () => {
@@ -407,7 +405,7 @@ it('renders a normal over as six balls', () => {
     const received = screen.getAllByText('•');
     const ballContainer = screen.getAllByTestId('ball-container');
     expect(received.length).toEqual(6);
-    ballContainer.map(e => expect(e).toHaveClass('bowler-six-ball-over'));
+    ballContainer.map(e => expect(e).toHaveClass('scorebook__bowlerball'));
 });
 
 it('renders an over with a wide as nine balls', () => {
@@ -420,7 +418,7 @@ it('renders an over with a wide as nine balls', () => {
     const received = screen.getAllByText('•');
     const ballContainer = screen.getAllByTestId('ball-container');
     expect(received.length).toEqual(6);
-    ballContainer.map(e => expect(e).toHaveClass('bowler-nine-ball-over'));
+    ballContainer.map(e => expect(e).toHaveClass('scorebook__bowlerball--nine'));
 });
 
 it('renders an over with two wides and two no-balls as twelve balls', () => {
@@ -445,7 +443,7 @@ it('renders an over with two wides and two no-balls as twelve balls', () => {
     const received = screen.getAllByText('•');
     const ballContainer = screen.getAllByTestId('ball-container');
     expect(received.length).toEqual(6);
-    ballContainer.map(e => expect(e).toHaveClass('bowler-twelve-ball-over'));
+    ballContainer.map(e => expect(e).toHaveClass('scorebook__bowlerball--twelve'));
 });
 
 it('renders the over-by-over summary with three overs', () => {

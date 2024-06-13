@@ -2,8 +2,6 @@ import {
   useState
 } from 'react';
 
-import './App.scss';
-
 import BallByBall from './BallByBall.js';
 import CrupdateEvent from './CrupdateEvent.js';
 import Scorebook from './Scorebook.js';
@@ -11,6 +9,7 @@ import Scorebook from './Scorebook.js';
 import { Contexts } from './Contexts.js';
 import Scoreboard from './Scoreboard.js';
 
+import './App.scss';
 
 function App() {
   const [ eventToEdit, setEventToEdit ] = useState({});
@@ -30,10 +29,10 @@ function App() {
       }
       {activePane === 'ballbyball' && 
         <>
-          <div class='appcontent__scoreboard'>
+          <div className='appcontent__scoreboard'>
             <Scoreboard />
           </div>
-          <div class='appcontent__ballbyball'>
+          <div className='appcontent__ballbyball'>
             <BallByBall />
           </div>
         </>

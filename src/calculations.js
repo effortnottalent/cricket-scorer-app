@@ -80,7 +80,7 @@ export function isEmpty(object) {
 }
 
 export const getPlayerName = (players, id, type) => 
-    players.filter(player => player.type === type)
+    players?.filter(player => player.type === type)
         [id]?.name ?? 'Player ' + (id + 1);
 
 
@@ -188,18 +188,19 @@ export function formatSummary(event, players) {
         if(['bowled', 'lbw', 'stumped'].includes(event.wicket)) {
             wicketSummary = `${event.wicket}!`;
             noDisplayRunsSummary = true;
-        }
-        else if(event.wicket === 'caught' && event.fieldPositionId === 1) {
+        } else if(event.wicket === 'caught' && event.fieldPositionId === 1) {
             wicketSummary = 'caught & bowled!';
             noDisplayRunsSummary = true;
-        }
-        else if(event.wicket === 'caught') {
+        } else if(event.wicket === 'caught') {
             wicketSummary = `caught at ${fieldPositionsList[event.fieldPositionId]?.label ?? 0}`;
             noDisplayRunsSummary = true;
-        }
-        else if(getBatterOutId(event) !== event.onStrikeBatterId) {
-            wicketSummary = 'batter ' + getPlayerName(players, getBatterOutId(event), 'batter');
-        }
+        } else if(event.wicket === 'run out') {
+            wicketSummary = `${event.wicket}!`;
+            if(getBatterOutId(event) !== event.onStrikeBatterId) {
+                wicketSummary = 'batter ' + getPlayerName(players, getBatterOutId(event), 'batter')
+                    + ' ' + wicketSummary;
+            }
+        } 
     }
     const runsSummary = noDisplayRunsSummary ? '' : 'went to ' + 
         fieldPositionsList[event.fieldPositionId ?? 0].label + (event.runs ? 
