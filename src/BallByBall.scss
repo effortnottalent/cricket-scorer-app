@@ -13,7 +13,6 @@
         border-top: 1px solid $hr-color;
         border-bottom: 1px solid $hr-color;
         div {
-            width: 2em;
             align-content: center;
             text-align: center;
             background-color: $table_header_backgroundcolor;
@@ -59,11 +58,11 @@
         text-align: left !important;
     }
     &__player {
-        min-width: 6em;
-        width: 6em;
+        min-width: 8em;
+        width: 8em;
     }
     &__score {
-        min-width: 6em;
-        width: 6em;
+        min-width: 8em;
+        width: 8em;
     }
 }

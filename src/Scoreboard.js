@@ -91,7 +91,7 @@ export default function Scoreboard() {
                 </div>
                 <div className='scoreboard__item'>
                     <div className='scoreboard__label'>First innings</div>
-                    <div className='scoreboard__value'>TBC</div>
+                    <div className='scoreboard__value'>-</div>
                 </div>
                 <div className='scoreboard__item'>
                     <div className='scoreboard__label'>Overs</div>
@@ -99,7 +99,7 @@ export default function Scoreboard() {
                 </div>
                 <div className='scoreboard__item'>
                     <div className='scoreboard__label'>Runs required</div>
-                    <div className='scoreboard__value'>TBC</div>
+                    <div className='scoreboard__value'>-</div>
                 </div>
             </div>
         </div>

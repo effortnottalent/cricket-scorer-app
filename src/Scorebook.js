@@ -450,7 +450,8 @@ export const OverLogEntry = ({events, index}) =>
 const overClass = (overLength) => (overLength > 9 ? '--twelve' : 
     (overLength > 6 ? '--nine' : ''));
 
-const GlyphContainer = ({children}) => (<span className='scorebook__glyph'>{children}</span>);
+const GlyphContainer = ({className, children}) => (
+    <span className={className ?? 'scorebook__glyph'}>{children}</span>);
 
 const BallContainer = ({overLength, isBatter, children, event}) => (
     <div 
@@ -478,7 +479,7 @@ const WicketSpan = () => (
 );
     
 const BatterOutGlyph = () => (
-    <GlyphContainer>
+    <GlyphContainer className='scorebook__glyph--batterout'>
         <svg data-testid='batter-out' viewBox="0 0 96 96">
             <path d="M12,12L48,48L12,84" fill="none" stroke="#000" strokeWidth="6"/>
             <path d="M48,12L84,48L48,84" fill="none" stroke="#000" strokeWidth="6"/>

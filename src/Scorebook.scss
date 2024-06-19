@@ -31,42 +31,43 @@
         }
     }
     &__howout {
-        width: 6em;
-        min-width: 6em;
+        width: 8em;
+        min-width: 8em;
         font-size: calc(100% - 2pt);
     }
     &__outfielder {
-        width: 6em;
-        min-width: 6em;
+        width: 8em;
+        min-width: 8em;
         font-size: calc(100% - 2pt);
     }
     &__ballsfaced {
-        width: 3em;
-        min-width: 3em;
+        width: 4em;
+        min-width: 4em;
         font-size: calc(100% - 2pt);
         > .scorebook__value {
             font-size: calc(100% + 4pt);
         }
     }
     &__batterrunsscored {
-        width: 3em;
-        min-width: 3em;
+        width: 4em;
+        min-width: 4em;
         font-size: calc(100% - 2pt);
         > .scorebook__value {
             font-size: calc(100% + 4pt);
         }
     }
     &__batternumber, &__bowlernumber {
-        width: 1.5em;
-        min-width: 1.5em;
+        width: 2em;
+        min-width: 2em;
         text-align: center;
         font-weight: bold;
     }
     &__battername, &__bowlername {
         display: flex;
-        width: 4em;
-        min-width: 4em;
+        width: 8em;
+        min-width: 8em;
         height: 3em;
+        min-height: 3em;
         align-items: center;
     }
     &__battername {
@@ -83,27 +84,29 @@
     }
     &__batterlog {
         display: flex;
-        padding-left: 4px;
+        padding-left: 0.5em;
         flex: 1;
+        height: 3em;
+        align-items: center;
     }
     &__batterball {
         display: flex;
     }
     &__bowlerball {
-        width: 24px;
-        height: 24px;
+        width: 1.5em;
+        height: 1.5em;
         display: flex;
         position: relative;
         &--nine {
             display: flex;
-            width: 16px;
-            height: 24px;
+            width: 1em;
+            height: 1.5em;
             position: relative;
         }
         &--twelve {
             display: flex;
-            width: 16px;
-            height: 16px;
+            width: 1em;
+            height: 1em;
             position: relative;
         }
     }
@@ -115,7 +118,7 @@
     }
     &__bowlerover {
         display: flex;
-        width: 48px;
+        width: 3em;
         height: 96px;
         border-left: 1px solid $hr-color;
         flex-wrap: wrap;
@@ -124,13 +127,17 @@
         border-right: 1px solid $hr-color;
     }
     &__glyph {
-        height: 16px;
-        width: 16px;
-        margin: auto;
+        height: 1em;
+        width: 1em;
+        display: flex;
+        &--batterout {
+            height: 1.5em;
+            width: 1.5em;
+        }
     }
     &__bowleroversummary {
         width: 100%;
-        height: 16px;
+        height: 1em;
         border-top: 1px solid $hr-color;
         text-align: center;
     }
@@ -222,7 +229,7 @@
     border-top: 1px solid darkgray;
     border-bottom: 1px solid darkgray;  
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(24px, 1fr));
+    grid-template-columns: repeat(auto-fill,minmax(1.5em, 1fr));
   }
   .ticker-score-section > div {
     font-size: 12px;
@@ -253,7 +260,7 @@
     flex-direction: column;
   }
   .overs-summary-entry > div {
-    width: 64px;
+    width: 4em;
     display: flex;
     justify-content: center;
   }
