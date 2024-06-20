@@ -4,6 +4,7 @@ import {
     RUN_OUT_WRONG_BATTER,
     calculateRunsIncludingExtras,
     calculateExtrasBreakdown,
+    getWhetherOverIsEndOfSpell,
     enrichEvents,
     getPlayerName,
     calculateExtrasTotal,
@@ -470,6 +471,27 @@ it('calculates over summaries correctly', () => {
     expect(received[2].wickets).toEqual(1);
     expect
 });
+
+it('should properly deduct when a bowler has had a gap in a spell', () => {
+    const events = new Array(36).fill().map((_, id) => ({
+        runs: 0,
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+    }));
+    events[0].over = 0;
+    events[6].over = 2;
+    events[12].over = 4;
+    events[18].over = 8;
+    events[24].over = 10;
+    events[30].over = 12;
+
+    expect(getWhetherOverIsEndOfSpell(events.slice(0, 6), events)).toEqual(false);
+    expect(getWhetherOverIsEndOfSpell(events.slice(6, 12), events)).toEqual(false);
+    expect(getWhetherOverIsEndOfSpell(events.slice(12, 18), events)).toEqual(true);
+    expect(getWhetherOverIsEndOfSpell(events.slice(18, 24), events)).toEqual(false);
+    expect(getWhetherOverIsEndOfSpell(events.slice(24, 30), events)).toEqual(false);
+    expect(getWhetherOverIsEndOfSpell(events.slice(30, 36), events)).toEqual(false);
+})
 
 });
 

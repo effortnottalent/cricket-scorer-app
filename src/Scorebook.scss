@@ -94,20 +94,23 @@
     }
     &__bowlerball {
         width: 1.5em;
-        height: 1.5em;
+        height: 1.33em;
         display: flex;
         position: relative;
+        align-items: center;
         &--nine {
             display: flex;
             width: 1em;
-            height: 1.5em;
+            height: 1.33em;
             position: relative;
+            align-items: center;
         }
         &--twelve {
             display: flex;
             width: 1em;
             height: 1em;
             position: relative;
+            align-items: center;
         }
     }
     &__logentry {
@@ -119,9 +122,18 @@
     &__bowlerover {
         display: flex;
         width: 3em;
-        height: 96px;
+        height: 5em;
         border-left: 1px solid $hr-color;
         flex-wrap: wrap;
+        &--endofspell {
+            display: flex;
+            width: 3em;
+            height: 5em;
+            border-left: 1px solid $hr-color;
+            flex-wrap: wrap;
+            border-right: 3px solid $hr-color !important;
+            margin-right: -3px;
+        }
     }
     &__bowlerover:last-child {
         border-right: 1px solid $hr-color;
@@ -139,65 +151,68 @@
         width: 100%;
         height: 1em;
         border-top: 1px solid $hr-color;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        top: -1px;
     }
     &__noball {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: calc(100% - 6pt);
+        font-size: calc(100% - 8pt);
     }
     &__legbye {
         position: absolute;
         top: 40%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: calc(100% - 7pt);
+        font-size: calc(100% - 8pt);
     }
     &__bye {
         position: absolute;
-        top: 60%;
+        top: 65%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: calc(100% - 7pt);
+        font-size: calc(100% - 8pt);
     }
     &__wide {
         &--stumped {
             position: absolute;
             top: 50%;
             left: 50%;
-            font-size: 10px;
+            font-size: calc(100% - 9pt);
             transform: translate(-130%, -120%);
-            font-size: calc(100% - 7pt);
         }
         &--runout0 {
             position: absolute;
             top: 50%;
             left: 50%;
-            font-size: 10px;
+            font-size: calc(100% - 9pt);
             transform: translate(-160%, -110%);
         }
         &--runout1 {
             position: absolute;
             top: 50%;
             left: 50%;
-            font-size: calc(100% - 7pt);
+            font-size: calc(100% - 9pt);
             transform: translate(50%, -110%);
         }
         &--runout2 {
             position: absolute;
             top: 50%;
             left: 50%;
-            font-size: calc(100% - 7pt);
+            font-size: calc(100% - 9pt);
             transform: translate(-160%, 10%);
         }
         &--runout3 {
             position: absolute;
             top: 50%;
-            left: 50%;
-            font-size: calc(100% - 7pt);
-            transform: translate(50%, 10%);
+            left: 50%;    
+            font-size: calc(100% - 9pt);
+            transform: translate(70%, 10%);
         }
     }
 }

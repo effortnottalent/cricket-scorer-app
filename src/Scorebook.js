@@ -17,7 +17,8 @@ import {
     calculateCumulativeOverSummaries,
     formatLongSummary,
     getBatterEvents,
-    getBatterOutId
+    getBatterOutId,
+    getWhetherOverIsEndOfSpell
 } from './calculations.js';
 import { enrichEvents } from './calculations.js';
 import { 
@@ -417,7 +418,9 @@ export const BowlerLog = ({ events, onSelectEventToEdit }) => {
             {eventsByOver.map((overEvents, index) => 
                 <div 
                     key={index} 
-                    className='scorebook__bowlerover'
+                    className={'scorebook__bowlerover' + 
+                        (getWhetherOverIsEndOfSpell(overEvents, events) 
+                            ? '--endofspell' : '')}
                     data-testid='over-log-entry'
                 >
                     <OverLogEntry

@@ -63,26 +63,26 @@ export function enrichEvents(events) {
     });
 }
 
-export function getOnStrikeBatterId() {
-    return onStrikeBatterId;
-}
+export const getOnStrikeBatterId = () => onStrikeBatterId;
 
-export function getOffStrikeBatterId(event) {
-    return offStrikeBatterId;
-}
+export const getOffStrikeBatterId = () => offStrikeBatterId;
 
-export function getOnBowlBowlerId() {
-    return onBowlBowlerId;
-}
+export const getOnBowlBowlerId = () => onBowlBowlerId;
 
-export function isEmpty(object) {
-    return Object.keys(object).length === 0;
-}
+export const isEmpty = (object) => Object.keys(object).length === 0;
 
 export const getPlayerName = (players, id, type) => 
     players?.filter(player => player.type === type)
         [id]?.name ?? 'Player ' + (id + 1);
 
+export function getWhetherOverIsEndOfSpell(overEvents, allOverEvents) {
+    if(overEvents[0].over == allOverEvents.flat().reduce(
+            (max, event) => Math.max(max, (event?.over ?? 0)), 0)) {
+        return false;
+    }
+    return allOverEvents.filter(event => 
+        event.over === (overEvents[0].over + 2)).length === 0;
+}
 
 export function calculateRunsIncludingExtras(events) {
     return events.reduce((acc, event) => {

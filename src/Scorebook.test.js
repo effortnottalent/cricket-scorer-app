@@ -501,7 +501,7 @@ if('renders the ticket section correctly for the runs scored', () => {
 
 });
 
-describe('ball log items', () => {
+describe('bowler log items', () => {
 
 it('should render bowler summary correctly', () => {
 
