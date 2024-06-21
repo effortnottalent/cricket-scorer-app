@@ -18,7 +18,11 @@ import {
     formatLongSummary,
     getBatterEvents,
     getBatterOutId,
-    getWhetherOverIsEndOfSpell
+    getWhetherOverIsEndOfSpell,
+    getPlayerName,
+    isBatterOut,
+    isBatterAtCrease,
+    isBowlerInSpell
 } from './calculations.js';
 import { enrichEvents } from './calculations.js';
 import { 
@@ -65,7 +69,9 @@ export default function Scorebook({ onSelectEventToEdit }) {
                 {players.filter(player => player.type === 'batter').map(player => 
                     <div 
                         key={player.id} 
-                        className='scorebook__batter'
+                        className={'scorebook__batter' + 
+                            (isBatterOut(player.id, events) ? '--out' : '') + 
+                            (isBatterAtCrease(player.id) ? '--in' : '')}
                     >
                         <PlayerNameEntry
                             player={player}
@@ -80,6 +86,7 @@ export default function Scorebook({ onSelectEventToEdit }) {
                             events={getBatterEvents(events, player.id)} 
                         />
                         <BatterSummary
+                            playerId={player.id}
                             events={getBatterEvents(events, player.id)} 
                         />
                     </div>
@@ -90,7 +97,8 @@ export default function Scorebook({ onSelectEventToEdit }) {
                 {players.filter(player => player.type === 'bowler').map(player => 
                     <div 
                         key={player.id} 
-                        className='scorebook__bowler'
+                        className={'scorebook__bowler' + 
+                            (isBowlerInSpell(player.id) ? '--in' : '')}
                     >
                         <PlayerNameEntry
                             player={player}
@@ -135,32 +143,32 @@ export function OverByOverSummary({events}) {
     return (
         <div 
             data-testid='over-by-over-summary' 
-            className='overs-summary-row'
+            className='scorebook__oversummary'
         >
-            <div className='overs-summary-entry'>
-                <div className='over-summary-over-label'>Over</div>
-                <div className='over-summary-runs-label'>Runs</div>
-                <div className='over-summary-wickets-label'>Wickets</div>
-                <div className='over-summary-bowler-label'>Bowler</div>
+            <div className='scorebook__oversummaryentry'>
+                <div className='scorebook__label'>Over</div>
+                <div className='scorebook__label'>Runs</div>
+                <div className='scorebook__label'>Wickets</div>
+                <div className='scorebook__label'>Bowler</div>
             </div>
             {eventsByOver.map((over, index) => {
                 const ballsUpToOver = eventsByOver.slice(0, index + 1).flat();
                 return (
                     <div 
                         key={index}
-                        className='overs-summary-entry'
+                        className='scorebook__oversummaryentry'
                         data-testid='overs-summary-entry'
                     >
-                        <div className='over-summary-over-value'>
+                        <div className='scorebook__value'>
                             {over[0].over + 1}
                         </div>
-                        <div className='over-summary-runs-value'>
+                        <div className='scorebook__value'>
                             {calculateRunsIncludingExtras(ballsUpToOver)}
                         </div>
-                        <div className='over-summary-wickets-value'>
+                        <div className='scorebook__value'>
                             {calculateWickets(ballsUpToOver)}
                         </div>
-                        <div className='over-summary-bowler-value'>
+                        <div className='scorebook__value'>
                             {over[0].onBowlBowlerId}
                         </div>
                     </div>
@@ -175,37 +183,37 @@ export function WicketByWicketSummary({ events }) {
     return (
         <div 
             data-testid="wicket-by-wicket-summary"
-            className='wickets-summary-row'
+            className='scorebook__wicketsummary'
         >
-            <div className='wickets-summary-entry'>
-                <div className='wickets-summary-wicket-label'>Wicket</div>
-                <div className='wickets-summary-batterout-label'>Batter out</div>
-                <div className='wickets-summary-runs-label'>Runs</div>
-                <div className='wickets-summary-partnership-label'>Partnership</div>
-                <div className='wickets-summary-bowler-label'>Bowler</div>
+            <div className='scorebook__wicketsummaryentry'>
+                <div className='scorebook__label'>Wicket</div>
+                <div className='scorebook__label'>Batter out</div>
+                <div className='scorebook__label'>Runs</div>
+                <div className='scorebook__label'>Partnership</div>
+                <div className='scorebook__label'>Bowler</div>
             </div>
             {[...Array(calculateWickets(events))].map((_, index) => {
                 return (
                     <div 
                         data-testid="wickets-summary-entry"
                         key={index}
-                        className='wickets-summary-entry'
+                        className='scorebook__wicketsummaryentry'
                     >
-                        <div className='wicket-summary-wicket-value'>
+                        <div className='scorebook__value'>
                             {index + 1}
                         </div>
-                        <div className='wickets-summary-batterout-value'>
+                        <div className='scorebook__value'>
                             {getBatterOutId(wicketEvents[index]) + 1}
                         </div>
-                        <div className='wicket-summary-runs-value'>
+                        <div className='scorebook__value'>
                             {calculateRunsIncludingExtras(events
                                 .filter(event => event.id <= wicketEvents[index]?.id ?? 
                                     Number.MAX_SAFE_INTEGER))}
                         </div>
-                        <div className='wicket-summary-partnership-value'>
+                        <div className='scorebook__value'>
                             {calculatePartnershipAtWicket(events, index)}
                         </div>
-                        <div className='wicket-summary-bowler-value'>
+                        <div className='scorebook__value'>
                             {wicketEvents[index].onBowlBowlerId + 1}
                         </div>
                     </div>
@@ -220,7 +228,7 @@ export function ScoreTicker({ events }) {
     const tickerLength = 420;
     let score = 0;
     return (
-        <div className='ticker-score-section'>
+        <div className='scorebook__ticker'>
             {events.map(event => {
                 const oldScore = score;
                 score += event.runs ?? 0;
@@ -256,31 +264,32 @@ export function ScoreTicker({ events }) {
 function ExtrasSummary({ events }) {
     const extrasBreakdown = calculateExtrasBreakdown(events);
     return (
-        <div className='extras-rows'>
-            <div className='wides'>
-                <div className='wides-label'>Wides</div>
-                <div className='wides-value'>{extrasBreakdown.wides}</div>
+        <div className='scorebook__extrasummary'>
+            <div className='scorebook__wides'>
+                <div className='scorebook__label'>Wides</div>
+                <div className='scorebook__value'>{extrasBreakdown.wides}</div>
             </div>
-            <div className='byes'>
-                <div className='byes-label'>Byes</div>
-                <div className='byes-value'>{extrasBreakdown.byes}</div>
+            <div className='scorebook__byes'>
+                <div className='scorebook__label'>Byes</div>
+                <div className='scorebook__value'>{extrasBreakdown.byes}</div>
             </div>
-            <div className='leg-byes'>
-                <div className='leg-byes-label'>Leg Byes</div>
-                <div className='leg byes-value'>{extrasBreakdown.legByes}</div>
+            <div className='scorebook__legbyes'>
+                <div className='scorebook__label'>Leg Byes</div>
+                <div className='scorebook__value'>{extrasBreakdown.legByes}</div>
             </div>
-            <div className='no-balls'>
-                <div className='no-balls-label'>No-Balls</div>
-                <div className='no-balls-value'>{extrasBreakdown.noBalls}</div>
+            <div className='scorebook__noballs'>
+                <div className='scorebook__label'>No-Balls</div>
+                <div className='scorebook__value'>{extrasBreakdown.noBalls}</div>
             </div>
         </div>
     )
 }
 
-function BatterSummary({events}) {
+function BatterSummary({playerId, events}) {
+    const players = useContext(PlayersContext);
     return (
         <div className='scorebook__battersummary'>
-            {events[events.length - 1]?.wicket && 
+            {isBatterOut(playerId, events) && 
                 <>
                     <div className='scorebook__howout'>
                         <div className='scorebook__label'>How out</div>
@@ -291,7 +300,10 @@ function BatterSummary({events}) {
                     <div className='scorebook__outfielder'>
                         <div className='scorebook__label'>Fielder</div>
                         <div className='scorebook__value'>
-                            {events[events.length - 1]?.wicket?.playerId ?? ''}
+                            {events[events.length - 1]?.fieldPositionId ?
+                                getPlayerName(players, 
+                                    events[events.length - 1]?.fieldPositionId, 
+                                    'batter') : ''}
                         </div>
                     </div>
                 </>

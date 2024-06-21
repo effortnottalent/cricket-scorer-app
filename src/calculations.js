@@ -3,6 +3,7 @@ import { fieldPositionsList } from './FieldPositionPicker.js';
 let onStrikeBatterId = 0;
 let offStrikeBatterId = 1;
 let onBowlBowlerId = 0;
+let offBowlBowlerId = 1;
 
 export const getBatterOutId = (event) => 
     (((event.batterOutOnStrike ?? true)) ? event.onStrikeBatterId : event.offStrikeBatterId);
@@ -11,7 +12,7 @@ export function enrichEvents(events) {
     onStrikeBatterId = 0;
     onBowlBowlerId = 0;
     offStrikeBatterId = 1;
-    let offBowlBowlerId = 1;
+    offBowlBowlerId = 1;
     let ball = 0;
     let over = 0;
 
@@ -63,6 +64,16 @@ export function enrichEvents(events) {
     });
 }
 
+export const isBatterAtCrease = (batterId) => 
+    [ onStrikeBatterId, offStrikeBatterId ].includes(batterId);
+
+export const isBowlerInSpell = (bowlerId) => 
+    [ onBowlBowlerId, offBowlBowlerId ].includes(bowlerId);
+
+export const isBatterOut = (batterId, events) => 
+    events.filter(event => event.wicket && 
+        getBatterOutId(event) === batterId).length !== 0;
+
 export const getOnStrikeBatterId = () => onStrikeBatterId;
 
 export const getOffStrikeBatterId = () => offStrikeBatterId;
@@ -76,7 +87,7 @@ export const getPlayerName = (players, id, type) =>
         [id]?.name ?? 'Player ' + (id + 1);
 
 export function getWhetherOverIsEndOfSpell(overEvents, allOverEvents) {
-    if(overEvents[0].over == allOverEvents.flat().reduce(
+    if(overEvents[0].over === allOverEvents.flat().reduce(
             (max, event) => Math.max(max, (event?.over ?? 0)), 0)) {
         return false;
     }

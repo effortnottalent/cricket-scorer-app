@@ -12,8 +12,30 @@
         align-items: center;
         flex-direction: row;
         height: 3em;
+        &--out {
+            border-top: 1px solid $hr_color;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            height: 3em;
+            background-color: $less_important;
+        }
+        &--in {
+            border-top: 1px solid $hr_color;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            height: 3em;
+            background-color: $more_important;
+        }
     }
     &__batter:last-child {
+        border-bottom: 1px solid $hr_color;
+    }
+    &__batter--out:last-child {
+        border-bottom: 1px solid $hr_color;
+    }
+    &__batter--in:last-child {
         border-bottom: 1px solid $hr_color;
     }
     &__battersummary {
@@ -71,16 +93,26 @@
         align-items: center;
     }
     &__battername {
-        border-right: 1px solid $hr-color;
+        border-right: 1px solid $hr_color;
     }
     &__bowler {
         border-top: 1px solid $hr_color;
         display: flex;
         align-items: center;
         flex-direction: row;
+        &--in {
+            border-top: 1px solid $hr_color;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            background-color: $more_important;
+        }
     }
     &__bowler:nth-last-child(2) {
-        border-bottom: 1px solid $hr-color;
+        border-bottom: 1px solid $hr_color;
+    }
+    &__bowler--in:nth-last-child(2) {
+        border-bottom: 1px solid $hr_color;
     }
     &__batterlog {
         display: flex;
@@ -123,20 +155,20 @@
         display: flex;
         width: 3em;
         height: 5em;
-        border-left: 1px solid $hr-color;
+        border-left: 1px solid $hr_color;
         flex-wrap: wrap;
         &--endofspell {
             display: flex;
             width: 3em;
             height: 5em;
-            border-left: 1px solid $hr-color;
+            border-left: 1px solid $hr_color;
             flex-wrap: wrap;
-            border-right: 3px solid $hr-color !important;
+            border-right: 3px solid $hr_color !important;
             margin-right: -3px;
         }
     }
     &__bowlerover:last-child {
-        border-right: 1px solid $hr-color;
+        border-right: 1px solid $hr_color;
     }
     &__glyph {
         height: 1em;
@@ -150,7 +182,7 @@
     &__bowleroversummary {
         width: 100%;
         height: 1em;
-        border-top: 1px solid $hr-color;
+        border-top: 1px solid $hr_color;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -163,6 +195,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: calc(100% - 8pt);
+        letter-spacing: -0.1em;
     }
     &__legbye {
         position: absolute;
@@ -170,6 +203,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: calc(100% - 8pt);
+        letter-spacing: -0.1em;
     }
     &__bye {
         position: absolute;
@@ -177,6 +211,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: calc(100% - 8pt);
+        letter-spacing: -0.1em;
     }
     &__wide {
         &--stumped {
@@ -215,6 +250,53 @@
             transform: translate(70%, 10%);
         }
     }
+    &__extrasummary {
+        display: flex;
+        border-top: 1px solid $hr_color;
+        border-bottom: 1px solid $hr_color;
+        justify-content: space-around;
+        > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+    &__ticker {
+        position: relative;
+        width: 100%;
+        border-top: 1px solid $hr_color;
+        border-bottom: 1px solid $hr_color;  
+        display: grid;
+        grid-template-columns: repeat(auto-fill,minmax(1.1em, 1fr));
+        > div {
+            font-size: calc(100% - 8pt);
+            text-align: center;
+        }
+    }
+    &__oversummary {
+        display: flex;
+        border-top: 1px solid $hr_color;
+        border-bottom: 1px solid $hr_color;
+    }
+    &__oversummaryentry {
+        display: flex;
+        border-right: 1px solid darkgray;
+        flex-direction: column;
+        min-width: 2em;
+        align-items: center;
+    }
+    &__wicketsummary {
+        display: flex;
+        border-top: 1px solid $hr_color;
+        border-bottom: 1px solid $hr_color;
+    }
+    &__wicketsummaryentry {
+        display: flex;
+        border-right: 1px solid darkgray;
+        flex-direction: column;
+        min-width: 3em;
+        align-items: center;
+    }
 }
   .bowler-maiden {
     position: absolute;
@@ -223,34 +305,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
-  .extras-rows {
-    display: flex;
-    border-top: 1px solid darkgray;
-    border-bottom: 1px solid darkgray;
-  }
-  .extras-rows div {
-    display: flex;
-    flex: 1;
-    height: 50px;
-    align-items: center;
-  }
-  .extras-rows > div {
-    flex-direction: column;
-  }
-  .ticker-score-section {
-    position: relative;
-    width: 100%;
-    border-top: 1px solid darkgray;
-    border-bottom: 1px solid darkgray;  
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(1.5em, 1fr));
-  }
-  .ticker-score-section > div {
-    font-size: 12px;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 100% 100%, auto;
   }
   .diag {
     background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='16' y1='80' x2='80' y2='16' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
@@ -263,34 +317,4 @@
   }
   .strike-end {
     background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 96 96'><line x1='0' y1='48' x2='72' y2='48' stroke='black' vector-effect='non-scaling-stroke'/></svg>");
-  }
-  .overs-summary-row {
-    display: flex;
-    border-top: 1px solid darkgray;
-    border-bottom: 1px solid darkgray;
-  }
-  .overs-summary-entry {
-    display: flex;
-    border-right: 1px solid darkgray;
-    flex-direction: column;
-  }
-  .overs-summary-entry > div {
-    width: 4em;
-    display: flex;
-    justify-content: center;
-  }
-  .wickets-summary-row {
-    display: flex;
-    border-top: 1px solid darkgray;
-    border-bottom: 1px solid darkgray;
-  }
-  .wickets-summary-entry {
-    display: flex;
-    border-right: 1px solid darkgray;
-    flex-direction: column;
-  }
-  .wickets-summary-entry > div {
-    width: 96px;
-    display: flex;
-    justify-content: center;
   }

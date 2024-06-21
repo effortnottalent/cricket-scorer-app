@@ -64,7 +64,8 @@ function playersReducer(players, action) {
                 ...players,
                 {
                     ...action.player,
-                    id: players.length
+                    id: players.filter(player => 
+                        player.type === action.player.type).length
                 }
             ];
         case 'edit': 

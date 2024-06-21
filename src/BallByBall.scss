@@ -10,8 +10,8 @@
         flex-direction: row;
         align-content: center;
         font-weight: bold;
-        border-top: 1px solid $hr-color;
-        border-bottom: 1px solid $hr-color;
+        border-top: 1px solid $hr_color;
+        border-bottom: 1px solid $hr_color;
         div {
             align-content: center;
             text-align: center;
@@ -45,7 +45,7 @@
     &__ballrow {
         display: flex;
         flex-direction: row;
-        border-bottom: 1px solid $hr-color_light;
+        border-bottom: 1px solid $hr_color_light;
         div {
             background-color: $table_cell_backgroundcolor;
         }
