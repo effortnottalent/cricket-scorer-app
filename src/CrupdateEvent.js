@@ -15,6 +15,7 @@ import {
 } from './Contexts.js';
 import {
     enrichEvents,
+    formatOverBall,
     formatSummary,
     getOffStrikeBatterId,
     getOnBowlBowlerId,
@@ -45,7 +46,8 @@ export default function CrupdateEvent({ eventToEdit }) {
 
     return (
         <div className='addevent'>
-            <h1>{ isEmpty(eventToEdit) ? 'Add' : 'Edit'} Ball</h1>
+            <h1>{ isEmpty(eventToEdit) ? 'Add Ball' : 'Edit Ball ' + 
+                formatOverBall(eventToEdit)}</h1>
             <div className='addevent-form'>
                 <fieldset className='runs'>
                     <legend>Runs scored</legend>
@@ -184,9 +186,6 @@ export default function CrupdateEvent({ eventToEdit }) {
             </fieldset>
             {Object.keys(event).length !== 0 &&
                 <fieldset className='confirm-ball'>
-                    {!isEmpty(eventToEdit) &&
-                        <p>Ball {event.over + 1}.{event.ball + 1}</p>
-                    }
                     <p>Batter {onStrikeBatterId + 1} - {getPlayerName(players, 
                             onStrikeBatterId, 'batter')} - on strike, facing 
                         bowler {onBowlBowlerId + 1} - {getPlayerName(players, 

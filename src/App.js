@@ -10,6 +10,7 @@ import { Contexts } from './Contexts.js';
 import Scoreboard from './Scoreboard.js';
 
 import './App.scss';
+import { isEmpty } from './calculations.js';
 
 function App() {
   const [ eventToEdit, setEventToEdit ] = useState({});
@@ -20,12 +21,12 @@ function App() {
     <main className="appcontent">
       {activePane === 'addball' && 
         <CrupdateEvent 
-          eventToEdit={Object.keys(eventToEdit).length !== 0 ? 
-            eventToEdit : {}}
+        key={isEmpty(eventToEdit) ? null : eventToEdit.id}
+          eventToEdit={isEmpty(eventToEdit) ? {} : eventToEdit}
         />
       }
       {activePane === 'scorebook' && 
-        <Scorebook onSelectEventToEdit={(id) => setEventToEdit(id)} />
+        <Scorebook onSelectEventToEdit={(id) => { setEventToEdit(id); setActivePane('addball'); } } />
       }
       {activePane === 'ballbyball' && 
         <>
@@ -53,7 +54,10 @@ function App() {
         </button>
         <button 
           className="menufooter__node"
-          onClick={() => setActivePane('addball')}
+          onClick={() => {
+            setEventToEdit({});
+            setActivePane('addball');
+          }}
         >
           Add ball
         </button>

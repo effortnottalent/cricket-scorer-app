@@ -184,8 +184,10 @@ export function calculateCumulativeOverSummaries(events) {
 export const getBatterEvents = (events, id) => events.filter(event => 
     (event.onStrikeBatterId === id || getBatterOutId(event) === id));
 
+export const formatOverBall = (event) => (event.over + 1) + '.' + (event.ball + 1);
+
 export function formatLongSummary(event, players) {
-    return 'Ball ' + (event.over + 1) + '.' + (event.ball + 1) + ': ' +
+    return 'Ball ' + formatOverBall(event) + ': ' +
         'batter ' + getPlayerName(players, event.onStrikeBatterId, 'batter') + 
         ' facing bowler ' + getPlayerName(players, event.onBowlBowlerId, 'bowler') + 
         ', ' + formatSummary(event, players);
