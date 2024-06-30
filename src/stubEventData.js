@@ -1,3 +1,59 @@
+import { fieldPositionsList } from './FieldPositionPicker';
+import { 
+  wicketScoredData,
+  extrasScoredData 
+} from './eventRefData';
+import { faker } from '@faker-js/faker';
+
+export const generateInitialEvents = () => {
+
+  const players = [
+    ...[...Array(11)].map((_, i) => ({ 
+      id: i, type: 'batter', name: faker.person.fullName()})),
+    ...[...Array(2)].map((_, i) => ({ 
+      id: i, type: 'bowler', name: faker.person.fullName()}))
+  ];
+
+  const PROBABILITIES = {
+    runsScored: 0.2,
+    wicket: 0.05,
+    extra: 0.1,
+    swapbowler: 0.04
+  };
+  const events = [];
+  do {
+    const event = {
+      id: events.length
+    };
+    event.fieldPositionId = Math.floor(Math.random() * fieldPositionsList.length);
+    if(Math.random() < PROBABILITIES.runsScored) {
+      event.runs = Math.floor(Math.random() * 4);
+      if([4, 6].includes(event.runs)) {
+        event.boundary = true;
+      }
+    }
+    if(Math.random() < PROBABILITIES.extra) {
+      event.extra = extrasScoredData[
+        Math.floor(Math.random() * extrasScoredData.length)].extra;
+    }
+    if(Math.random() < PROBABILITIES.wicket) {
+      event.wicket = wicketScoredData[
+        Math.floor(Math.random() * wicketScoredData.length)].type;
+    }
+    if(Math.random() < PROBABILITIES.swapbowler) {
+      const numberBowlers = Math.max([0,1].push.apply(events
+        .filter(event => event.newBowlerId)
+        .map(event => event.newBowlerId)));
+      event.newBowlerId = numberBowlers + 1;
+      players.push({ 
+        id: players.filter(player => player.type === 'bowler').length, 
+        type: 'bowler', 
+        name: faker.person.fullName()})
+    }
+    events.push(event);
+  } while (events.filter(event => event.wicket).length < 10);
+  return [ events, players ];
+}
 
 export const initialEvents = [{
     id: 0,
