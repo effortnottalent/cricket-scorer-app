@@ -39,7 +39,11 @@ export const bowlerColours = [
     'red',
     'purple',
     'brown',
-    'orange'
+    'orange',
+    'pink',
+    'lightgreen',
+    'lightblue',
+    'darkgreen'
 ];
 
 export default function Scorebook({ onSelectEventToEdit }) {
@@ -580,7 +584,7 @@ const ByeGlyph = ({runs, isLeg, isRunOut}) => (
         </svg>
         {isRunOut &&
         <span className={'scorebook__' + (isLeg ? 'leg' : '') + 'bye'}>
-            {runs !== 1 ? runs : ''}R
+            {runs > 1 ? runs : ''}R
         </span>
         }
     </GlyphContainer>
@@ -600,7 +604,7 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
                     />
                 )}
         </svg>
-        {isHit && !isRunOut &&
+        {isHit && !isRunOut && runs !== 0 &&
         <span className='scorebook__noball'>
             {runs}
         </span>
