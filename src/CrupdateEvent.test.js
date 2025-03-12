@@ -86,10 +86,11 @@ it('should disable and clear runs when certain wicket types are selected', () =>
     });
 });
 
-it('should render the event being edited', () => {
+it('should show edit ball instead of add ball', () => {
 
     const event = {
         runs: 2,
+        ball: 7,
         extra: 'hit no-ball',
         wicket: 'run out',
         fieldPositionId: 6,
@@ -101,7 +102,7 @@ it('should render the event being edited', () => {
         extraBall: true
     }
     render(<CrupdateEvent eventToEdit={event} />);
-    expect(screen.queryByText('Edit Ball')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Edit Ball/i })).toBeInTheDocument();
     runsScoredData.map(runs => {
         const element = screen.getByText(runs.label);
         ((runs.runs === event.runs) && 
@@ -126,5 +127,5 @@ it('should render the event being edited', () => {
         .toHaveValue(event.notes);
     expect(screen.getByText('Extra ball')).toHaveClass('selected');
 })
-
+    
 });

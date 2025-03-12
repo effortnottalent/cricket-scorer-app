@@ -78,6 +78,7 @@ export const FieldPositionGlyph = ({ initialPoint, handleClick, editing }) => {
             {fieldPositionsList.map((fp, index) => 
                 <ellipse 
                     index={index}
+                    key={index}
                     rx="1" ry="1" 
                     transform={`translate(${fp.x} ${fp.y})`} 
                     fill="grey" />
