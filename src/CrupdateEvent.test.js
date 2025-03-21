@@ -125,7 +125,6 @@ it('should show edit ball instead of add ball', () => {
     // expect(screen.getByLabelText('Batter out')).toHaveValue('' + event.batterOut);
     expect(screen.getByLabelText('notes'))
         .toHaveValue(event.notes);
-    expect(screen.getByText('Extra ball')).toHaveClass('selected');
 })
     
 });

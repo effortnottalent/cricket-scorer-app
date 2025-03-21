@@ -3,14 +3,6 @@ import {
     useReducer
 } from 'react';
 
-/*
-import { initialEvents } from './stubEventData.js';
-const initialPlayers = [
-...[...Array(11)].map((_, i) => ({ id: i, type: 'batter'})),
-...[...Array(3)].map((_, i) => ({ id: i, type: 'bowler'}))
-];
-*/
-
 import { generateInitialEvents } from './stubEventData.js';
 const [ initialEvents, initialPlayers ] = generateInitialEvents();
 

@@ -45,7 +45,6 @@ it('shows ball has tooltip set', () => {
     expect(received).toHaveAttribute('title');
 });
 
-
 it('shows dot ball for bowler for no runs', () => {
     const event = {
         onStrikeBatterId: 0,
@@ -55,6 +54,21 @@ it('shows dot ball for bowler for no runs', () => {
     render(<BallLogEntry 
         event={event}
         isBatter={false}
+        playerId={0} />);
+    const received = screen.getByText('•');
+    expect(received).toBeInTheDocument();
+});
+
+it('shows dot ball for batter running a bye', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        extra: 'bye',
+        runs: 1
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
         playerId={0} />);
     const received = screen.getByText('•');
     expect(received).toBeInTheDocument();
@@ -609,4 +623,48 @@ it('fires update when clicked and text entered', () => {
     });
 });
 
-})
+});
+
+describe('batter log items', () => {
+
+it('dot ball should not be fullheight', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        runs: 0
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
+        playerId={0} />);
+    expect(screen.getByTestId('ball-container')).toBeInTheDocument()
+});
+
+it('runs should be fullheight', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        runs: 1
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
+        playerId={0} />);
+    expect(screen.getByTestId('ball-container-fullheight')).toBeInTheDocument()
+});
+
+it('wicket should be fullheight', () => {
+    const event = {
+        onStrikeBatterId: 0,
+        onBowlBowlerId: 0,
+        wicket: 'bowled'
+    };
+    render(<BallLogEntry 
+        event={event}
+        isBatter={true}
+        playerId={0} />);
+    expect(screen.getByTestId('ball-container-fullheight')).toBeInTheDocument()
+});
+
+
+});

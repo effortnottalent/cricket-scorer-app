@@ -117,12 +117,19 @@
     &__batterlog {
         display: flex;
         padding-left: 0.5em;
-        flex: 1;
         height: 3em;
         align-items: center;
+        flex-wrap: wrap;
+        flex-direction: column;
     }
     &__batterball {
         display: flex;
+        height: 33%;
+        &--fullheight {
+            display: flex;
+            height: 100%;
+            font-size: calc(100% + 8pt);
+        }
     }
     &__bowlerball {
         width: 1.5em;
@@ -178,6 +185,7 @@
         &--batterout {
             height: 1.5em;
             width: 1.5em;
+            margin: auto;
         }
     }
     &__bowleroversummary {

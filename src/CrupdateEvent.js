@@ -7,7 +7,10 @@ import {
     extrasScoredData,
     wicketScoredData
 } from './eventRefData.js';
-import FieldPositionPicker, { fieldPositionsList } from './FieldPositionPicker.js';
+import 
+    FieldPositionPicker, 
+    { fieldPositionsList } 
+from './FieldPositionPicker.js';
 import { 
     EventsContext,
     EventsDispatchContext,

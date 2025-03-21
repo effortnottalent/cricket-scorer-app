@@ -472,14 +472,19 @@ const overClass = (overLength) => (overLength > 9 ? '--twelve' :
 const GlyphContainer = ({className, children}) => (
     <span className={className ?? 'scorebook__glyph'}>{children}</span>);
 
-const BallContainer = ({overLength, isBatter, children, event}) => (
+const BallContainer = ({overLength, isBatter, children, event, fullHeight}) => (
     <div 
         data-eventid={event.id}
-        data-testid='ball-container'
+        data-testid={'ball-container' + (fullHeight ? '-fullheight' : '')}
         title={formatLongSummary(event, useContext(PlayersContext))}
-        className={'scorebook__' + (isBatter ? 'batter' : 'bowler') + 'ball' + overClass(overLength)}>
+        className={buildBallContainerClassName(isBatter, fullHeight, overLength)}
+    >
         {children}
     </div>);
+
+const buildBallContainerClassName = (isBatter, fullHeight, overLength) => 
+    'scorebook__' + (isBatter ? 'batter' : 'bowler') + 'ball' + 
+        (fullHeight ? '--fullheight' : '') + overClass(overLength);
 
 const HitRunsSpan = ({runs, bowler}) => (
     <span 
@@ -618,85 +623,96 @@ const NoBallGlyph = ({runs, isHit, isRunOut}) => (
 );
 
 export function BallLogEntry({event, overLength, isBatter, playerId}) {
-    let glyph = null;
+    let glyphs = [];
+    let fullHeight = false;
     if(overLength === undefined) overLength = 6;
+    if(!event.runs) event.runs = 0;
     if(event.wicket) {
         if(isBatter) {
             if(getBatterOutId(event) === playerId) {
-                if(event.runs !== 0 && getBatterOutId(event) === event.onStrikeBatterId) {
-                    glyph = <>{!event.extra && <HitRunsSpan runs={event.runs} />}<BatterOutGlyph /></>;
-                } else {
-                    glyph = <BatterOutGlyph />;
+                if(event.runs !== 0 && 
+                        getBatterOutId(event) === event.onStrikeBatterId) {
+                    !event.extra && glyphs.push(<HitRunsSpan runs={event.runs} />);
                 }
+                glyphs.push(<BatterOutGlyph />);
+                fullHeight = true;
             }
         } else if(event.extra) {
             if(event.extra === 'wide') {
-                glyph = <WideGlyph 
+                glyphs.push(<WideGlyph 
                     runs={event.runs ?? 0} 
                     wicket={event.wicket}
-                />
+                />);
             } else if(event.extra === 'no-ball' && 
                     event.wicket === 'run out') {
-                glyph = <NoBallGlyph 
+                glyphs.push(<NoBallGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isHit={false} 
-                />;
+                />);
             } else if(event.extra === 'hit no-ball' && 
                     event.wicket === 'run out') {
-                glyph = <NoBallGlyph 
+                glyphs.push(<NoBallGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isHit={true} 
-                />;
+                />);
             } else if(event.extra === 'bye' && 
                     event.wicket === 'run out') {
-                glyph = <ByeGlyph 
+                glyphs.push(<ByeGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isLeg={false} 
-                />;
+                />);
             } else if(event.extra === 'leg bye' && 
                     event.wicket === 'run out') {
-                glyph = <ByeGlyph 
+                glyphs.push(<ByeGlyph 
                     runs={event.runs ?? 0} 
                     isRunOut={true} 
                     isLeg={true} 
-                />;
+                />);
             }
         } else {
-             glyph = <WicketSpan />;
+             glyphs.push(<WicketSpan />);
         }
     } else if(event.extra) {
         if(isBatter) {
             if(event.extra === 'hit no-ball') {
-                glyph = <HitRunsSpan 
+                glyphs.push(<HitRunsSpan 
                     runs={event.runs ?? 0}
                     bowler={event.onBowlBowlerId}
-                />;
+                />);
+                fullHeight = event.runs !== 0;
+            } else if(event.extra.includes('bye')) {
+                glyphs.push(<HitRunsSpan 
+                    runs={0}
+                    bowler={event.onBowlBowlerId}
+                />);
             }
         } else if(event.extra === 'wide') {
-            glyph = <WideGlyph runs={event.runs ?? 0} />
+            glyphs.push(<WideGlyph runs={event.runs ?? 0} />);
         } else if(event.extra === 'no-ball') {
-            glyph = <NoBallGlyph runs={event.runs ?? 0} isHit={false} />;
+            glyphs.push(<NoBallGlyph runs={event.runs ?? 0} isHit={false} />);
         } else if(event.extra === 'hit no-ball') {
-            glyph = <NoBallGlyph runs={event.runs ?? 0} isHit={true} />;
+            glyphs.push(<NoBallGlyph runs={event.runs ?? 0} isHit={true} />);
         } else if(event.extra === 'bye') {
-            glyph = <ByeGlyph runs={event.runs ?? 0} isLeg={false} />;
+            glyphs.push(<ByeGlyph runs={event.runs ?? 0} isLeg={false} />);
         } else if(event.extra === 'leg bye') {
-            glyph = <ByeGlyph runs={event.runs ?? 0} isLeg={true} />;
+            glyphs.push(<ByeGlyph runs={event.runs ?? 0} isLeg={true} />);
         }
     } else {
-        glyph = <HitRunsSpan 
+        glyphs.push(<HitRunsSpan 
             runs={event.runs ?? 0} 
             {...(isBatter ? {bowler: event.onBowlBowlerId} : '')}
-        />;
+        />);
+        if(isBatter) fullHeight = event.runs !== 0;
     }
-    return <BallContainer
+    return glyphs.map(glyph => <BallContainer
         event={event}
         overLength={overLength}
         isBatter={isBatter}
+        fullHeight={fullHeight}
         >
             {glyph}
-        </BallContainer>;
+        </BallContainer>);
 }
